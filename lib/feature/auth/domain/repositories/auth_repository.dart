@@ -30,4 +30,7 @@ abstract class AuthRepository {
   ResultFuture<UserEntity?> getCachedUser();
   
   ResultVoid cacheUser(UserEntity user);
+  
+  // Account management
+  ResultVoid deleteAccount();
 }

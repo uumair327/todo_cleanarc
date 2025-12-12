@@ -1,4 +1,5 @@
 import '../../../../core/utils/typedef.dart';
+import '../../../../core/utils/pagination_helper.dart';
 import '../entities/task_entity.dart';
 import '../../../../core/domain/value_objects/task_id.dart';
 import '../../../../core/domain/value_objects/user_id.dart';
@@ -6,6 +7,14 @@ import '../../../../core/domain/value_objects/user_id.dart';
 abstract class TaskRepository {
   // Basic CRUD operations
   ResultFuture<List<TaskEntity>> getAllTasks();
+  
+  ResultFuture<PaginatedResult<TaskEntity>> getTasksPaginated({
+    int page = 0,
+    int pageSize = 20,
+    String? searchQuery,
+    DateTime? startDate,
+    DateTime? endDate,
+  });
   
   ResultFuture<TaskEntity?> getTaskById(TaskId id);
   

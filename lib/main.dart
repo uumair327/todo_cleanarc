@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'core/services/injection_container.dart' as di;
 import 'core/theme/app_theme.dart';
-import 'feature/auth/presentation/screens/splash_screen.dart';
+import 'core/router/app_router.dart';
+import 'feature/auth/presentation/auth_presentation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,10 +26,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Todo Clean Architecture',
-      theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => di.sl<AuthBloc>(),
+        ),
+      ],
+      child: MaterialApp.router(
+        title: 'TaskFlow',
+        theme: AppTheme.lightTheme,
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }

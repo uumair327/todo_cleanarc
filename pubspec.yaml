@@ -57,6 +57,7 @@ dependencies:
   path_provider: ^2.1.4
   dartz: ^0.10.1
   uuid: ^4.4.0
+  connectivity_plus: ^6.0.5
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,14 @@ dev_dependencies:
   # Code Generation
   hive_generator: ^2.0.1
   build_runner: ^2.4.12
+  
+  # Property-Based Testing
+  test: ^1.25.8
+  mockito: ^5.4.4
+  
+  # Property-based testing framework for Dart
+  # Using 'test' package with custom generators for property-based testing
+  faker: ^2.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

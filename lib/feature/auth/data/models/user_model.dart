@@ -19,12 +19,16 @@ class UserModel extends HiveObject {
   
   @HiveField(3)
   DateTime createdAt;
+  
+  @HiveField(4)
+  DateTime? updatedAt;
 
   UserModel({
     required this.id,
     required this.email,
     required this.displayName,
     required this.createdAt,
+    this.updatedAt,
   });
 
   factory UserModel.fromJson(DataMap json) {
@@ -33,6 +37,7 @@ class UserModel extends HiveObject {
       email: json['email'] as String,
       displayName: json['display_name'] as String? ?? '',
       createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : null,
     );
   }
 
@@ -42,6 +47,7 @@ class UserModel extends HiveObject {
       'email': email,
       'display_name': displayName,
       'created_at': createdAt.toIso8601String(),
+      if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
     };
   }
 
@@ -51,6 +57,7 @@ class UserModel extends HiveObject {
       email: Email.fromString(email),
       displayName: displayName,
       createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 
@@ -60,6 +67,7 @@ class UserModel extends HiveObject {
       email: entity.email.toString(),
       displayName: entity.displayName,
       createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     );
   }
 }
