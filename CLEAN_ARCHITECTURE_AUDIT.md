@@ -53,9 +53,25 @@ Presentation → Domain ← Data
 **Fix:**
 - Moved `TaskCard` to `lib/feature/todo/presentation/widgets/task_card.dart`
 - Updated barrel file `lib/core/widgets/widgets.dart`
+- Updated imports in `dashboard_screen.dart` and `task_list_screen.dart`
 - Core widgets should only contain feature-agnostic components
 
-### 4. ⚠️ Acceptable Violations (By Design)
+### 4. ✅ Presentation Layer Type Conversion
+
+**Files Affected:**
+- `lib/feature/todo/presentation/bloc/task_form/task_form_bloc.dart`
+- `lib/feature/todo/presentation/bloc/task_form/task_form_state.dart`
+
+**Violation:** Presentation layer needed to convert between domain types (`DomainTime`) and Flutter types (`TimeOfDay`).
+
+**Fix:**
+- Added conversion extensions in `task_form_bloc.dart`:
+  - `DomainTime.toTimeOfDay()` - converts domain to presentation
+  - `TimeOfDay.toDomainTime()` - converts presentation to domain
+- `task_form_state.dart` correctly uses `TimeOfDay` (presentation layer can use Flutter)
+- Conversions happen at the boundary when loading/saving tasks
+
+### 5. ⚠️ Acceptable Violations (By Design)
 
 **Files:**
 - `lib/core/services/injection_container.dart` - DI container must know all features
@@ -65,7 +81,7 @@ Presentation → Domain ← Data
 
 **Reason:** These are infrastructure components that by necessity need to wire together all features. This is acceptable in Clean Architecture as long as they depend on abstractions (interfaces/repositories) not implementations.
 
-### 5. ⚠️ Remaining Items to Consider
+### 6. ⚠️ Remaining Items to Consider
 
 **Files:**
 - `lib/core/widgets/main_app_shell.dart` - Imports auth presentation
@@ -81,7 +97,12 @@ Presentation → Domain ← Data
 - `lib/feature/todo/domain/entities/task_entity.dart` - Added `DomainTime`, removed Flutter
 - `lib/feature/todo/domain/entities/category_entity.dart` - Changed `Color` to `int`
 - `lib/feature/todo/data/models/task_model.dart` - Updated conversions
+- `lib/feature/todo/presentation/bloc/task_form/task_form_bloc.dart` - Added type conversion extensions
+- `lib/feature/todo/presentation/screens/dashboard_screen.dart` - Updated TaskCard import
+- `lib/feature/todo/presentation/screens/task_list_screen.dart` - Updated TaskCard import
 - `lib/core/widgets/widgets.dart` - Removed task_card export
+- `integration_test/performance_test.dart` - Added Flutter foundation import
+- `integration_test/sync_test.dart` - Added Flutter material import
 
 ### Files Deleted
 - `lib/core/widgets/task_card.dart` - Moved to feature
@@ -126,6 +147,6 @@ The project now follows Clean Architecture principles with proper layer separati
 
 ---
 
-**Audit Date:** December 14, 2025
+**Audit Date:** December 15, 2025
 **Package:** com.glimfo.todo
 **Status:** ✅ Compliant (with acceptable exceptions)
