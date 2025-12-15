@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:glimfo_todo/core/theme/app_theme.dart';
+import 'package:todo_cleanarc/core/theme/app_theme.dart';
 
 void main() {
   testWidgets('App theme loads correctly', (WidgetTester tester) async {

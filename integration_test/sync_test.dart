@@ -6,13 +6,13 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:glimfo_todo/main.dart' as app;
-import 'package:glimfo_todo/core/services/injection_container.dart' as di;
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart';
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart';
-import 'package:glimfo_todo/core/domain/value_objects/task_id.dart';
-import 'package:glimfo_todo/core/domain/value_objects/user_id.dart';
-import 'package:glimfo_todo/core/domain/enums/task_enums.dart';
+import 'package:todo_cleanarc/main.dart' as app;
+import 'package:todo_cleanarc/core/services/injection_container.dart' as di;
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart';
+import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
+import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
 import 'test_config.dart';
 
 void main() {

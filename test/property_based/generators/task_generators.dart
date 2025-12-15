@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart';
-import 'package:glimfo_todo/core/domain/value_objects/task_id.dart';
-import 'package:glimfo_todo/core/domain/value_objects/user_id.dart';
-import 'package:glimfo_todo/core/domain/enums/task_enums.dart';
+import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
+import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
 
 /// Property-based test generators for TaskEntity and related objects
 class TaskGenerators {

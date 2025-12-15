@@ -114,12 +114,7 @@ class _MainAppShellState extends State<MainAppShell> {
           const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // TODO: Implement notifications
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications coming soon!')),
-              );
-            },
+            onPressed: () => _showNotificationsComingSoon(context),
           ),
         ],
       ),
@@ -406,6 +401,15 @@ class AppDrawer extends StatelessWidget {
             child: const Text('Logout'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showNotificationsComingSoon(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Notifications feature coming soon!'),
+        duration: Duration(seconds: 2),
       ),
     );
   }

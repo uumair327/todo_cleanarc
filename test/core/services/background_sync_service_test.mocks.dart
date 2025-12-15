@@ -7,20 +7,20 @@ import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:glimfo_todo/core/domain/value_objects/email.dart' as _i12;
-import 'package:glimfo_todo/core/domain/value_objects/password.dart' as _i13;
-import 'package:glimfo_todo/core/domain/value_objects/task_id.dart' as _i8;
-import 'package:glimfo_todo/core/domain/value_objects/user_id.dart' as _i9;
-import 'package:glimfo_todo/core/error/failures.dart' as _i5;
-import 'package:glimfo_todo/core/network/network_info.dart' as _i14;
-import 'package:glimfo_todo/core/utils/pagination_helper.dart' as _i7;
-import 'package:glimfo_todo/feature/auth/domain/entities/user_entity.dart'
+import 'package:todo_cleanarc/core/domain/value_objects/email.dart' as _i12;
+import 'package:todo_cleanarc/core/domain/value_objects/password.dart' as _i13;
+import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart' as _i8;
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart' as _i9;
+import 'package:todo_cleanarc/core/error/failures.dart' as _i5;
+import 'package:todo_cleanarc/core/network/network_info.dart' as _i14;
+import 'package:todo_cleanarc/core/utils/pagination_helper.dart' as _i7;
+import 'package:todo_cleanarc/feature/auth/domain/entities/user_entity.dart'
     as _i11;
-import 'package:glimfo_todo/feature/auth/domain/repositories/auth_repository.dart'
+import 'package:todo_cleanarc/feature/auth/domain/repositories/auth_repository.dart'
     as _i10;
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart'
+import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart'
     as _i6;
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart'
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart'
     as _i3;
 
 // ignore_for_file: type=lint
@@ -46,6 +46,78 @@ class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
         );
 }
 
+class _FakeTaskRepository_1 extends _i1.SmartFake
+    implements _i3.TaskRepository {
+  _FakeTaskRepository_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFuture_2<T> extends _i1.SmartFake implements _i4.Future<T> {
+  _FakeFuture_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFailure_3 extends _i1.SmartFake implements _i5.Failure {
+  _FakeFailure_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeTaskEntity_4 extends _i1.SmartFake implements _i6.TaskEntity {
+  _FakeTaskEntity_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePaginationHelper_5<T> extends _i1.SmartFake
+    implements _i7.PaginationHelper<T> {
+  _FakePaginationHelper_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeTaskId_6 extends _i1.SmartFake implements _i8.TaskId {
+  _FakeTaskId_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeUserId_7 extends _i1.SmartFake implements _i9.UserId {
+  _FakeUserId_7(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [TaskRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -55,197 +127,112 @@ class MockTaskRepository extends _i1.Mock implements _i3.TaskRepository {
   }
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>> getAllTasks() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getAllTasks,
-          [],
-        ),
-        returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.TaskEntity>>(
-          this,
-          Invocation.method(
-            #getAllTasks,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i7.PaginatedResult<_i6.TaskEntity>>>
-      getTasksPaginated({
-    int? page = 0,
-    int? pageSize = 20,
-    String? searchQuery,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) =>
-          (super.noSuchMethod(
-            Invocation.method(
-              #getTasksPaginated,
-              [],
-              {
-                #page: page,
-                #pageSize: pageSize,
-                #searchQuery: searchQuery,
-                #startDate: startDate,
-                #endDate: endDate,
-              },
-            ),
-            returnValue: _i4.Future<
-                    _i2.Either<_i5.Failure,
-                        _i7.PaginatedResult<_i6.TaskEntity>>>.value(
-                _FakeEither_0<_i5.Failure, _i7.PaginatedResult<_i6.TaskEntity>>(
-              this,
-              Invocation.method(
-                #getTasksPaginated,
-                [],
-                {
-                  #page: page,
-                  #pageSize: pageSize,
-                  #searchQuery: searchQuery,
-                  #startDate: startDate,
-                  #endDate: endDate,
-                },
-              ),
-            )),
-          ) as _i4.Future<
-              _i2.Either<_i5.Failure, _i7.PaginatedResult<_i6.TaskEntity>>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity?>> getTaskById(
-          _i8.TaskId? id) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getTaskById,
-          [id],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity?>>.value(
-            _FakeEither_0<_i5.Failure, _i6.TaskEntity?>(
-          this,
-          Invocation.method(
-            #getTaskById,
-            [id],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity?>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, void>> createTask(_i6.TaskEntity? task) =>
+  _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity>> createTask(
+          _i6.TaskEntity? task) =>
       (super.noSuchMethod(
         Invocation.method(
           #createTask,
           [task],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
-            _FakeEither_0<_i5.Failure, void>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity>>.value(
+            _FakeEither_0<_i5.Failure, _i6.TaskEntity>(
           this,
           Invocation.method(
             #createTask,
             [task],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, void>> updateTask(_i6.TaskEntity? task) =>
+  _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity>> updateTask(
+          _i6.TaskEntity? task) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateTask,
           [task],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
-            _FakeEither_0<_i5.Failure, void>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity>>.value(
+            _FakeEither_0<_i5.Failure, _i6.TaskEntity>(
           this,
           Invocation.method(
             #updateTask,
             [task],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, void>> deleteTask(_i8.TaskId? id) =>
+  _i4.Future<_i2.Either<_i5.Failure, void>> deleteTask(_i8.TaskId? taskId) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteTask,
-          [id],
+          [taskId],
         ),
         returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
             _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
             #deleteTask,
-            [id],
+            [taskId],
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>> getTasksByDateRange(
-    DateTime? start,
-    DateTime? end,
-  ) =>
+  _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity?>> getTaskById(
+          _i8.TaskId? taskId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getTasksByDateRange,
-          [
-            start,
-            end,
-          ],
+          #getTaskById,
+          [taskId],
         ),
         returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.TaskEntity>>(
+            _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity?>>.value(
+                _FakeEither_0<_i5.Failure, _i6.TaskEntity?>(
           this,
           Invocation.method(
-            #getTasksByDateRange,
-            [
-              start,
-              end,
-            ],
+            #getTaskById,
+            [taskId],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.TaskEntity?>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>> searchTasks(
-          String? query) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #searchTasks,
-          [query],
-        ),
-        returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.TaskEntity>>(
-          this,
-          Invocation.method(
-            #searchTasks,
-            [query],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>> getTasksByUserId(
-          _i9.UserId? userId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getTasksByUserId,
-          [userId],
-        ),
-        returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.TaskEntity>>(
-          this,
-          Invocation.method(
-            #getTasksByUserId,
-            [userId],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>);
+  _i4.Future<_i2.Either<_i5.Failure, _i7.PaginationHelper<_i6.TaskEntity>>>
+      getTasks({
+    _i9.UserId? userId,
+    int? page = 1,
+    int? limit = 20,
+  }) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #getTasks,
+              [],
+              {
+                #userId: userId,
+                #page: page,
+                #limit: limit,
+              },
+            ),
+            returnValue: _i4.Future<
+                    _i2.Either<_i5.Failure,
+                        _i7.PaginationHelper<_i6.TaskEntity>>>.value(
+                _FakeEither_0<_i5.Failure,
+                    _i7.PaginationHelper<_i6.TaskEntity>>(
+              this,
+              Invocation.method(
+                #getTasks,
+                [],
+                {
+                  #userId: userId,
+                  #page: page,
+                  #limit: limit,
+                },
+              ),
+            )),
+          ) as _i4
+              .Future<_i2.Either<_i5.Failure, _i7.PaginationHelper<_i6.TaskEntity>>>);
 
   @override
   _i4.Future<_i2.Either<_i5.Failure, void>> syncWithRemote() =>
@@ -263,58 +250,6 @@ class MockTaskRepository extends _i1.Mock implements _i3.TaskRepository {
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>> getOfflineTasks() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getOfflineTasks,
-          [],
-        ),
-        returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.TaskEntity>>(
-          this,
-          Invocation.method(
-            #getOfflineTasks,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.TaskEntity>>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, void>> markForSync(_i8.TaskId? id) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #markForSync,
-          [id],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
-            _FakeEither_0<_i5.Failure, void>(
-          this,
-          Invocation.method(
-            #markForSync,
-            [id],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, bool>> hasUnsyncedChanges() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #hasUnsyncedChanges,
-          [],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, bool>>.value(
-            _FakeEither_0<_i5.Failure, bool>(
-          this,
-          Invocation.method(
-            #hasUnsyncedChanges,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, bool>>);
 }
 
 /// A class which mocks [AuthRepository].
@@ -326,13 +261,13 @@ class MockAuthRepository extends _i1.Mock implements _i10.AuthRepository {
   }
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity>> signUp({
+  _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity>> signInWithEmail({
     required _i12.Email? email,
     required _i13.Password? password,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #signUp,
+          #signInWithEmail,
           [],
           {
             #email: email,
@@ -343,7 +278,7 @@ class MockAuthRepository extends _i1.Mock implements _i10.AuthRepository {
             _FakeEither_0<_i5.Failure, _i11.UserEntity>(
           this,
           Invocation.method(
-            #signUp,
+            #signInWithEmail,
             [],
             {
               #email: email,
@@ -354,28 +289,31 @@ class MockAuthRepository extends _i1.Mock implements _i10.AuthRepository {
       ) as _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity>> signIn({
+  _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity>> signUpWithEmail({
     required _i12.Email? email,
     required _i13.Password? password,
+    required String? fullName,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #signIn,
+          #signUpWithEmail,
           [],
           {
             #email: email,
             #password: password,
+            #fullName: fullName,
           },
         ),
         returnValue: _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity>>.value(
             _FakeEither_0<_i5.Failure, _i11.UserEntity>(
           this,
           Invocation.method(
-            #signIn,
+            #signUpWithEmail,
             [],
             {
               #email: email,
               #password: password,
+              #fullName: fullName,
             },
           ),
         )),
@@ -416,99 +354,10 @@ class MockAuthRepository extends _i1.Mock implements _i10.AuthRepository {
       ) as _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity?>>);
 
   @override
-  _i4.Future<bool> isAuthenticated() => (super.noSuchMethod(
-        Invocation.method(
-          #isAuthenticated,
-          [],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, String?>> getStoredToken() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getStoredToken,
-          [],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, String?>>.value(
-            _FakeEither_0<_i5.Failure, String?>(
-          this,
-          Invocation.method(
-            #getStoredToken,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, String?>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, void>> clearSession() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #clearSession,
-          [],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
-            _FakeEither_0<_i5.Failure, void>(
-          this,
-          Invocation.method(
-            #clearSession,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity?>> getCachedUser() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getCachedUser,
-          [],
-        ),
-        returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity?>>.value(
-                _FakeEither_0<_i5.Failure, _i11.UserEntity?>(
-          this,
-          Invocation.method(
-            #getCachedUser,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i11.UserEntity?>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, void>> cacheUser(_i11.UserEntity? user) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #cacheUser,
-          [user],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
-            _FakeEither_0<_i5.Failure, void>(
-          this,
-          Invocation.method(
-            #cacheUser,
-            [user],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, void>> deleteAccount() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #deleteAccount,
-          [],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
-            _FakeEither_0<_i5.Failure, void>(
-          this,
-          Invocation.method(
-            #deleteAccount,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+  _i4.Stream<_i11.UserEntity?> get authStateChanges => (super.noSuchMethod(
+        Invocation.getter(#authStateChanges),
+        returnValue: _i4.Stream<_i11.UserEntity?>.empty(),
+      ) as _i4.Stream<_i11.UserEntity?>);
 }
 
 /// A class which mocks [NetworkInfo].

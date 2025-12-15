@@ -1,8 +1,8 @@
-# Glimfo Todo - Clean Architecture
+# TaskFlow - Clean Architecture
 
-**Package**: `com.glimfo.todo` | **Version**: 1.0.0+1
+**Package**: `todo_cleanarc` | **Version**: 1.0.0+1
 
-A production-ready, offline-first task management application built with Flutter using Clean Architecture principles. Glimfo Todo provides comprehensive task management features with seamless offline-online synchronization powered by Supabase.
+A production-ready, offline-first task management application built with Flutter using Clean Architecture principles. TaskFlow provides comprehensive task management features with seamless offline-online synchronization powered by Supabase.
 
 ## Features
 
@@ -209,12 +209,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 | Platform | Status | Package/Bundle ID |
 |----------|--------|-------------------|
-| Android  | ✅ Ready | com.glimfo.todo |
-| iOS      | ✅ Ready | com.glimfo.todo |
+| Android  | ✅ Ready | com.example.todo_cleanarc |
+| iOS      | ✅ Ready | com.example.todo_cleanarc |
 | Web      | ✅ Ready | - |
 | Windows  | ✅ Ready | - |
-| macOS    | ✅ Ready | com.glimfo.todo |
-| Linux    | ✅ Ready | com.glimfo.todo |
+| macOS    | ✅ Ready | com.example.todo_cleanarc |
+| Linux    | ✅ Ready | com.example.todo_cleanarc |
 
 ## Quick Start for Production
 

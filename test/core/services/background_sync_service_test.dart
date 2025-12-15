@@ -3,11 +3,11 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
 
-import 'package:glimfo_todo/core/services/background_sync_service.dart';
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart';
-import 'package:glimfo_todo/feature/auth/domain/repositories/auth_repository.dart';
-import 'package:glimfo_todo/core/network/network_info.dart';
-import 'package:glimfo_todo/core/error/failures.dart';
+import 'package:todo_cleanarc/core/services/background_sync_service.dart';
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart';
+import 'package:todo_cleanarc/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:todo_cleanarc/core/network/network_info.dart';
+import 'package:todo_cleanarc/core/error/failures.dart';
 
 import 'background_sync_service_test.mocks.dart';
 
