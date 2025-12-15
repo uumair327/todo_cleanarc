@@ -463,7 +463,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       // Remove from all indexes
       for (final entry in indexBox.toMap().entries) {
         final data = entry.value;
-        if (data is Map<String, dynamic> && data.containsKey('ids')) {
+        if (data.containsKey('ids')) {
           final ids = List<String>.from(data['ids'] ?? []);
           if (ids.remove(taskId)) {
             data['ids'] = ids;

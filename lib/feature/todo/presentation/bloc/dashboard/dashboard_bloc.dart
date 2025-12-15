@@ -62,7 +62,6 @@ class DashboardBloc extends HydratedBloc<DashboardEvent, DashboardState> {
   }
 
   String _getPersonalizedGreeting(String email) {
-    final hour = DateTime.now().hour;
     final timeGreeting = _getTimeBasedGreeting();
     
     // Extract name from email (part before @)

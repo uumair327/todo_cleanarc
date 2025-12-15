@@ -64,7 +64,6 @@ class MemoryManager {
   
   /// Get cache statistics
   CacheStats getCacheStats() {
-    final now = DateTime.now();
     int expiredCount = 0;
     
     for (final entry in _cache.values) {
