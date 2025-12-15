@@ -76,7 +76,7 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
       );
 
       if (response.user == null) {
-        throw AuthenticationException(message: 'Failed to create user account');
+        throw const AuthenticationException(message: 'Failed to create user account');
       }
 
       // For email confirmation flow, we create a basic user model
@@ -101,7 +101,7 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
       );
 
       if (response.user == null) {
-        throw AuthenticationException(message: 'Invalid email or password');
+        throw const AuthenticationException(message: 'Invalid email or password');
       }
 
       // Get user profile from the users table
@@ -197,7 +197,7 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
     return _executeWithRetry(() async {
       final user = _client.auth.currentUser;
       if (user == null) {
-        throw AuthenticationException(message: 'No authenticated user found');
+        throw const AuthenticationException(message: 'No authenticated user found');
       }
 
       // Delete user data from tasks table

@@ -116,7 +116,7 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
       final totalCount = countResponse.length;
 
       // Then get paginated data
-      var dataQuery = _client
+      final dataQuery = _client
           .from(_tableName)
           .select()
           .eq('user_id', userId)

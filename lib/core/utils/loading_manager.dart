@@ -181,21 +181,17 @@ class LoadingState {
         operationCount = 0;
 
   const LoadingState.loading({
-    String? message,
-    double progress = 0.0,
-    int operationCount = 1,
+    this.message,
+    this.progress = 0.0,
+    this.operationCount = 1,
   }) : isLoading = true,
         hasError = false,
-        message = message,
-        errorMessage = null,
-        progress = progress,
-        operationCount = operationCount;
+        errorMessage = null;
 
-  const LoadingState.error(String errorMessage)
+  const LoadingState.error(this.errorMessage)
       : isLoading = false,
         hasError = true,
         message = null,
-        errorMessage = errorMessage,
         progress = 0.0,
         operationCount = 0;
 

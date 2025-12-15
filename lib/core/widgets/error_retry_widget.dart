@@ -234,7 +234,7 @@ class SnackBarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.white),
+            const Icon(Icons.error_outline, color: Colors.white),
             const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],
@@ -258,7 +258,7 @@ class SnackBarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.check_circle_outline, color: Colors.white),
+            const Icon(Icons.check_circle_outline, color: Colors.white),
             const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],
@@ -275,7 +275,7 @@ class SnackBarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.info_outline, color: Colors.white),
+            const Icon(Icons.info_outline, color: Colors.white),
             const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],
@@ -292,7 +292,7 @@ class SnackBarHelper {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.warning_outlined, color: Colors.white),
+            const Icon(Icons.warning_outlined, color: Colors.white),
             const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],

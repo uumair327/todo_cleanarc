@@ -182,7 +182,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.error_outline,
                 size: 16.0,
                 color: AppColors.error,

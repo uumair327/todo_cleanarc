@@ -50,7 +50,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   @override
   Future<List<TaskModel>> getAllTasks() async {
     try {
-      final cacheKey = 'all_tasks';
+      const cacheKey = 'all_tasks';
       final cached = memoryManager.getCachedItem<List<TaskModel>>(cacheKey);
       if (cached != null) return cached;
 
@@ -363,7 +363,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   @override
   Future<int> getTaskCount() async {
     try {
-      final cacheKey = 'task_count';
+      const cacheKey = 'task_count';
       final cached = memoryManager.getCachedItem<int>(cacheKey);
       if (cached != null) return cached;
 

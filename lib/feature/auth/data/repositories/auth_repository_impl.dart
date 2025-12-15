@@ -28,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultFuture<UserEntity> signUp({required Email email, required Password password}) async {
     if (!await _networkInfo.isConnected) {
-      return Left(NetworkFailure(message: 'No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {

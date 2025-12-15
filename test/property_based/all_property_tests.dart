@@ -1,9 +1,9 @@
+import 'package:flutter_test/flutter_test.dart';
+
 /// Main entry point for all property-based tests
 /// 
 /// This file imports and runs all property-based tests for the Flutter Todo App.
 /// Run with: flutter test test/property_based/all_property_tests.dart
-
-import 'package:flutter_test/flutter_test.dart';
 
 // Import all property-based test files
 import 'examples/task_entity_properties_test.dart' as task_entity_tests;

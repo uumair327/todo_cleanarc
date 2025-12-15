@@ -137,7 +137,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             onChanged: (value) {
               // Debounce search to avoid too many API calls
               Future.delayed(const Duration(milliseconds: 500), () {
-                if (_searchController.text == value) {
+                if (_searchController.text == value && mounted) {
                   _paginationHelper.reset();
                   context.read<TaskListBloc>().add(
                     TaskListLoadPaginatedRequested(

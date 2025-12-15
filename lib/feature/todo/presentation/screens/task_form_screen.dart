@@ -256,7 +256,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           firstDate: DateTime.now(),
           lastDate: DateTime(2030),
         );
-        if (date != null) {
+        if (date != null && mounted) {
           context.read<TaskFormBloc>().add(TaskFormDueDateChanged(date));
         }
       },
@@ -294,7 +294,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           context: context,
           initialTime: state.dueTime,
         );
-        if (time != null) {
+        if (time != null && mounted) {
           context.read<TaskFormBloc>().add(TaskFormDueTimeChanged(time));
         }
       },

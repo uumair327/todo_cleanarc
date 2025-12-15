@@ -76,7 +76,7 @@ class AppTheme {
       ),
       
       // Card theme with rounded corners and soft shadows
-      cardTheme: CardTheme(
+      cardTheme: const CardTheme(
         elevation: AppDimensions.cardElevation,
         color: AppColors.surface,
         shadowColor: AppColors.shadow,
