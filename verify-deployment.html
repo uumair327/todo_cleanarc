@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deployment Verification - TaskFlow</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .test-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #007bff;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .url-test {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .launch-btn {
+            background: #28a745;
+            font-size: 18px;
+            padding: 15px 30px;
+        }
+        .launch-btn:hover {
+            background: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 TaskFlow Deployment Verification</h1>
+            <p>Checking if your Flutter app is properly deployed to GitHub Pages</p>
+        </div>
+        
+        <div class="content">
+            <div class="test-item">
+                <div class="status">📍 Current Location</div>
+                <div class="url-test" id="current-url">Loading...</div>
+                <div>Expected: https://uumair327.github.io/todo_cleanarc/</div>
+            </div>
+            
+            <div class="test-item" id="flutter-files-test">
+                <div class="status">📁 Flutter Files Test</div>
+                <div id="files-status">Testing file accessibility...</div>
+            </div>
+            
+            <div class="test-item" id="base-href-test">
+                <div class="status">🔗 Base Href Test</div>
+                <div id="base-href-status">Checking base href configuration...</div>
+            </div>
+            
+            <div class="test-item">
+                <div class="status">🚀 Launch Your App</div>
+                <p>If all tests pass, your Flutter app should work:</p>
+                <button class="launch-btn" onclick="window.open('index.html', '_blank')">
+                    Launch TaskFlow App
+                </button>
+                <button onclick="window.open('https://uumair327.github.io/todo_cleanarc/', '_blank')">
+                    Open Direct URL
+                </button>
+            </div>
+            
+            <div class="test-item">
+                <div class="status">🛠️ Troubleshooting</div>
+                <div id="troubleshooting">
+                    <p><strong>If files are missing (404 errors):</strong></p>
+                    <ul>
+                        <li>Upload all files from <code>build/web/</code> to gh-pages branch</li>
+                        <li>Make sure GitHub Pages source is set to gh-pages branch</li>
+                        <li>Wait 5-10 minutes after uploading</li>
+                    </ul>
+                    
+                    <p><strong>If base href is wrong:</strong></p>
+                    <ul>
+                        <li>Rebuild with: <code>flutter build web --release --base-href "/todo_cleanarc/"</code></li>
+                        <li>Re-upload the generated files</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="test-item">
+                <div class="status">📋 Deployment Checklist</div>
+                <ul>
+                    <li>✅ Repository: todo_cleanarc</li>
+                    <li>✅ Base href: /todo_cleanarc/</li>
+                    <li>✅ GitHub Pages enabled</li>
+                    <li id="files-checklist">⏳ Files deployed: Testing...</li>
+                    <li id="app-checklist">⏳ App working: Testing...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Display current URL
+        document.getElementById('current-url').textContent = window.location.href;
+        
+        // Test Flutter files
+        const requiredFiles = [
+            'flutter.js',
+            'main.dart.js',
+            'manifest.json',
+            'index.html',
+            'flutter_service_worker.js'
+        ];
+        
+        let filesFound = 0;
+        let filesTotal = requiredFiles.length;
+        let testResults = [];
+        
+        console.log('🔍 Starting deployment verification...');
+        console.log('Current URL:', window.location.href);
+        console.log('Testing required files:', requiredFiles);
+        
+        requiredFiles.forEach(file => {
+            fetch(file)
+                .then(response => {
+                    const status = response.ok ? '✅' : '❌';
+                    const message = `${status} ${file} - ${response.status}`;
+                    testResults.push(message);
+                    console.log(message);
+                    
+                    if (response.ok) filesFound++;
+                    
+                    updateResults();
+                })
+                .catch(error => {
+                    const message = `❌ ${file} - Error: ${error.message}`;
+                    testResults.push(message);
+                    console.log(message);
+                    updateResults();
+                });
+        });
+        
+        function updateResults() {
+            if (testResults.length === filesTotal) {
+                const filesStatus = document.getElementById('files-status');
+                const filesTest = document.getElementById('flutter-files-test');
+                const filesChecklist = document.getElementById('files-checklist');
+                
+                filesStatus.innerHTML = testResults.join('<br>');
+                
+                if (filesFound === filesTotal) {
+                    filesTest.className = 'test-item success';
+                    filesChecklist.innerHTML = '✅ Files deployed: All required files found';
+                    
+                    // Test base href
+                    testBaseHref();
+                } else {
+                    filesTest.className = 'test-item error';
+                    filesChecklist.innerHTML = `❌ Files deployed: ${filesFound}/${filesTotal} files found`;
+                    
+                    document.getElementById('base-href-status').innerHTML = 
+                        '⚠️ Cannot test base href - required files missing';
+                    document.getElementById('base-href-test').className = 'test-item warning';
+                }
+            }
+        }
+        
+        function testBaseHref() {
+            fetch('index.html')
+                .then(response => response.text())
+                .then(html => {
+                    const baseHrefMatch = html.match(/<base href="([^"]+)"/);
+                    const baseHref = baseHrefMatch ? baseHrefMatch[1] : 'Not found';
+                    
+                    const baseHrefStatus = document.getElementById('base-href-status');
+                    const baseHrefTest = document.getElementById('base-href-test');
+                    
+                    if (baseHref === '/todo_cleanarc/') {
+                        baseHrefStatus.innerHTML = `✅ Base href is correct: ${baseHref}`;
+                        baseHrefTest.className = 'test-item success';
+                        
+                        document.getElementById('app-checklist').innerHTML = 
+                            '✅ App working: Ready to launch!';
+                    } else {
+                        baseHrefStatus.innerHTML = `❌ Base href is wrong: ${baseHref} (should be /todo_cleanarc/)`;
+                        baseHrefTest.className = 'test-item error';
+                        
+                        document.getElementById('app-checklist').innerHTML = 
+                            '❌ App working: Base href needs fixing';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('base-href-status').innerHTML = 
+                        `❌ Error reading index.html: ${error.message}`;
+                    document.getElementById('base-href-test').className = 'test-item error';
+                });
+        }
+        
+        // Log deployment info
+        console.log('Expected base URL: https://uumair327.github.io/todo_cleanarc/');
+        console.log('Repository: todo_cleanarc');
+        console.log('Required base href: /todo_cleanarc/');
+    </script>
+</body>
+</html>
