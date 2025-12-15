@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/app_colors.dart';
@@ -21,6 +20,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -96,42 +96,101 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Widget _buildSignInForm() {
     return BlocBuilder<SignInBloc, SignInState>(
+      buildWhen: (previous, current) =>
+          previous.emailError != current.emailError ||
+          previous.passwordError != current.passwordError,
       builder: (context, state) {
+        // Update error text after bloc state changes
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) setState(() {});
+        });
+        
         return Column(
           children: [
-            CustomTextField(
-              label: 'Email Address',
-              hint: 'Enter your email address',
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              prefixIcon: const Icon(Icons.email_outlined),
-              validator: (value) => state.emailError,
-              onChanged: (value) {
-                context.read<SignInBloc>().add(SignInEmailChanged(value));
-              },
-            ),
+            _buildEmailField(state),
             const SizedBox(height: AppSpacing.lg),
-            CustomTextField(
-              label: 'Password',
-              hint: 'Enter your password',
-              controller: _passwordController,
-              obscureText: true,
-              textInputAction: TextInputAction.done,
-              prefixIcon: const Icon(Icons.lock_outlined),
-              validator: (value) => state.passwordError,
-              onChanged: (value) {
-                context.read<SignInBloc>().add(SignInPasswordChanged(value));
-              },
-              onSubmitted: (_) {
-                if (state.isFormValid) {
-                  context.read<SignInBloc>().add(const SignInSubmitted());
-                }
-              },
-            ),
+            _buildPasswordField(state),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildEmailField(SignInState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Email Address',
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        TextFormField(
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          onChanged: (value) {
+            context.read<SignInBloc>().add(SignInEmailChanged(value));
+          },
+          decoration: InputDecoration(
+            hintText: 'Enter your email address',
+            prefixIcon: const Icon(Icons.email_outlined),
+            errorText: state.emailError,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField(SignInState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Password',
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        TextFormField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          textInputAction: TextInputAction.done,
+          onChanged: (value) {
+            context.read<SignInBloc>().add(SignInPasswordChanged(value));
+          },
+          onFieldSubmitted: (_) {
+            final state = context.read<SignInBloc>().state;
+            if (state.isFormValid) {
+              context.read<SignInBloc>().add(const SignInSubmitted());
+            }
+          },
+          decoration: InputDecoration(
+            hintText: 'Enter your password',
+            prefixIcon: const Icon(Icons.lock_outlined),
+            errorText: state.passwordError,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 

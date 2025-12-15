@@ -30,11 +30,15 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
         return await operation();
       } catch (e) {
         attempts++;
+        // Don't retry auth errors - they won't change
+        if (e is AuthException) {
+          throw AuthenticationException(message: _getAuthErrorMessage(e));
+        }
         if (attempts >= _maxRetries) {
-          if (e is AuthException) {
-            throw AuthenticationException(message: e.message);
-          } else if (e is SocketException || e.toString().contains('network')) {
+          if (e is SocketException || e.toString().contains('network')) {
             throw NetworkException(message: 'Network error: $e');
+          } else if (e is PostgrestException) {
+            throw ServerException(message: 'Database error: ${e.message}');
           } else {
             throw ServerException(message: 'Server error: $e');
           }
@@ -42,7 +46,22 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
         await Future.delayed(_retryDelay * attempts);
       }
     }
-    throw ServerException(message: 'Max retries exceeded');
+    throw const ServerException(message: 'Max retries exceeded');
+  }
+
+  String _getAuthErrorMessage(AuthException e) {
+    final message = e.message.toLowerCase();
+    if (message.contains('invalid login credentials') || 
+        message.contains('invalid email or password')) {
+      return 'Invalid email or password. Please check your credentials.';
+    } else if (message.contains('email not confirmed')) {
+      return 'Please verify your email address before signing in.';
+    } else if (message.contains('user not found')) {
+      return 'No account found with this email. Please sign up first.';
+    } else if (message.contains('too many requests')) {
+      return 'Too many login attempts. Please try again later.';
+    }
+    return e.message;
   }
 
   @override
@@ -107,9 +126,43 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
           .from('users')
           .select()
           .eq('id', response.user!.id)
-          .single();
+          .maybeSingle();
 
-      return UserModel.fromJson(userProfile);
+      if (userProfile != null) {
+        return UserModel.fromJson(userProfile);
+      }
+
+      // User profile doesn't exist - create it (fallback for users created before trigger)
+      final newProfile = {
+        'id': response.user!.id,
+        'email': response.user!.email!,
+        'display_name': response.user!.email!.split('@')[0],
+        'created_at': DateTime.now().toIso8601String(),
+      };
+
+      try {
+        await _client.from('users').insert(newProfile);
+        return UserModel.fromJson(newProfile);
+      } catch (e) {
+        // If insert fails, try to fetch again (might have been created by trigger)
+        final retryProfile = await _client
+            .from('users')
+            .select()
+            .eq('id', response.user!.id)
+            .maybeSingle();
+        
+        if (retryProfile != null) {
+          return UserModel.fromJson(retryProfile);
+        }
+        
+        // Return a basic user model if all else fails
+        return UserModel(
+          id: response.user!.id,
+          email: response.user!.email!,
+          displayName: response.user!.email!.split('@')[0],
+          createdAt: DateTime.now(),
+        );
+      }
     });
   }
 

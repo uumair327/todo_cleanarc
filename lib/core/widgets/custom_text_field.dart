@@ -98,10 +98,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   void _validateInput(String? value) {
     if (widget.validator != null) {
-      setState(() {
-        _errorText = widget.validator!(value);
-      });
-    } else {
+      final error = widget.validator!(value);
+      if (error != _errorText) {
+        setState(() {
+          _errorText = error;
+        });
+      }
+    } else if (_errorText != null) {
       setState(() {
         _errorText = null;
       });
