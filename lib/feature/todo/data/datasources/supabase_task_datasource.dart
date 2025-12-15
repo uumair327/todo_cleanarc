@@ -103,13 +103,13 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
 
       // Apply filters to count query
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        countQuery = countQuery.textSearch('title,description', searchQuery);
+        countQuery = countQuery.ilike('title', '%$searchQuery%');
       }
       if (startDate != null) {
-        countQuery = countQuery.filter('due_date', 'gte', startDate.toIso8601String().split('T')[0]);
+        countQuery = countQuery.gte('due_date', startDate.toIso8601String().split('T')[0]);
       }
       if (endDate != null) {
-        countQuery = countQuery.filter('due_date', 'lte', endDate.toIso8601String().split('T')[0]);
+        countQuery = countQuery.lte('due_date', endDate.toIso8601String().split('T')[0]);
       }
 
       final countResponse = await countQuery;
@@ -126,13 +126,13 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
 
       // Apply same filters to data query
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        dataQuery = dataQuery.textSearch('title,description', searchQuery);
+        dataQuery = dataQuery.ilike('title', '%$searchQuery%');
       }
       if (startDate != null) {
-        dataQuery = dataQuery.filter('due_date', 'gte', startDate.toIso8601String().split('T')[0]);
+        dataQuery = dataQuery.gte('due_date', startDate.toIso8601String().split('T')[0]);
       }
       if (endDate != null) {
-        dataQuery = dataQuery.filter('due_date', 'lte', endDate.toIso8601String().split('T')[0]);
+        dataQuery = dataQuery.lte('due_date', endDate.toIso8601String().split('T')[0]);
       }
 
       final dataResponse = await dataQuery;

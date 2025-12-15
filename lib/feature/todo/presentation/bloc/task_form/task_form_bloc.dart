@@ -69,7 +69,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
     emit(state.copyWith(isLoading: true, clearError: true));
 
     try {
-      final result = await _getTaskByIdUseCase(TaskId(event.taskId));
+      final result = await _getTaskByIdUseCase(TaskId.fromString(event.taskId));
       
       result.fold(
         (failure) => emit(state.copyWith(
@@ -219,7 +219,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
       } else {
         // Create new task
         final newTask = TaskEntity(
-          id: TaskId(const Uuid().v4()),
+          id: TaskId.generate(),
           userId: _currentUserId,
           title: state.title.trim(),
           description: state.description.trim(),
