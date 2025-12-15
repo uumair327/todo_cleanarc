@@ -73,13 +73,13 @@ class _AuthCallbackScreenState extends State<AuthCallbackScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.background,
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(
+            CircularProgressIndicator(
               color: AppColors.primary,
             ),
             SizedBox(height: AppSpacing.lg),
