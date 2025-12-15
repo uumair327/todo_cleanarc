@@ -76,15 +76,15 @@ try {
 switch ($Environment) {
     "dev" {
         Write-Status "Building for development..."
-        flutter build web --debug --web-renderer html --base-href "/"
+        flutter build web --debug --base-href "/"
     }
     "github" {
         Write-Status "Building for GitHub Pages..."
-        flutter build web --release --web-renderer html --base-href "/glimfo-todo/" --dart-define=GITHUB_PAGES=true
+        flutter build web --release --base-href "/todo_cleanarc/" --dart-define=GITHUB_PAGES=true
     }
     "prod" {
         Write-Status "Building for production..."
-        flutter build web --release --web-renderer html --base-href "/"
+        flutter build web --release --base-href "/"
     }
 }
 

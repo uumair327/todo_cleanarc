@@ -64,15 +64,15 @@ fi
 case "${1:-dev}" in
     "dev")
         print_status "Building for development..."
-        flutter build web --debug --web-renderer html --base-href "/"
+        flutter build web --debug --base-href "/"
         ;;
     "github")
         print_status "Building for GitHub Pages..."
-        flutter build web --release --web-renderer html --base-href "/glimfo-todo/" --dart-define=GITHUB_PAGES=true
+        flutter build web --release --base-href "/todo_cleanarc/" --dart-define=GITHUB_PAGES=true
         ;;
     "prod")
         print_status "Building for production..."
-        flutter build web --release --web-renderer html --base-href "/"
+        flutter build web --release --base-href "/"
         ;;
     *)
         print_error "Invalid environment. Use: dev, github, or prod"
