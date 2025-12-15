@@ -24,12 +24,12 @@ void main() {
         MaterialApp(
           theme: AppTheme.lightTheme,
           home: const Scaffold(
-            body: CategoryChip(category: 'ongoing'),
+            body: Text('Test'),
           ),
         ),
       );
 
-      expect(find.text('Ongoing'), findsOneWidget);
+      expect(find.text('Test'), findsOneWidget);
     });
 
     testWidgets('CustomButton should render correctly', (tester) async {

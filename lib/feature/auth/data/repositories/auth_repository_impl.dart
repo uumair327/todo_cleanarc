@@ -197,6 +197,7 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
   ResultVoid deleteAccount() async {
     if (!await _networkInfo.isConnected) {
       return Left(NetworkFailure(message: 'Internet connection required for account deletion'));

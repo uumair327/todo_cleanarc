@@ -289,7 +289,7 @@ class CategoryChip extends StatelessWidget {
           color: categoryLightColor,
           borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
           border: Border.all(
-            color: categoryColor.withValues(alpha: 0.3),
+            color: categoryColor.withOpacity(0.3),
             width: 1,
           ),
         ),

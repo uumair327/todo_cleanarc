@@ -56,10 +56,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     // Re-validate confirm password with the new password
     String? confirmPasswordError;
-    if (state.confirmPassword.isNotEmpty) {
-      if (state.confirmPassword != password) {
-        confirmPasswordError = 'Passwords do not match';
-      }
+    if (state.confirmPassword.isNotEmpty && state.confirmPassword != password) {
+      confirmPasswordError = 'Passwords do not match';
     }
 
     emit(state.copyWith(
@@ -89,10 +87,6 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       confirmPasswordError = 'Please confirm your password';
     } else if (confirmPassword != state.password) {
       confirmPasswordError = 'Passwords do not match';
-      // Debug: Print to see what's happening
-      print('Password mismatch: password="${state.password}" (${state.password.length}), confirm="$confirmPassword" (${confirmPassword.length})');
-    } else {
-      print('Passwords match: password="${state.password}", confirm="$confirmPassword"');
     }
 
     emit(state.copyWith(
@@ -118,12 +112,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(status: SignUpStatus.loading));
 
     try {
-      print('SignUp: email="${state.email}", password="${state.password}" (${state.password.length} chars)');
-      
       final email = Email.fromString(state.email);
       final password = Password.fromString(state.password);
-
-      print('SignUp: Calling use case with email=${email.value}, password length=${password.value.length}');
 
       final result = await _signUpUseCase(
         email: email,
@@ -132,19 +122,16 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
       result.fold(
         (failure) {
-          print('SignUp failed: ${_getFailureMessage(failure)}');
           emit(state.copyWith(
             status: SignUpStatus.failure,
             errorMessage: () => _getFailureMessage(failure),
           ));
         },
         (user) {
-          print('SignUp success!');
           emit(state.copyWith(status: SignUpStatus.success));
         },
       );
     } catch (e) {
-      print('SignUp exception: $e');
       emit(state.copyWith(
         status: SignUpStatus.failure,
         errorMessage: () => e.toString(),

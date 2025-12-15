@@ -64,16 +64,12 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     Emitter<SignInState> emit,
   ) async {
     if (!state.isFormValid) {
-      // Debug: show why form is invalid
-      print('SignIn: Form not valid - email: "${state.email}", password length: ${state.password.length}');
-      print('SignIn: emailError: ${state.emailError}, passwordError: ${state.passwordError}');
       return;
     }
 
     emit(state.copyWith(status: SignInStatus.loading));
 
     try {
-      print('SignIn: Attempting sign in with email: ${state.email}');
       final email = Email.fromString(state.email);
       final password = Password.fromString(state.password);
 
@@ -84,19 +80,16 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
       result.fold(
         (failure) {
-          print('SignIn: Failed - ${_getFailureMessage(failure)}');
           emit(state.copyWith(
             status: SignInStatus.failure,
             errorMessage: () => _getFailureMessage(failure),
           ));
         },
         (user) {
-          print('SignIn: Success!');
           emit(state.copyWith(status: SignInStatus.success));
         },
       );
     } catch (e) {
-      print('SignIn: Exception - $e');
       emit(state.copyWith(
         status: SignInStatus.failure,
         errorMessage: () => e.toString(),

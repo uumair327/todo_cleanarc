@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../feature/auth/presentation/auth_presentation.dart';
-import '../theme/app_theme.dart';
+
 import '../utils/app_colors.dart';
 import '../services/injection_container.dart' as di;
 import '../services/sync_manager.dart';

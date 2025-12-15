@@ -7,7 +7,7 @@ class AuthConstants {
   // Get the appropriate redirect URL based on environment
   static String get redirectUrl {
     // Check if running on GitHub Pages
-    const String? githubPages = String.fromEnvironment('GITHUB_PAGES');
+    const String githubPages = String.fromEnvironment('GITHUB_PAGES');
     if (githubPages == 'true') {
       return githubPagesUrl;
     }
