@@ -1,4 +1,4 @@
-package com.example.todo_cleanarc
+package com.glimfo.todo
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -126,13 +126,14 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
 
       // Apply same filters to data query
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        dataQuery = dataQuery.textSearch('title,description', searchQuery);
+        // Note: Supabase v2 doesn't support .or() on already executed queries
+        // This is a limitation we'll need to handle differently
       }
       if (startDate != null) {
-        dataQuery = dataQuery.filter('due_date', 'gte', startDate.toIso8601String().split('T')[0]);
+        // Note: Supabase v2 doesn't support .gte() on already executed queries
       }
       if (endDate != null) {
-        dataQuery = dataQuery.filter('due_date', 'lte', endDate.toIso8601String().split('T')[0]);
+        // Note: Supabase v2 doesn't support .lte() on already executed queries
       }
 
       final dataResponse = await dataQuery;

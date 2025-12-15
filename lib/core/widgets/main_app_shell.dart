@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../utils/app_colors.dart';
 import '../services/injection_container.dart' as di;
 import '../services/sync_manager.dart';
+import '../services/background_sync_service.dart';
 import 'sync_status_widget.dart';
 import 'global_error_handler.dart';
 

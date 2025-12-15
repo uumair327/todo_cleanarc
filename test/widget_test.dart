@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:todo_cleanarc/main.dart';
+import 'package:glimfo_todo/main.dart';
 
 void main() {
   testWidgets('App loads and shows splash screen', (WidgetTester tester) async {

@@ -30,10 +30,10 @@ class SignUpState extends Equatable {
     String? email,
     String? password,
     String? confirmPassword,
-    String? emailError,
-    String? passwordError,
-    String? confirmPasswordError,
-    String? errorMessage,
+    String? Function()? emailError,
+    String? Function()? passwordError,
+    String? Function()? confirmPasswordError,
+    String? Function()? errorMessage,
     bool? isFormValid,
   }) {
     return SignUpState(
@@ -41,10 +41,10 @@ class SignUpState extends Equatable {
       email: email ?? this.email,
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
-      emailError: emailError,
-      passwordError: passwordError,
-      confirmPasswordError: confirmPasswordError,
-      errorMessage: errorMessage,
+      emailError: emailError != null ? emailError() : this.emailError,
+      passwordError: passwordError != null ? passwordError() : this.passwordError,
+      confirmPasswordError: confirmPasswordError != null ? confirmPasswordError() : this.confirmPasswordError,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       isFormValid: isFormValid ?? this.isFormValid,
     );
   }

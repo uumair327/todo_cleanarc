@@ -4,7 +4,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../core/domain/enums/task_enums.dart';
-import '../../../domain/entities/task_entity.dart';
+import '../../domain/entities/task_entity.dart';
 import '../bloc/task_form/task_form_bloc.dart';
 import '../bloc/task_form/task_form_event.dart';
 import '../bloc/task_form/task_form_state.dart';
@@ -134,7 +134,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     _buildSectionTitle('Task Title'),
                     CustomTextField(
                       controller: _titleController,
-                      hintText: 'Enter task title',
+                      hint: 'Enter task title',
                       onChanged: (value) {
                         context.read<TaskFormBloc>().add(TaskFormTitleChanged(value));
                       },
@@ -151,7 +151,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     _buildSectionTitle('Description'),
                     CustomTextField(
                       controller: _descriptionController,
-                      hintText: 'Enter task description',
+                      hint: 'Enter task description',
                       maxLines: 3,
                       onChanged: (value) {
                         context.read<TaskFormBloc>().add(TaskFormDescriptionChanged(value));

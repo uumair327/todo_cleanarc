@@ -9,20 +9,92 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/generated/**"
+  errors:
+    # Treat missing required parameters as errors
+    missing_required_param: error
+    # Treat undefined identifiers as errors
+    undefined_identifier: error
+    # Allow TODOs in development
+    todo: ignore
+    # Deprecated member use warnings (not errors for gradual migration)
+    deprecated_member_use: warning
+    deprecated_member_use_from_same_package: warning
+
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # Error rules
+    avoid_print: true
+    avoid_relative_lib_imports: true
+    avoid_types_as_parameter_names: true
+    no_duplicate_case_values: true
+    prefer_void_to_null: true
+    use_key_in_widget_constructors: false  # Allow flexibility in widget constructors
+    
+    # Style rules
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    prefer_single_quotes: true
+    unnecessary_brace_in_string_interps: true
+    unnecessary_const: true
+    unnecessary_new: true
+    unnecessary_this: true
+    
+    # Documentation
+    public_member_api_docs: false  # Don't require docs for all public members
+    
+    # Imports
+    always_use_package_imports: false
+    avoid_web_libraries_in_flutter: true
+    
+    # Null safety
+    avoid_null_checks_in_equality_operators: true
+    
+    # Best practices
+    annotate_overrides: true
+    avoid_empty_else: true
+    avoid_init_to_null: true
+    avoid_return_types_on_setters: true
+    await_only_futures: true
+    camel_case_types: true
+    cancel_subscriptions: true
+    close_sinks: true
+    empty_catches: false  # Allow empty catches with comment
+    empty_constructor_bodies: true
+    library_names: true
+    library_prefixes: true
+    no_leading_underscores_for_library_prefixes: true
+    no_leading_underscores_for_local_identifiers: true
+    null_closures: true
+    prefer_collection_literals: true
+    prefer_conditional_assignment: true
+    prefer_contains: true
+    prefer_for_elements_to_map_fromIterable: true
+    prefer_function_declarations_over_variables: true
+    prefer_if_null_operators: true
+    prefer_initializing_formals: true
+    prefer_inlined_adds: true
+    prefer_is_empty: true
+    prefer_is_not_empty: true
+    prefer_iterable_whereType: true
+    prefer_spread_collections: true
+    recursive_getters: true
+    slash_for_doc_comments: true
+    type_init_formals: true
+    unawaited_futures: true
+    unnecessary_null_in_if_null_operators: true
+    unnecessary_overrides: true
+    unrelated_type_equality_checks: true
+    use_function_type_syntax_for_parameters: true
+    use_rethrow_when_possible: true
+    valid_regexps: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

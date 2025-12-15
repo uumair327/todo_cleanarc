@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'package:flutter/foundation.dart';
 import '../../feature/todo/domain/repositories/task_repository.dart';
 import '../../feature/auth/domain/repositories/auth_repository.dart';
 import '../network/network_info.dart';
@@ -119,11 +118,7 @@ class BackgroundSyncService {
     
     try {
       // Check if user is authenticated
-      final authResult = await _authRepository.isAuthenticated();
-      final isAuthenticated = authResult.fold(
-        (failure) => false,
-        (authenticated) => authenticated,
-      );
+      final isAuthenticated = await _authRepository.isAuthenticated();
       
       if (!isAuthenticated) {
         developer.log('User not authenticated, skipping sync', 
@@ -220,10 +215,8 @@ class BackgroundSyncService {
       _currentStatus = status;
       _syncStatusController.add(status);
       
-      if (kDebugMode) {
-        developer.log('Sync status changed to: ${status.name}', 
-            name: 'BackgroundSyncService');
-      }
+      developer.log('Sync status changed to: ${status.name}', 
+          name: 'BackgroundSyncService');
     }
   }
 

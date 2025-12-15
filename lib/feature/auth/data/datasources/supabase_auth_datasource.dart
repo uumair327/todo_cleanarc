@@ -57,17 +57,36 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
         throw AuthenticationException(message: 'Failed to create user account');
       }
 
-      // Create user profile in the users table
-      final userProfile = {
+      // User profile is created automatically by database trigger
+      // Wait a moment for the trigger to complete
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Fetch the user profile created by the trigger
+      final userProfile = await _client
+          .from('users')
+          .select()
+          .eq('id', response.user!.id)
+          .maybeSingle();
+
+      if (userProfile != null) {
+        return UserModel.fromJson(userProfile);
+      }
+
+      // Fallback: create profile manually if trigger didn't work
+      final newProfile = {
         'id': response.user!.id,
         'email': response.user!.email!,
         'display_name': response.user!.email!.split('@')[0],
         'created_at': DateTime.now().toIso8601String(),
       };
 
-      await _client.from('users').insert(userProfile);
+      try {
+        await _client.from('users').insert(newProfile);
+      } catch (e) {
+        // Profile might already exist from trigger, ignore error
+      }
 
-      return UserModel.fromJson(userProfile);
+      return UserModel.fromJson(newProfile);
     });
   }
 

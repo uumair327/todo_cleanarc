@@ -1,11 +1,11 @@
 {
-    "name": "todo_cleanarc",
-    "short_name": "todo_cleanarc",
+    "name": "Glimfo Todo",
+    "short_name": "Glimfo Todo",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#6366F1",
+    "theme_color": "#6366F1",
+    "description": "Powerful task management with offline-first capabilities and seamless cloud sync.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

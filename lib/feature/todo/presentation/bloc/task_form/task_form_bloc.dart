@@ -24,7 +24,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
         _updateTaskUseCase = updateTaskUseCase,
         _getTaskByIdUseCase = getTaskByIdUseCase,
         _currentUserId = currentUserId,
-        super(const TaskFormState()) {
+        super(TaskFormState()) {
     on<TaskFormInitialized>(_onTaskFormInitialized);
     on<TaskFormLoadById>(_onTaskFormLoadById);
     on<TaskFormTitleChanged>(_onTaskFormTitleChanged);
@@ -58,7 +58,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
       ).validateForm());
     } else {
       // Create mode - reset to default values
-      emit(const TaskFormState().validateForm());
+      emit(TaskFormState().validateForm());
     }
   }
 
@@ -257,7 +257,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
     TaskFormReset event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(const TaskFormState().validateForm());
+    emit(TaskFormState().validateForm());
   }
 
   String _getFailureMessage(dynamic failure) {

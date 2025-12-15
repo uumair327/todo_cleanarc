@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:todo_cleanarc/core/theme/theme.dart';
-import 'package:todo_cleanarc/core/utils/app_colors.dart';
-import 'package:todo_cleanarc/core/widgets/widgets.dart';
+import 'package:glimfo_todo/core/theme/theme.dart';
+import 'package:glimfo_todo/core/utils/app_colors.dart';
+import 'package:glimfo_todo/core/widgets/widgets.dart';
 
 void main() {
   group('Theme System Tests', () {
