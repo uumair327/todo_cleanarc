@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/widgets.dart';
-import '../../../../core/domain/enums/task_enums.dart';
 import '../bloc/dashboard/dashboard_bloc.dart';
 import '../bloc/dashboard/dashboard_event.dart';
 import '../bloc/dashboard/dashboard_state.dart';
+import '../widgets/task_card.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

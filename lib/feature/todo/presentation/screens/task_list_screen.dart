@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/widgets.dart';
-import '../../../../core/widgets/error_retry_widget.dart';
 import '../../../../core/utils/pagination_helper.dart';
 import '../../../../core/utils/loading_manager.dart';
 import '../bloc/task_list/task_list_bloc.dart';
 import '../bloc/task_list/task_list_event.dart';
 import '../bloc/task_list/task_list_state.dart';
+import '../widgets/task_card.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});

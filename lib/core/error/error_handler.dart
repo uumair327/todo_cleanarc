@@ -148,7 +148,7 @@ class ErrorHandler {
     if (message.contains('email')) {
       return 'Please enter a valid email address.';
     } else if (message.contains('password')) {
-      return 'Password must be at least 8 characters long.';
+      return 'Password must be at least 6 characters long.';
     } else if (message.contains('required')) {
       return 'This field is required.';
     } else {

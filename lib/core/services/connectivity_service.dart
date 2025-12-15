@@ -13,8 +13,8 @@ class ConnectivityService {
   final NetworkInfo _networkInfo;
   final BackgroundSyncService _syncService;
   
-  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
-  ConnectivityResult _currentConnectivity = ConnectivityResult.none;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  List<ConnectivityResult> _currentConnectivity = [ConnectivityResult.none];
   bool _wasOffline = false;
   
   // Stream controllers for connectivity updates
@@ -34,7 +34,7 @@ class ConnectivityService {
       _connectivityStatusController.stream;
   
   /// Current connectivity status
-  ConnectivityStatus get currentStatus => _mapConnectivityResult(_currentConnectivity);
+  ConnectivityStatus get currentStatus => _mapConnectivityResults(_currentConnectivity);
 
   /// Start monitoring connectivity changes
   Future<void> startMonitoring() async {
@@ -54,7 +54,7 @@ class ConnectivityService {
         },
       );
       
-      developer.log('Connectivity monitoring started. Initial state: ${_currentConnectivity.name}', 
+      developer.log('Connectivity monitoring started. Initial state: ${_currentConnectivity.join(", ")}', 
           name: 'ConnectivityService');
       
     } catch (e) {
@@ -71,19 +71,19 @@ class ConnectivityService {
   }
 
   /// Handle connectivity changes
-  void _onConnectivityChanged(ConnectivityResult result) async {
-    developer.log('Connectivity changed from ${_currentConnectivity.name} to ${result.name}', 
+  void _onConnectivityChanged(List<ConnectivityResult> results) async {
+    developer.log('Connectivity changed from ${_currentConnectivity.join(", ")} to ${results.join(", ")}', 
         name: 'ConnectivityService');
     
     final previousConnectivity = _currentConnectivity;
-    _currentConnectivity = result;
+    _currentConnectivity = results;
     
     // Update connectivity status
-    _updateConnectivityStatus(result);
+    _updateConnectivityStatus(results);
     
     // Check if we've transitioned from offline to online
     final wasOffline = _isOffline(previousConnectivity);
-    final isOnline = _isOnline(result);
+    final isOnline = _isOnline(results);
     
     if (wasOffline && isOnline) {
       await _handleConnectivityRestored();
@@ -92,7 +92,7 @@ class ConnectivityService {
       await _handleConnectivityRestored();
     }
     
-    _wasOffline = _isOffline(result);
+    _wasOffline = _isOffline(results);
   }
 
   /// Handle connectivity restoration
@@ -123,45 +123,46 @@ class ConnectivityService {
   }
 
   /// Update connectivity status and notify listeners
-  void _updateConnectivityStatus(ConnectivityResult result) {
-    final status = _mapConnectivityResult(result);
+  void _updateConnectivityStatus(List<ConnectivityResult> results) {
+    final status = _mapConnectivityResults(results);
     _connectivityStatusController.add(status);
     
-    if (kDebugMode) {
-      developer.log('Connectivity status updated to: ${status.name}', 
-          name: 'ConnectivityService');
-    }
+    developer.log('Connectivity status updated to: ${status.name}', 
+        name: 'ConnectivityService');
   }
 
-  /// Map ConnectivityResult to ConnectivityStatus
-  ConnectivityStatus _mapConnectivityResult(ConnectivityResult result) {
-    switch (result) {
-      case ConnectivityResult.wifi:
-        return ConnectivityStatus.wifi;
-      case ConnectivityResult.mobile:
-        return ConnectivityStatus.mobile;
-      case ConnectivityResult.ethernet:
-        return ConnectivityStatus.ethernet;
-      case ConnectivityResult.bluetooth:
-        return ConnectivityStatus.bluetooth;
-      case ConnectivityResult.vpn:
-        return ConnectivityStatus.vpn;
-      case ConnectivityResult.other:
-        return ConnectivityStatus.other;
-      case ConnectivityResult.none:
-      default:
-        return ConnectivityStatus.none;
+  /// Map ConnectivityResult list to ConnectivityStatus
+  ConnectivityStatus _mapConnectivityResults(List<ConnectivityResult> results) {
+    if (results.isEmpty || results.contains(ConnectivityResult.none)) {
+      return ConnectivityStatus.none;
     }
+    
+    // Prioritize connection types
+    if (results.contains(ConnectivityResult.wifi)) {
+      return ConnectivityStatus.wifi;
+    } else if (results.contains(ConnectivityResult.ethernet)) {
+      return ConnectivityStatus.ethernet;
+    } else if (results.contains(ConnectivityResult.mobile)) {
+      return ConnectivityStatus.mobile;
+    } else if (results.contains(ConnectivityResult.vpn)) {
+      return ConnectivityStatus.vpn;
+    } else if (results.contains(ConnectivityResult.bluetooth)) {
+      return ConnectivityStatus.bluetooth;
+    } else if (results.contains(ConnectivityResult.other)) {
+      return ConnectivityStatus.other;
+    }
+    
+    return ConnectivityStatus.none;
   }
 
   /// Check if connectivity result indicates offline state
-  bool _isOffline(ConnectivityResult result) {
-    return result == ConnectivityResult.none;
+  bool _isOffline(List<ConnectivityResult> results) {
+    return results.isEmpty || results.contains(ConnectivityResult.none);
   }
 
   /// Check if connectivity result indicates online state
-  bool _isOnline(ConnectivityResult result) {
-    return result != ConnectivityResult.none;
+  bool _isOnline(List<ConnectivityResult> results) {
+    return results.isNotEmpty && !results.contains(ConnectivityResult.none);
   }
 
   /// Get user-friendly connectivity description
@@ -206,7 +207,26 @@ enum ConnectivityStatus {
   ethernet,
   bluetooth,
   vpn,
-  other,
+  other;
+  
+  String get displayName {
+    switch (this) {
+      case ConnectivityStatus.none:
+        return 'No Connection';
+      case ConnectivityStatus.wifi:
+        return 'WiFi';
+      case ConnectivityStatus.mobile:
+        return 'Mobile Data';
+      case ConnectivityStatus.ethernet:
+        return 'Ethernet';
+      case ConnectivityStatus.bluetooth:
+        return 'Bluetooth';
+      case ConnectivityStatus.vpn:
+        return 'VPN';
+      case ConnectivityStatus.other:
+        return 'Other';
+    }
+  }
 }
 
 /// Extension to provide user-friendly names for connectivity status

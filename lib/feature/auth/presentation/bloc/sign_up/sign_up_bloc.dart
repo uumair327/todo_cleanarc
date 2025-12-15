@@ -34,7 +34,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     final newState = state.copyWith(
       email: email,
-      emailError: emailError,
+      emailError: () => emailError,
     );
 
     emit(newState.copyWith(isFormValid: _isFormValid(newState)));
@@ -47,28 +47,34 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     final password = event.password;
     String? passwordError;
 
-    // Validate password
+    // Validate password (Supabase minimum is 6 characters)
     if (password.isEmpty) {
       passwordError = 'Password is required';
-    } else if (password.length < 8) {
-      passwordError = 'Password must be at least 8 characters long';
+    } else if (password.length < 6) {
+      passwordError = 'Password must be at least 6 characters long';
     }
 
-    // Check if confirm password still matches
-    String? confirmPasswordError = state.confirmPasswordError;
-    if (state.confirmPassword.isNotEmpty && state.confirmPassword != password) {
-      confirmPasswordError = 'Passwords do not match';
-    } else if (state.confirmPassword.isNotEmpty && state.confirmPassword == password) {
-      confirmPasswordError = null;
+    // Re-validate confirm password with the new password
+    String? confirmPasswordError;
+    if (state.confirmPassword.isNotEmpty) {
+      if (state.confirmPassword != password) {
+        confirmPasswordError = 'Passwords do not match';
+      }
     }
 
-    final newState = state.copyWith(
+    emit(state.copyWith(
       password: password,
-      passwordError: passwordError,
-      confirmPasswordError: confirmPasswordError,
-    );
-
-    emit(newState.copyWith(isFormValid: _isFormValid(newState)));
+      passwordError: () => passwordError,
+      confirmPasswordError: () => confirmPasswordError,
+      isFormValid: _isFormValid(SignUpState(
+        email: state.email,
+        password: password,
+        confirmPassword: state.confirmPassword,
+        emailError: state.emailError,
+        passwordError: passwordError,
+        confirmPasswordError: confirmPasswordError,
+      )),
+    ));
   }
 
   void _onConfirmPasswordChanged(
@@ -83,14 +89,24 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       confirmPasswordError = 'Please confirm your password';
     } else if (confirmPassword != state.password) {
       confirmPasswordError = 'Passwords do not match';
+      // Debug: Print to see what's happening
+      print('Password mismatch: password="${state.password}" (${state.password.length}), confirm="$confirmPassword" (${confirmPassword.length})');
+    } else {
+      print('Passwords match: password="${state.password}", confirm="$confirmPassword"');
     }
 
-    final newState = state.copyWith(
+    emit(state.copyWith(
       confirmPassword: confirmPassword,
-      confirmPasswordError: confirmPasswordError,
-    );
-
-    emit(newState.copyWith(isFormValid: _isFormValid(newState)));
+      confirmPasswordError: () => confirmPasswordError,
+      isFormValid: _isFormValid(SignUpState(
+        email: state.email,
+        password: state.password,
+        confirmPassword: confirmPassword,
+        emailError: state.emailError,
+        passwordError: state.passwordError,
+        confirmPasswordError: confirmPasswordError,
+      )),
+    ));
   }
 
   Future<void> _onSubmitted(
@@ -102,8 +118,12 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(status: SignUpStatus.loading));
 
     try {
+      print('SignUp: email="${state.email}", password="${state.password}" (${state.password.length} chars)');
+      
       final email = Email.fromString(state.email);
       final password = Password.fromString(state.password);
+
+      print('SignUp: Calling use case with email=${email.value}, password length=${password.value.length}');
 
       final result = await _signUpUseCase(
         email: email,
@@ -111,16 +131,23 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       );
 
       result.fold(
-        (failure) => emit(state.copyWith(
-          status: SignUpStatus.failure,
-          errorMessage: _getFailureMessage(failure),
-        )),
-        (user) => emit(state.copyWith(status: SignUpStatus.success)),
+        (failure) {
+          print('SignUp failed: ${_getFailureMessage(failure)}');
+          emit(state.copyWith(
+            status: SignUpStatus.failure,
+            errorMessage: () => _getFailureMessage(failure),
+          ));
+        },
+        (user) {
+          print('SignUp success!');
+          emit(state.copyWith(status: SignUpStatus.success));
+        },
       );
     } catch (e) {
+      print('SignUp exception: $e');
       emit(state.copyWith(
         status: SignUpStatus.failure,
-        errorMessage: e.toString(),
+        errorMessage: () => e.toString(),
       ));
     }
   }

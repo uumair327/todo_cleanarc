@@ -102,4 +102,9 @@ class AppTypography {
     height: 1.6,
     letterSpacing: 1.5,
   );
+
+  // Aliases for Material Design 3 compatibility
+  static const TextStyle headlineMedium = h5;
+  static const TextStyle headlineSmall = h6;
+  static const TextStyle titleMedium = h6;
 }

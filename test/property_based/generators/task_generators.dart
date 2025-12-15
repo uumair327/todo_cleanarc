@@ -1,10 +1,9 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
-import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart';
-import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart';
-import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
-import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
+import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart';
+import 'package:glimfo_todo/core/domain/value_objects/task_id.dart';
+import 'package:glimfo_todo/core/domain/value_objects/user_id.dart';
+import 'package:glimfo_todo/core/domain/enums/task_enums.dart';
 
 /// Property-based test generators for TaskEntity and related objects
 class TaskGenerators {
@@ -18,7 +17,7 @@ class TaskGenerators {
     String? title,
     String? description,
     DateTime? dueDate,
-    TimeOfDay? dueTime,
+    DomainTime? dueTime,
     TaskCategory? category,
     TaskPriority? priority,
     int? progressPercentage,
@@ -41,7 +40,7 @@ class TaskGenerators {
         start: now,
         end: now.add(const Duration(days: 365)),
       ),
-      dueTime: dueTime ?? _generateRandomTimeOfDay(),
+      dueTime: dueTime ?? _generateRandomDomainTime(),
       category: category ?? _generateRandomTaskCategory(),
       priority: priority ?? _generateRandomTaskPriority(),
       progressPercentage: progressPercentage ?? _generateValidProgressPercentage(),
@@ -56,18 +55,19 @@ class TaskGenerators {
 
   /// Generates a TaskEntity with invalid properties for negative testing
   static TaskEntity generateInvalidTask() {
+    final now = DateTime.now();
     return TaskEntity(
       id: TaskId.generate(),
       userId: UserId.generate(),
       title: _generateInvalidTitle(),
       description: _faker.lorem.sentence(),
-      dueDate: DateTime.now(),
-      dueTime: TimeOfDay.now(),
+      dueDate: now,
+      dueTime: DomainTime(hour: now.hour, minute: now.minute),
       category: TaskCategory.ongoing,
       priority: TaskPriority.medium,
       progressPercentage: _generateInvalidProgressPercentage(),
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      createdAt: now,
+      updatedAt: now,
       isDeleted: false,
     );
   }
@@ -148,9 +148,9 @@ class TaskGenerators {
     return start.add(Duration(milliseconds: randomMilliseconds));
   }
 
-  /// Generates a random TimeOfDay
-  static TimeOfDay _generateRandomTimeOfDay() {
-    return TimeOfDay(
+  /// Generates a random DomainTime
+  static DomainTime _generateRandomDomainTime() {
+    return DomainTime(
       hour: _random.nextInt(24),
       minute: _random.nextInt(60),
     );

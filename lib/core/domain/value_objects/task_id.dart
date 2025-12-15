@@ -6,6 +6,9 @@ class TaskId extends Equatable {
 
   const TaskId._(this.value);
 
+  // Public constructor for creating TaskId from string
+  const TaskId(this.value);
+
   factory TaskId.generate() {
     return TaskId._(const Uuid().v4());
   }

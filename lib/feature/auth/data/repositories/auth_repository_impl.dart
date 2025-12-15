@@ -33,8 +33,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
     try {
       final userModel = await _supabaseDataSource.signUp(
-        email.toString(),
-        password.toString(),
+        email.value,
+        password.value,
       );
 
       // Save user locally
@@ -69,8 +69,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
     try {
       final userModel = await _supabaseDataSource.signIn(
-        email.toString(),
-        password.toString(),
+        email.value,
+        password.value,
       );
 
       // Save user locally
@@ -228,7 +228,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final localUser = await _hiveDataSource.getCurrentUser();
       
-      if (localUser != null && localUser.email == email.toString()) {
+      if (localUser != null && localUser.email == email.value) {
         // In a real app, you'd want to verify the password hash
         // For this implementation, we'll assume the stored user is valid
         return Right(localUser.toEntity());

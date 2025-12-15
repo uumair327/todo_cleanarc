@@ -7,13 +7,13 @@ class Password extends Equatable {
 
   factory Password.fromString(String password) {
     if (!_isValidPassword(password)) {
-      throw ArgumentError('Password must be at least 8 characters long');
+      throw ArgumentError('Password must be at least 6 characters long');
     }
     return Password._(password);
   }
 
   static bool _isValidPassword(String password) {
-    return password.length >= 8;
+    return password.length >= 6;
   }
 
   @override

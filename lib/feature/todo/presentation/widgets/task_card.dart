@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import '../utils/app_colors.dart';
-import '../theme/app_typography.dart';
-import '../theme/app_spacing.dart';
+import '../../../../core/utils/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../domain/entities/task_entity.dart';
 
 class TaskCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final String category;
-  final int progressPercentage;
-  final DateTime? dueDate;
-  final TimeOfDay? dueTime;
+  final TaskEntity task;
   final VoidCallback? onTap;
   final VoidCallback? onComplete;
   final VoidCallback? onDelete;
@@ -17,17 +13,19 @@ class TaskCard extends StatelessWidget {
 
   const TaskCard({
     super.key,
-    required this.title,
-    required this.description,
-    required this.category,
-    required this.progressPercentage,
-    this.dueDate,
-    this.dueTime,
+    required this.task,
     this.onTap,
     this.onComplete,
     this.onDelete,
     this.onEdit,
   });
+  
+  String get title => task.title;
+  String get description => task.description;
+  String get category => task.category.name;
+  int get progressPercentage => task.progressPercentage;
+  DateTime? get dueDate => task.dueDate;
+  DomainTime? get dueTime => task.dueTime;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +104,7 @@ class TaskCard extends StatelessWidget {
                 if (dueDate != null) ...[
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.schedule,
                         size: AppDimensions.iconSizeSmall,
                         color: AppColors.textSecondary,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import '../../../domain/usecases/create_task_usecase.dart';
@@ -8,6 +9,15 @@ import '../../../../../core/domain/value_objects/task_id.dart';
 import '../../../../../core/domain/value_objects/user_id.dart';
 import 'task_form_event.dart';
 import 'task_form_state.dart';
+
+/// Helper extension to convert between DomainTime and TimeOfDay
+extension DomainTimeConversion on DomainTime {
+  TimeOfDay toTimeOfDay() => TimeOfDay(hour: hour, minute: minute);
+}
+
+extension TimeOfDayConversion on TimeOfDay {
+  DomainTime toDomainTime() => DomainTime(hour: hour, minute: minute);
+}
 
 class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
   final CreateTaskUseCase _createTaskUseCase;
@@ -24,7 +34,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
         _updateTaskUseCase = updateTaskUseCase,
         _getTaskByIdUseCase = getTaskByIdUseCase,
         _currentUserId = currentUserId,
-        super(const TaskFormState()) {
+        super(TaskFormState()) {
     on<TaskFormInitialized>(_onTaskFormInitialized);
     on<TaskFormLoadById>(_onTaskFormLoadById);
     on<TaskFormTitleChanged>(_onTaskFormTitleChanged);
@@ -51,14 +61,14 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
         title: task.title,
         description: task.description,
         dueDate: task.dueDate,
-        dueTime: task.dueTime,
+        dueTime: task.dueTime.toTimeOfDay(),
         category: task.category,
         priority: task.priority,
         progressPercentage: task.progressPercentage,
       ).validateForm());
     } else {
       // Create mode - reset to default values
-      emit(const TaskFormState().validateForm());
+      emit(TaskFormState().validateForm());
     }
   }
 
@@ -86,7 +96,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
               title: task.title,
               description: task.description,
               dueDate: task.dueDate,
-              dueTime: task.dueTime,
+              dueTime: task.dueTime.toTimeOfDay(),
               category: task.category,
               priority: task.priority,
               progressPercentage: task.progressPercentage,
@@ -197,7 +207,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
           title: state.title.trim(),
           description: state.description.trim(),
           dueDate: state.dueDate,
-          dueTime: state.dueTime,
+          dueTime: state.dueTime.toDomainTime(),
           category: state.category,
           priority: state.priority,
           progressPercentage: state.progressPercentage,
@@ -224,7 +234,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
           title: state.title.trim(),
           description: state.description.trim(),
           dueDate: state.dueDate,
-          dueTime: state.dueTime,
+          dueTime: state.dueTime.toDomainTime(),
           category: state.category,
           priority: state.priority,
           progressPercentage: state.progressPercentage,
@@ -257,7 +267,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
     TaskFormReset event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(const TaskFormState().validateForm());
+    emit(TaskFormState().validateForm());
   }
 
   String _getFailureMessage(dynamic failure) {

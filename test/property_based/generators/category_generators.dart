@@ -1,19 +1,22 @@
 import 'dart:math';
-import 'package:flutter/material.dart' as material;
-import 'package:faker/faker.dart';
-import 'package:todo_cleanarc/feature/todo/domain/entities/category_entity.dart';
-import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
+import 'package:glimfo_todo/feature/todo/domain/entities/category_entity.dart';
+import 'package:glimfo_todo/core/domain/enums/task_enums.dart';
 
 /// Property-based test generators for CategoryEntity and related objects
 class CategoryGenerators {
   static final Random _random = Random();
-  static final Faker _faker = Faker();
+
+  /// Color values as ARGB integers (matching Flutter Colors)
+  static const int _blueColor = 0xFF2196F3;
+  static const int _greenColor = 0xFF4CAF50;
+  static const int _yellowColor = 0xFFFFEB3B;
+  static const int _redColor = 0xFFF44336;
 
   /// Generates a random CategoryEntity with valid properties
   static CategoryEntity generateValidCategory({
     TaskCategory? category,
     String? name,
-    material.Color? displayColor,
+    int? colorValue,
     int? taskCount,
   }) {
     final categoryValue = category ?? _generateRandomTaskCategory();
@@ -21,7 +24,7 @@ class CategoryGenerators {
     return CategoryEntity(
       category: categoryValue,
       name: name ?? _generateCategoryName(categoryValue),
-      displayColor: displayColor ?? _generateCategoryColor(categoryValue),
+      colorValue: colorValue ?? _generateCategoryColorValue(categoryValue),
       taskCount: taskCount ?? _generateValidTaskCount(),
     );
   }
@@ -31,7 +34,7 @@ class CategoryGenerators {
     return CategoryEntity(
       category: TaskCategory.ongoing,
       name: _generateInvalidCategoryName(),
-      displayColor: material.Colors.blue,
+      colorValue: _blueColor,
       taskCount: _generateInvalidTaskCount(),
     );
   }
@@ -53,25 +56,25 @@ class CategoryGenerators {
       CategoryEntity(
         category: TaskCategory.ongoing,
         name: 'Ongoing',
-        displayColor: material.Colors.blue,
+        colorValue: _blueColor,
         taskCount: ongoingCount ?? _generateValidTaskCount(),
       ),
       CategoryEntity(
         category: TaskCategory.completed,
         name: 'Completed',
-        displayColor: material.Colors.green,
+        colorValue: _greenColor,
         taskCount: completedCount ?? _generateValidTaskCount(),
       ),
       CategoryEntity(
         category: TaskCategory.inProcess,
         name: 'In Process',
-        displayColor: material.Colors.yellow,
+        colorValue: _yellowColor,
         taskCount: inProcessCount ?? _generateValidTaskCount(),
       ),
       CategoryEntity(
         category: TaskCategory.canceled,
         name: 'Canceled',
-        displayColor: material.Colors.red,
+        colorValue: _redColor,
         taskCount: canceledCount ?? _generateValidTaskCount(),
       ),
     ];
@@ -79,7 +82,7 @@ class CategoryGenerators {
 
   /// Generates a random TaskCategory
   static TaskCategory _generateRandomTaskCategory() {
-    final categories = TaskCategory.values;
+    const categories = TaskCategory.values;
     return categories[_random.nextInt(categories.length)];
   }
 
@@ -97,17 +100,17 @@ class CategoryGenerators {
     }
   }
 
-  /// Generates a category color based on the category type
-  static material.Color _generateCategoryColor(TaskCategory category) {
+  /// Generates a category color value based on the category type
+  static int _generateCategoryColorValue(TaskCategory category) {
     switch (category) {
       case TaskCategory.ongoing:
-        return material.Colors.blue;
+        return _blueColor;
       case TaskCategory.completed:
-        return material.Colors.green;
+        return _greenColor;
       case TaskCategory.inProcess:
-        return material.Colors.yellow;
+        return _yellowColor;
       case TaskCategory.canceled:
-        return material.Colors.red;
+        return _redColor;
     }
   }
 
@@ -160,7 +163,7 @@ class CategoryGenerators {
     return CategoryEntity(
       category: category,
       name: _generateCategoryName(category),
-      displayColor: _generateCategoryColor(category),
+      colorValue: _generateCategoryColorValue(category),
       taskCount: taskCount ?? _generateValidTaskCount(),
     );
   }

@@ -4,6 +4,25 @@ import 'app_typography.dart';
 import 'app_spacing.dart';
 
 class AppTheme {
+  // Static text theme for direct access
+  static const TextTheme textTheme = TextTheme(
+    displayLarge: AppTypography.h1,
+    displayMedium: AppTypography.h2,
+    displaySmall: AppTypography.h3,
+    headlineLarge: AppTypography.h4,
+    headlineMedium: AppTypography.h5,
+    headlineSmall: AppTypography.h6,
+    titleLarge: AppTypography.h5,
+    titleMedium: AppTypography.h6,
+    titleSmall: AppTypography.labelLarge,
+    bodyLarge: AppTypography.bodyLarge,
+    bodyMedium: AppTypography.bodyMedium,
+    bodySmall: AppTypography.bodySmall,
+    labelLarge: AppTypography.labelLarge,
+    labelMedium: AppTypography.labelMedium,
+    labelSmall: AppTypography.labelSmall,
+  );
+  
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

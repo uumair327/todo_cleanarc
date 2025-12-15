@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/app_colors.dart';
@@ -22,6 +21,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
@@ -98,55 +99,139 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildSignUpForm() {
     return BlocBuilder<SignUpBloc, SignUpState>(
+      buildWhen: (previous, current) =>
+          previous.emailError != current.emailError ||
+          previous.passwordError != current.passwordError ||
+          previous.confirmPasswordError != current.confirmPasswordError,
       builder: (context, state) {
         return Column(
           children: [
-            CustomTextField(
-              label: 'Email Address',
-              hint: 'Enter your email address',
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              prefixIcon: const Icon(Icons.email_outlined),
-              validator: (value) => state.emailError,
-              onChanged: (value) {
-                context.read<SignUpBloc>().add(SignUpEmailChanged(value));
-              },
-            ),
+            _buildEmailField(state),
             const SizedBox(height: AppSpacing.lg),
-            CustomTextField(
-              label: 'Password',
-              hint: 'Enter your password',
-              controller: _passwordController,
-              obscureText: true,
-              textInputAction: TextInputAction.next,
-              prefixIcon: const Icon(Icons.lock_outlined),
-              validator: (value) => state.passwordError,
-              onChanged: (value) {
-                context.read<SignUpBloc>().add(SignUpPasswordChanged(value));
-              },
-            ),
+            _buildPasswordField(state),
             const SizedBox(height: AppSpacing.lg),
-            CustomTextField(
-              label: 'Confirm Password',
-              hint: 'Confirm your password',
-              controller: _confirmPasswordController,
-              obscureText: true,
-              textInputAction: TextInputAction.done,
-              prefixIcon: const Icon(Icons.lock_outlined),
-              validator: (value) => state.confirmPasswordError,
-              onChanged: (value) {
-                context.read<SignUpBloc>().add(SignUpConfirmPasswordChanged(value));
-              },
-              onSubmitted: (_) {
-                if (state.isFormValid) {
-                  context.read<SignUpBloc>().add(const SignUpSubmitted());
-                }
-              },
-            ),
+            _buildConfirmPasswordField(state),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildEmailField(SignUpState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Email Address',
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        TextFormField(
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          onChanged: (value) {
+            context.read<SignUpBloc>().add(SignUpEmailChanged(value));
+          },
+          decoration: InputDecoration(
+            hintText: 'Enter your email address',
+            prefixIcon: const Icon(Icons.email_outlined),
+            errorText: state.emailError,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField(SignUpState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Password',
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        TextFormField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          textInputAction: TextInputAction.next,
+          onChanged: (value) {
+            context.read<SignUpBloc>().add(SignUpPasswordChanged(value));
+          },
+          decoration: InputDecoration(
+            hintText: 'Enter your password (min 6 characters)',
+            prefixIcon: const Icon(Icons.lock_outlined),
+            errorText: state.passwordError,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConfirmPasswordField(SignUpState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Confirm Password',
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        TextFormField(
+          controller: _confirmPasswordController,
+          obscureText: _obscureConfirmPassword,
+          textInputAction: TextInputAction.done,
+          onChanged: (value) {
+            context.read<SignUpBloc>().add(SignUpConfirmPasswordChanged(value));
+          },
+          onFieldSubmitted: (_) {
+            final state = context.read<SignUpBloc>().state;
+            if (state.isFormValid) {
+              context.read<SignUpBloc>().add(const SignUpSubmitted());
+            }
+          },
+          decoration: InputDecoration(
+            hintText: 'Confirm your password',
+            prefixIcon: const Icon(Icons.lock_outlined),
+            errorText: state.confirmPasswordError,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _obscureConfirmPassword = !_obscureConfirmPassword;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 

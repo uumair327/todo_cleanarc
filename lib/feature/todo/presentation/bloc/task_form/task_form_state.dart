@@ -18,7 +18,7 @@ class TaskFormState extends Equatable {
   final String? errorMessage;
   final bool isSubmissionSuccess;
 
-  const TaskFormState({
+  TaskFormState({
     this.isEditing = false,
     this.originalTask,
     this.title = '',

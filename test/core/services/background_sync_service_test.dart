@@ -3,11 +3,11 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
 
-import 'package:todo_cleanarc/core/services/background_sync_service.dart';
-import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart';
-import 'package:todo_cleanarc/feature/auth/domain/repositories/auth_repository.dart';
-import 'package:todo_cleanarc/core/network/network_info.dart';
-import 'package:todo_cleanarc/core/error/failures.dart';
+import 'package:glimfo_todo/core/services/background_sync_service.dart';
+import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart';
+import 'package:glimfo_todo/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:glimfo_todo/core/network/network_info.dart';
+import 'package:glimfo_todo/core/error/failures.dart';
 
 import 'background_sync_service_test.mocks.dart';
 
@@ -47,7 +47,7 @@ void main() {
     test('should emit sync status updates', () async {
       // Arrange
       when(mockAuthRepository.isAuthenticated())
-          .thenAnswer((_) async => const Right(true));
+          .thenAnswer((_) async => true);
       when(mockNetworkInfo.isConnected)
           .thenAnswer((_) async => true);
       when(mockTaskRepository.hasUnsyncedChanges())
@@ -68,7 +68,7 @@ void main() {
     test('should handle sync failure with retry', () async {
       // Arrange
       when(mockAuthRepository.isAuthenticated())
-          .thenAnswer((_) async => const Right(true));
+          .thenAnswer((_) async => true);
       when(mockNetworkInfo.isConnected)
           .thenAnswer((_) async => true);
       when(mockTaskRepository.hasUnsyncedChanges())
@@ -96,7 +96,7 @@ void main() {
     test('should skip sync when offline', () async {
       // Arrange
       when(mockAuthRepository.isAuthenticated())
-          .thenAnswer((_) async => const Right(true));
+          .thenAnswer((_) async => true);
       when(mockNetworkInfo.isConnected)
           .thenAnswer((_) async => false);
 
@@ -115,7 +115,7 @@ void main() {
     test('should skip sync when not authenticated', () async {
       // Arrange
       when(mockAuthRepository.isAuthenticated())
-          .thenAnswer((_) async => const Right(false));
+          .thenAnswer((_) async => false);
 
       // Act & Assert
       expectLater(

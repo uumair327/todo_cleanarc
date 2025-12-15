@@ -25,18 +25,18 @@ class SignInState extends Equatable {
     SignInStatus? status,
     String? email,
     String? password,
-    String? emailError,
-    String? passwordError,
-    String? errorMessage,
+    String? Function()? emailError,
+    String? Function()? passwordError,
+    String? Function()? errorMessage,
     bool? isFormValid,
   }) {
     return SignInState(
       status: status ?? this.status,
       email: email ?? this.email,
       password: password ?? this.password,
-      emailError: emailError,
-      passwordError: passwordError,
-      errorMessage: errorMessage,
+      emailError: emailError != null ? emailError() : this.emailError,
+      passwordError: passwordError != null ? passwordError() : this.passwordError,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       isFormValid: isFormValid ?? this.isFormValid,
     );
   }

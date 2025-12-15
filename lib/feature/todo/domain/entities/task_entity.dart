@@ -1,8 +1,22 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import '../../../../core/domain/value_objects/task_id.dart';
 import '../../../../core/domain/value_objects/user_id.dart';
 import '../../../../core/domain/enums/task_enums.dart';
+
+/// Pure Dart time representation for domain layer.
+/// Avoids Flutter dependency (TimeOfDay).
+class DomainTime extends Equatable {
+  final int hour;
+  final int minute;
+
+  const DomainTime({required this.hour, required this.minute});
+
+  @override
+  List<Object> get props => [hour, minute];
+
+  @override
+  String toString() => '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+}
 
 class TaskEntity extends Equatable {
   final TaskId id;
@@ -10,7 +24,7 @@ class TaskEntity extends Equatable {
   final String title;
   final String description;
   final DateTime dueDate;
-  final TimeOfDay dueTime;
+  final DomainTime dueTime;
   final TaskCategory category;
   final TaskPriority priority;
   final int progressPercentage;
@@ -39,7 +53,7 @@ class TaskEntity extends Equatable {
     String? title,
     String? description,
     DateTime? dueDate,
-    TimeOfDay? dueTime,
+    DomainTime? dueTime,
     TaskCategory? category,
     TaskPriority? priority,
     int? progressPercentage,

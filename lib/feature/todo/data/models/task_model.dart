@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../../../core/utils/typedef.dart';
@@ -110,7 +109,7 @@ class TaskModel extends HiveObject {
       title: title,
       description: description,
       dueDate: dueDate,
-      dueTime: TimeOfDay(hour: hour, minute: minute),
+      dueTime: DomainTime(hour: hour, minute: minute),
       category: TaskCategory.values.firstWhere(
         (e) => e.name == category,
         orElse: () => TaskCategory.ongoing,
@@ -125,12 +124,12 @@ class TaskModel extends HiveObject {
 
   factory TaskModel.fromEntity(TaskEntity entity) {
     return TaskModel(
-      id: entity.id.toString(),
-      userId: entity.userId.toString(),
+      id: entity.id.value,
+      userId: entity.userId.value,
       title: entity.title,
       description: entity.description,
       dueDate: entity.dueDate,
-      dueTime: '${entity.dueTime.hour.toString().padLeft(2, '0')}:${entity.dueTime.minute.toString().padLeft(2, '0')}',
+      dueTime: entity.dueTime.toString(),
       category: entity.category.name,
       priority: entity.priority.index,
       progressPercentage: entity.progressPercentage,

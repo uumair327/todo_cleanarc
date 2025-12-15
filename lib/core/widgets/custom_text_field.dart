@@ -80,6 +80,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 
   @override
+  void didUpdateWidget(CustomTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Re-validate when the widget updates (e.g., when validator changes)
+    if (widget.validator != oldWidget.validator) {
+      _validateInput(_controller.text);
+    }
+  }
+
+  @override
   void dispose() {
     if (widget.controller == null) {
       _controller.dispose();
@@ -89,8 +98,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   void _validateInput(String? value) {
     if (widget.validator != null) {
+      final error = widget.validator!(value);
+      if (error != _errorText) {
+        setState(() {
+          _errorText = error;
+        });
+      }
+    } else if (_errorText != null) {
       setState(() {
-        _errorText = widget.validator!(value);
+        _errorText = null;
       });
     }
   }
@@ -281,8 +297,8 @@ class PasswordTextField extends StatelessWidget {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters long';
     }
     return null;
   }
