@@ -316,4 +316,24 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(CacheFailure(message: 'Unexpected error: $e'));
     }
   }
+
+  @override
+  ResultVoid resendVerificationEmail(String email) async {
+    if (!await _networkInfo.isConnected) {
+      return Left(NetworkFailure(message: 'No internet connection'));
+    }
+
+    try {
+      await _supabaseDataSource.resendVerificationEmail(email);
+      return const Right(null);
+    } on AuthenticationException catch (e) {
+      return Left(AuthenticationFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(message: 'Unexpected error: $e'));
+    }
+  }
 }

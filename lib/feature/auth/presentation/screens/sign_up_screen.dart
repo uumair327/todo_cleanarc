@@ -40,8 +40,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: BlocListener<SignUpBloc, SignUpState>(
           listener: (context, state) {
             if (state.status == SignUpStatus.success) {
-              // Navigate to dashboard or sign in screen
-              context.go('/dashboard');
+              // Navigate to email verification screen
+              context.go('/email-verification?email=${Uri.encodeComponent(state.email)}');
             } else if (state.status == SignUpStatus.failure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

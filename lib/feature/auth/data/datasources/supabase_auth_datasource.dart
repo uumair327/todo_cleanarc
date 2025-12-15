@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/constants/auth_constants.dart';
 
 abstract class SupabaseAuthDataSource {
   Future<UserModel> signUp(String email, String password);
@@ -14,6 +15,7 @@ abstract class SupabaseAuthDataSource {
   Stream<AuthState> get authStateChanges;
   Future<String?> getAccessToken();
   Future<void> refreshSession();
+  Future<void> resendVerificationEmail(String email);
 }
 
 class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
@@ -70,42 +72,23 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
       final response = await _client.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo: AuthConstants.redirectUrl,
       );
 
       if (response.user == null) {
         throw AuthenticationException(message: 'Failed to create user account');
       }
 
-      // User profile is created automatically by database trigger
-      // Wait a moment for the trigger to complete
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // Fetch the user profile created by the trigger
-      final userProfile = await _client
-          .from('users')
-          .select()
-          .eq('id', response.user!.id)
-          .maybeSingle();
-
-      if (userProfile != null) {
-        return UserModel.fromJson(userProfile);
-      }
-
-      // Fallback: create profile manually if trigger didn't work
-      final newProfile = {
+      // For email confirmation flow, we create a basic user model
+      // The actual profile will be created after email verification
+      final basicProfile = {
         'id': response.user!.id,
         'email': response.user!.email!,
         'display_name': response.user!.email!.split('@')[0],
         'created_at': DateTime.now().toIso8601String(),
       };
 
-      try {
-        await _client.from('users').insert(newProfile);
-      } catch (e) {
-        // Profile might already exist from trigger, ignore error
-      }
-
-      return UserModel.fromJson(newProfile);
+      return UserModel.fromJson(basicProfile);
     });
   }
 
@@ -254,6 +237,17 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
   Future<void> refreshSession() async {
     return _executeWithRetry(() async {
       await _client.auth.refreshSession();
+    });
+  }
+
+  @override
+  Future<void> resendVerificationEmail(String email) async {
+    return _executeWithRetry(() async {
+      await _client.auth.resend(
+        type: OtpType.signup,
+        email: email,
+        emailRedirectTo: AuthConstants.redirectUrl,
+      );
     });
   }
 }

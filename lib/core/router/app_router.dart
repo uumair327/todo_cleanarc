@@ -7,6 +7,8 @@ import '../../feature/todo/presentation/bloc/task_form/task_form_bloc.dart';
 import '../../feature/auth/presentation/bloc/profile/profile_bloc.dart';
 import '../../feature/auth/presentation/screens/profile_screen.dart';
 import '../../feature/auth/presentation/screens/settings_screen.dart';
+import '../../feature/auth/presentation/screens/email_verification_screen.dart';
+import '../../feature/auth/presentation/screens/auth_callback_screen.dart';
 import '../services/injection_container.dart' as di;
 import '../widgets/widgets.dart';
 
@@ -36,6 +38,19 @@ class AppRouter {
           create: (context) => di.sl<SignUpBloc>(),
           child: const SignUpScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/email-verification',
+        name: 'emailVerification',
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'] ?? '';
+          return EmailVerificationScreen(email: email);
+        },
+      ),
+      GoRoute(
+        path: '/auth/callback',
+        name: 'authCallback',
+        builder: (context, state) => const AuthCallbackScreen(),
       ),
       
       // Main App Shell with Bottom Navigation
