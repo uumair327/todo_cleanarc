@@ -163,7 +163,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       final taskBox = await box;
       final existingTask = taskBox.get(task.id);
       if (existingTask == null) {
-        throw CacheException(message: 'Task not found for update');
+        throw const CacheException(message: 'Task not found for update');
       }
       
       task.needsSync = true;
@@ -182,7 +182,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       final taskBox = await box;
       final task = taskBox.get(id);
       if (task == null) {
-        throw CacheException(message: 'Task not found for deletion');
+        throw const CacheException(message: 'Task not found for deletion');
       }
       
       // Soft delete - mark as deleted and needs sync

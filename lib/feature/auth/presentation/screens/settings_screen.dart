@@ -261,7 +261,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       trailing: onTap != null
-          ? Icon(
+          ? const Icon(
               Icons.chevron_right,
               color: AppColors.textSecondary,
             )

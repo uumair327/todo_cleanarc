@@ -277,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: AppColors.textSecondary,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.chevron_right,
           color: AppColors.textSecondary,
         ),
@@ -293,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
               color: AppColors.error,

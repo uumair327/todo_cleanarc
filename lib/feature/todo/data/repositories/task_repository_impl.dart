@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:meta/meta.dart';
 import '../../domain/entities/task_entity.dart';
 import '../../domain/repositories/task_repository.dart';
 import '../datasources/hive_task_datasource.dart';
@@ -36,7 +35,8 @@ class TaskRepositoryImpl implements TaskRepository {
 
       // Try to sync in the background if connected
       if (await _networkInfo.isConnected) {
-        unawaited(_syncInBackground());
+        // ignore: unawaited_futures
+        _syncInBackground();
       }
 
       return Right(taskEntities);
@@ -75,7 +75,8 @@ class TaskRepositoryImpl implements TaskRepository {
 
       // Try to sync in the background if connected
       if (await _networkInfo.isConnected) {
-        unawaited(_syncInBackground());
+        // ignore: unawaited_futures
+        _syncInBackground();
       }
 
       return Right(result);
@@ -212,7 +213,7 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   ResultVoid syncWithRemote() async {
     if (!await _networkInfo.isConnected) {
-      return Left(NetworkFailure(message: 'No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {

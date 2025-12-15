@@ -54,7 +54,7 @@ void main() {
           .thenAnswer((_) async => const Right(false));
 
       // Act & Assert
-      expectLater(
+      await expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,
@@ -74,10 +74,10 @@ void main() {
       when(mockTaskRepository.hasUnsyncedChanges())
           .thenAnswer((_) async => const Right(true));
       when(mockTaskRepository.syncWithRemote())
-          .thenAnswer((_) async => Left(NetworkFailure(message: 'Network error')));
+          .thenAnswer((_) async => const Left(NetworkFailure(message: 'Network error')));
 
       // Act & Assert
-      expectLater(
+      await expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,
@@ -85,7 +85,7 @@ void main() {
         ]),
       );
 
-      expectLater(
+      await expectLater(
         syncService.syncErrorStream,
         emits(isA<SyncError>()),
       );
@@ -101,7 +101,7 @@ void main() {
           .thenAnswer((_) async => false);
 
       // Act & Assert
-      expectLater(
+      await expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,
@@ -118,7 +118,7 @@ void main() {
           .thenAnswer((_) async => false);
 
       // Act & Assert
-      expectLater(
+      await expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,

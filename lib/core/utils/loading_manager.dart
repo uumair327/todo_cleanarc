@@ -163,14 +163,7 @@ class LoadingState {
   final double progress;
   final int operationCount;
 
-  const LoadingState._({
-    required this.isLoading,
-    required this.hasError,
-    this.message,
-    this.errorMessage,
-    this.progress = 0.0,
-    this.operationCount = 0,
-  });
+
 
   const LoadingState.idle()
       : isLoading = false,

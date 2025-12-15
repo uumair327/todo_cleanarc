@@ -200,7 +200,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultVoid deleteAccount() async {
     if (!await _networkInfo.isConnected) {
-      return Left(NetworkFailure(message: 'Internet connection required for account deletion'));
+      return const Left(NetworkFailure(message: 'Internet connection required for account deletion'));
     }
 
     try {
@@ -235,7 +235,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(localUser.toEntity());
       }
 
-      return Left(AuthenticationFailure(message: 'No cached credentials available'));
+      return const Left(AuthenticationFailure(message: 'No cached credentials available'));
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
@@ -321,7 +321,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultVoid resendVerificationEmail(String email) async {
     if (!await _networkInfo.isConnected) {
-      return Left(NetworkFailure(message: 'No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {

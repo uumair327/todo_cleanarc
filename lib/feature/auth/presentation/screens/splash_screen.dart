@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(60),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.task_alt,
                   size: 60,
                   color: AppColors.primary,
@@ -77,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen> {
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   if (state is AuthLoading) {
-                    return CircularProgressIndicator(
+                    return const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                     );
                   }

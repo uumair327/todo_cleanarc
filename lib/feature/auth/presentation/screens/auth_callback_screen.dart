@@ -79,7 +79,7 @@ class _AuthCallbackScreenState extends State<AuthCallbackScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               color: AppColors.primary,
             ),
             SizedBox(height: AppSpacing.lg),

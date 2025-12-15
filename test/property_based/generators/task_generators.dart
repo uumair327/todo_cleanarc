@@ -87,13 +87,13 @@ class TaskGenerators {
 
   /// Generates a random TaskCategory
   static TaskCategory _generateRandomTaskCategory() {
-    final categories = TaskCategory.values;
+    const categories = TaskCategory.values;
     return categories[_random.nextInt(categories.length)];
   }
 
   /// Generates a random TaskPriority
   static TaskPriority _generateRandomTaskPriority() {
-    final priorities = TaskPriority.values;
+    const priorities = TaskPriority.values;
     return priorities[_random.nextInt(priorities.length)];
   }
 

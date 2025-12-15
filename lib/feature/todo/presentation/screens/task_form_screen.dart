@@ -269,7 +269,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         ),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.calendar_today,
               size: 20,
               color: AppColors.textSecondary,
@@ -307,7 +307,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         ),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.access_time,
               size: 20,
               color: AppColors.textSecondary,

@@ -235,7 +235,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         ),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.calendar_today,
               size: 16,
               color: AppColors.textSecondary,

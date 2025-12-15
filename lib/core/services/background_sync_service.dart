@@ -193,7 +193,7 @@ class BackgroundSyncService {
       );
       
       developer.log(
-        'Scheduling sync retry ${_retryCount}/$_maxRetries in ${retryDelay.inSeconds}s',
+        'Scheduling sync retry $_retryCount/$_maxRetries in ${retryDelay.inSeconds}s',
         name: 'BackgroundSyncService',
       );
       
