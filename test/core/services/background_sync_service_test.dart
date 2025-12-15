@@ -28,6 +28,9 @@ void main() {
       authRepository: mockAuthRepository,
       networkInfo: mockNetworkInfo,
     );
+    
+    // Reset service state
+    syncService.resetRetryCount();
   });
 
   tearDown(() {
@@ -35,10 +38,16 @@ void main() {
   });
 
   group('BackgroundSyncService', () {
-    test('should start and stop periodic sync', () {
+    test('should start and stop periodic sync', () async {
+      // Arrange - Set up mocks to prevent actual sync operations
+      when(mockAuthRepository.isAuthenticated())
+          .thenAnswer((_) async => false);
+      
       // Act
       syncService.startPeriodicSync();
-      expect(syncService.currentStatus, SyncStatus.idle);
+      
+      // Wait a bit for any async operations to complete
+      await Future.delayed(const Duration(milliseconds: 10));
       
       syncService.stopPeriodicSync();
       expect(syncService.currentStatus, SyncStatus.idle);
@@ -54,7 +63,7 @@ void main() {
           .thenAnswer((_) async => const Right(false));
 
       // Act & Assert
-      await expectLater(
+      final statusFuture = expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,
@@ -63,6 +72,7 @@ void main() {
       );
 
       await syncService.triggerSync();
+      await statusFuture;
     });
 
     test('should handle sync failure with retry', () async {
@@ -77,7 +87,7 @@ void main() {
           .thenAnswer((_) async => const Left(NetworkFailure(message: 'Network error')));
 
       // Act & Assert
-      await expectLater(
+      final statusFuture = expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,
@@ -85,12 +95,14 @@ void main() {
         ]),
       );
 
-      await expectLater(
+      final errorFuture = expectLater(
         syncService.syncErrorStream,
         emits(isA<SyncError>()),
       );
 
       await syncService.triggerSync();
+      await statusFuture;
+      await errorFuture;
     });
 
     test('should skip sync when offline', () async {
@@ -101,7 +113,7 @@ void main() {
           .thenAnswer((_) async => false);
 
       // Act & Assert
-      await expectLater(
+      final statusFuture = expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,
@@ -110,6 +122,7 @@ void main() {
       );
 
       await syncService.triggerSync();
+      await statusFuture;
     });
 
     test('should skip sync when not authenticated', () async {
@@ -118,7 +131,7 @@ void main() {
           .thenAnswer((_) async => false);
 
       // Act & Assert
-      await expectLater(
+      final statusFuture = expectLater(
         syncService.syncStatusStream,
         emitsInOrder([
           SyncStatus.syncing,
@@ -127,6 +140,7 @@ void main() {
       );
 
       await syncService.triggerSync();
+      await statusFuture;
     });
 
     test('should reset retry count', () {

@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.glimfo.todo"
-        minSdk = 21  // Minimum SDK for production
+        minSdk = flutter.minSdkVersion  // Minimum SDK for production
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
