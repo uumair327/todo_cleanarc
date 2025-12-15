@@ -400,7 +400,7 @@ class AppDrawer extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              context.read<AuthBloc>().add(AuthSignOutRequested());
+              context.read<AuthBloc>().add(const AuthSignOutRequested());
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Logout'),
