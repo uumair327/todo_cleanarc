@@ -251,6 +251,8 @@ class _MainAppShellState extends State<MainAppShell> {
       ],
     );
   }
+  
+  void _showNotificationsComingSoon(BuildContext context) {}
 }
 
 class NavigationItem {
