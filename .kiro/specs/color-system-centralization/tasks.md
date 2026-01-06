@@ -56,7 +56,7 @@ This implementation plan converts the color centralization design into discrete 
   - **Property 13: Performance optimization**
   - **Validates: Requirements 3.5, 7.1, 7.2, 7.3, 7.4, 7.5**
 
-- [-] 4. Checkpoint - Ensure core services pass tests
+- [x] 4. Checkpoint - Ensure core services pass tests
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 5. Create presentation layer theme extensions
@@ -77,18 +77,19 @@ This implementation plan converts the color centralization design into discrete 
   - Test Material 3 integration
   - _Requirements: 2.2, 2.3, 3.4_
 
-- [ ] 6. Implement dependency injection setup
+- [x] 6. Implement dependency injection setup
   - Create service locator registration for color services
   - Set up dependency injection in main.dart
   - Configure theme provider as singleton
   - Add service initialization and cleanup
   - _Requirements: 3.1, 4.1, 4.4_
 
-- [ ]* 6.1 Write property test for clean architecture separation
+- [x] 6.1 Write property test for clean architecture separation
+
   - **Property 9: Clean architecture separation**
   - **Validates: Requirements 4.1, 4.3, 4.4, 4.5**
 
-- [ ] 7. Replace hardcoded colors in existing components
+- [x] 7. Replace hardcoded colors in existing components
   - Update dashboard_screen.dart to use semantic colors
   - Replace Colors.white and Colors.black references
   - Update main_app_shell.dart color usage
@@ -104,7 +105,7 @@ This implementation plan converts the color centralization design into discrete 
   - **Property 3: Opacity variant consistency**
   - **Validates: Requirements 1.5**
 
-- [ ] 8. Implement theme switching functionality
+- [x] 8. Implement theme switching functionality
   - Add theme selection UI in settings
   - Implement system theme synchronization
   - Add smooth theme transition animations
@@ -124,7 +125,7 @@ This implementation plan converts the color centralization design into discrete 
   - **Property 12: Theme persistence**
   - **Validates: Requirements 6.5**
 
-- [ ] 9. Add build-time color validation
+- [-] 9. Add build-time color validation
   - Create custom lint rules to detect hardcoded colors
   - Add pre-commit hooks for color validation
   - Implement build script to scan for color violations

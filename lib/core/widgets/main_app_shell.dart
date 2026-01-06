@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../feature/auth/presentation/auth_presentation.dart';
 
-import '../utils/app_colors.dart';
+import '../theme/build_context_color_extension.dart';
 import '../services/injection_container.dart' as di;
 import '../services/sync_manager.dart';
 import '../services/background_sync_service.dart';
@@ -94,8 +94,8 @@ class _MainAppShellState extends State<MainAppShell> {
       child: Scaffold(
       appBar: AppBar(
         title: Text(_getAppBarTitle()),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: context.ongoingTaskColor,
+        foregroundColor: context.onOngoingTaskColor,
         elevation: 0,
         actions: [
           // Sync status indicator
@@ -114,7 +114,14 @@ class _MainAppShellState extends State<MainAppShell> {
           const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () => _showNotificationsComingSoon(context),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Notifications feature coming soon!'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -146,9 +153,9 @@ class _MainAppShellState extends State<MainAppShell> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textSecondary,
-        backgroundColor: Colors.white,
+        selectedItemColor: context.ongoingTaskColor,
+        unselectedItemColor: context.onSurfaceSecondary,
+        backgroundColor: context.surfacePrimary,
         elevation: 8,
         items: _navigationItems.map((item) => BottomNavigationBarItem(
           icon: Icon(item.icon),
@@ -158,8 +165,8 @@ class _MainAppShellState extends State<MainAppShell> {
       ),
       floatingActionButton: _shouldShowFAB() ? FloatingActionButton(
         onPressed: () => context.push('/task/new'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: context.ongoingTaskColor,
+        foregroundColor: context.onOngoingTaskColor,
         child: const Icon(Icons.add),
       ) : null,
       ),
@@ -245,14 +252,12 @@ class _MainAppShellState extends State<MainAppShell> {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(color: AppColors.textSecondary),
+            style: TextStyle(color: context.onSurfaceSecondary),
           ),
         ),
       ],
     );
   }
-  
-  void _showNotificationsComingSoon(BuildContext context) {}
 }
 
 class NavigationItem {
@@ -291,8 +296,8 @@ class AppDrawer extends StatelessWidget {
               }
 
               return UserAccountsDrawerHeader(
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
+                decoration: BoxDecoration(
+                  color: context.ongoingTaskColor,
                 ),
                 accountName: Text(
                   userName,
@@ -303,13 +308,13 @@ class AppDrawer extends StatelessWidget {
                 ),
                 accountEmail: Text(userEmail),
                 currentAccountPicture: CircleAvatar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: context.onOngoingTaskColor,
                   child: Text(
                     userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: context.ongoingTaskColor,
                     ),
                   ),
                 ),
@@ -370,8 +375,8 @@ class AppDrawer extends StatelessWidget {
           // Logout
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout', style: TextStyle(color: Colors.red)),
+            leading: Icon(Icons.logout, color: context.colorScheme.error),
+            title: Text('Logout', style: TextStyle(color: context.colorScheme.error)),
             onTap: () {
               Navigator.pop(context);
               _showLogoutDialog(context);
@@ -399,19 +404,10 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(dialogContext).pop();
               context.read<AuthBloc>().add(const AuthSignOutRequested());
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: context.colorScheme.error),
             child: const Text('Logout'),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showNotificationsComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Notifications feature coming soon!'),
-        duration: Duration(seconds: 2),
       ),
     );
   }

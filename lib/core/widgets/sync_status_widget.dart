@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/background_sync_service.dart';
 import '../services/connectivity_service.dart';
-import '../utils/app_colors.dart';
+import '../theme/build_context_color_extension.dart';
 
 /// Widget that displays the current sync and connectivity status to the user
 /// Provides visual feedback about sync operations and network connectivity
@@ -29,17 +29,17 @@ class SyncStatusWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: _getStatusColor().withOpacity(0.1),
+        color: _getStatusColor(context).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: _getStatusColor().withOpacity(0.3),
+          color: _getStatusColor(context).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildStatusIcon(),
+          _buildStatusIcon(context),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -49,7 +49,7 @@ class SyncStatusWidget extends StatelessWidget {
                 Text(
                   _getStatusMessage(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: _getStatusColor(),
+                    color: _getStatusColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -58,7 +58,7 @@ class SyncStatusWidget extends StatelessWidget {
                   Text(
                     _getDetailMessage(),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: _getStatusColor().withOpacity(0.8),
+                      color: _getStatusColor(context).withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -71,7 +71,7 @@ class SyncStatusWidget extends StatelessWidget {
               onPressed: onRetryPressed,
               icon: const Icon(Icons.refresh),
               iconSize: 20,
-              color: _getStatusColor(),
+              color: _getStatusColor(context),
               tooltip: 'Retry sync',
             ),
           ],
@@ -80,7 +80,7 @@ class SyncStatusWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(BuildContext context) {
     IconData iconData;
     
     switch (syncStatus) {
@@ -90,7 +90,7 @@ class SyncStatusWidget extends StatelessWidget {
           height: 16,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(_getStatusColor()),
+            valueColor: AlwaysStoppedAnimation<Color>(_getStatusColor(context)),
           ),
         );
       case SyncStatus.upToDate:
@@ -106,7 +106,6 @@ class SyncStatusWidget extends StatelessWidget {
         iconData = Icons.error;
         break;
       case SyncStatus.idle:
-      default:
         iconData = Icons.cloud_queue;
         break;
     }
@@ -114,24 +113,23 @@ class SyncStatusWidget extends StatelessWidget {
     return Icon(
       iconData,
       size: 16,
-      color: _getStatusColor(),
+      color: _getStatusColor(context),
     );
   }
 
-  Color _getStatusColor() {
+  Color _getStatusColor(BuildContext context) {
     switch (syncStatus) {
       case SyncStatus.syncing:
       case SyncStatus.retrying:
-        return AppColors.primary;
+        return context.ongoingTaskColor;
       case SyncStatus.upToDate:
-        return AppColors.success;
+        return context.completedTaskColor;
       case SyncStatus.offline:
-        return AppColors.warning;
+        return context.inProcessTaskColor;
       case SyncStatus.failed:
-        return AppColors.error;
+        return context.colorScheme.error;
       case SyncStatus.idle:
-      default:
-        return AppColors.textSecondary;
+        return context.onSurfaceSecondary;
     }
   }
 
@@ -150,7 +148,6 @@ class SyncStatusWidget extends StatelessWidget {
       case SyncStatus.failed:
         return 'Sync failed';
       case SyncStatus.idle:
-      default:
         return 'Ready to sync';
     }
   }
@@ -204,18 +201,18 @@ class CompactSyncStatusWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: _getStatusColor().withOpacity(0.1),
+          color: _getCompactStatusColor(context).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildStatusIcon(),
+            _buildCompactStatusIcon(context),
             const SizedBox(width: 4),
             Text(
               _getCompactMessage(),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: _getStatusColor(),
+                color: _getCompactStatusColor(context),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -225,20 +222,19 @@ class CompactSyncStatusWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusIcon() {
-    if (syncStatus == SyncStatus.syncing) {
-      return SizedBox(
-        width: 12,
-        height: 12,
-        child: CircularProgressIndicator(
-          strokeWidth: 1.5,
-          valueColor: AlwaysStoppedAnimation<Color>(_getStatusColor()),
-        ),
-      );
-    }
-
+  Widget _buildCompactStatusIcon(BuildContext context) {
     IconData iconData;
+    
     switch (syncStatus) {
+      case SyncStatus.syncing:
+        return SizedBox(
+          width: 12,
+          height: 12,
+          child: CircularProgressIndicator(
+            strokeWidth: 1.5,
+            valueColor: AlwaysStoppedAnimation<Color>(_getCompactStatusColor(context)),
+          ),
+        );
       case SyncStatus.offline:
         iconData = Icons.cloud_off;
         break;
@@ -248,7 +244,8 @@ class CompactSyncStatusWidget extends StatelessWidget {
       case SyncStatus.retrying:
         iconData = Icons.sync_problem;
         break;
-      default:
+      case SyncStatus.upToDate:
+      case SyncStatus.idle:
         iconData = Icons.cloud_queue;
         break;
     }
@@ -256,21 +253,22 @@ class CompactSyncStatusWidget extends StatelessWidget {
     return Icon(
       iconData,
       size: 12,
-      color: _getStatusColor(),
+      color: _getCompactStatusColor(context),
     );
   }
 
-  Color _getStatusColor() {
+  Color _getCompactStatusColor(BuildContext context) {
     switch (syncStatus) {
       case SyncStatus.syncing:
       case SyncStatus.retrying:
-        return AppColors.primary;
+        return context.ongoingTaskColor;
       case SyncStatus.offline:
-        return AppColors.warning;
+        return context.inProcessTaskColor;
       case SyncStatus.failed:
-        return AppColors.error;
-      default:
-        return AppColors.textSecondary;
+        return context.colorScheme.error;
+      case SyncStatus.upToDate:
+      case SyncStatus.idle:
+        return context.onSurfaceSecondary;
     }
   }
 
@@ -284,7 +282,8 @@ class CompactSyncStatusWidget extends StatelessWidget {
         return 'Failed';
       case SyncStatus.retrying:
         return 'Retrying';
-      default:
+      case SyncStatus.upToDate:
+      case SyncStatus.idle:
         return 'Sync';
     }
   }

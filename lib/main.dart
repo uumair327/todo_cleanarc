@@ -20,7 +20,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'core/services/injection_container.dart' as di;
-import 'core/theme/app_theme.dart';
+import 'core/services/theme_provider_service.dart';
+import 'core/theme/app_theme_data.dart' as theme_data;
 import 'core/router/app_router.dart';
 import 'feature/auth/presentation/auth_presentation.dart';
 
@@ -56,7 +57,7 @@ void main() async {
 /// 
 /// Configures the app with:
 /// - BLoC providers for state management
-/// - Material Design theme
+/// - Material Design theme with color system integration
 /// - GoRouter for declarative navigation
 /// - Global error handling
 class MyApp extends StatelessWidget {
@@ -71,11 +72,23 @@ class MyApp extends StatelessWidget {
           create: (context) => di.sl<AuthBloc>(),
         ),
       ],
-      child: MaterialApp.router(
-        title: 'TaskFlow',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        routerConfig: AppRouter.router,
+      child: StreamBuilder(
+        // Listen to theme changes from the centralized theme provider
+        stream: di.sl<ThemeProviderService>().themeStream,
+        builder: (context, snapshot) {
+          // Get current theme from the theme provider service
+          final themeState = di.sl<ThemeProviderService>().currentTheme;
+          final colorExtension = theme_data.AppThemeData.createColorExtension(themeState.currentTheme.mode);
+          
+          return MaterialApp.router(
+            title: 'TaskFlow',
+            debugShowCheckedModeBanner: false,
+            theme: theme_data.AppThemeData.lightTheme(colorExtension),
+            darkTheme: theme_data.AppThemeData.darkTheme(colorExtension),
+            themeMode: themeState.currentTheme.mode,
+            routerConfig: AppRouter.router,
+          );
+        },
       ),
     );
   }

@@ -1,0 +1,113 @@
+name: Color Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  color-validation:
+    name: Validate Color Usage
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Dart
+      uses: dart-lang/setup-dart@v1
+      with:
+        sdk: stable
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: stable
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Make validation script executable
+      run: chmod +x scripts/validate_colors.sh
+      
+    - name: Run color validation
+      id: validation
+      run: |
+        # Run validation and capture output
+        if scripts/validate_colors.sh --ci --output color-violations.json; then
+          echo "validation_passed=true" >> $GITHUB_OUTPUT
+        else
+          echo "validation_passed=false" >> $GITHUB_OUTPUT
+        fi
+      continue-on-error: true
+      
+    - name: Upload validation results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: color-validation-results
+        path: color-violations.json
+        retention-days: 30
+        
+    - name: Comment PR with violations
+      if: github.event_name == 'pull_request' && steps.validation.outputs.validation_passed == 'false'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          try {
+            const violations = JSON.parse(fs.readFileSync('color-violations.json', 'utf8'));
+            
+            if (!violations.isValid && violations.violations.length > 0) {
+              const violationsByFile = {};
+              violations.violations.forEach(v => {
+                if (!violationsByFile[v.filePath]) {
+                  violationsByFile[v.filePath] = [];
+                }
+                violationsByFile[v.filePath].push(v);
+              });
+              
+              let comment = `## 🎨 Color Validation Failed\n\n`;
+              comment += `Found ${violations.violations.length} hardcoded color(s) in ${Object.keys(violationsByFile).length} file(s).\n\n`;
+              comment += `### Violations:\n\n`;
+              
+              for (const [file, fileViolations] of Object.entries(violationsByFile)) {
+                comment += `**${file}**\n`;
+                fileViolations.forEach(v => {
+                  comment += `- Line ${v.lineNumber}: \`${v.colorValue}\`\n`;
+                  comment += `  - Suggestion: ${v.suggestion}\n`;
+                });
+                comment += `\n`;
+              }
+              
+              comment += `### How to fix:\n`;
+              comment += `1. Replace hardcoded colors with semantic color tokens\n`;
+              comment += `2. Use \`context.appColors.semanticColorName\` for custom colors\n`;
+              comment += `3. Use \`context.colorScheme.colorName\` for Material colors\n`;
+              comment += `4. Run \`dart scripts/validate_colors.dart\` locally to check your changes\n\n`;
+              comment += `For more information, see the [Color System Documentation](docs/color-system.md).`;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+          } catch (error) {
+            console.log('Could not read validation results:', error.message);
+          }
+          
+    - name: Fail job if validation failed
+      if: steps.validation.outputs.validation_passed == 'false'
+      run: |
+        echo "❌ Color validation failed. Please fix the hardcoded colors before merging."
+        exit 1
+        
+    - name: Success message
+      if: steps.validation.outputs.validation_passed == 'true'
+      run: |
+        echo "✅ Color validation passed successfully!"
