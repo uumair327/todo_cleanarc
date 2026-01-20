@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../domain/entities/user_entity.dart';
 
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
@@ -16,7 +17,7 @@ class AuthSignOutRequested extends AuthEvent {
 }
 
 class AuthUserChanged extends AuthEvent {
-  final dynamic user;
+  final UserEntity? user;
 
   const AuthUserChanged(this.user);
 

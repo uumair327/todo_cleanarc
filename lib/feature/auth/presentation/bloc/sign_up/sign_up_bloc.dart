@@ -90,9 +90,11 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     } else if (confirmPassword != state.password) {
       confirmPasswordError = 'Passwords do not match';
       // Debug: Print to see what's happening
-      print('Password mismatch: password="${state.password}" (${state.password.length}), confirm="$confirmPassword" (${confirmPassword.length})');
+      print(
+          'Password mismatch: password="${state.password}" (${state.password.length}), confirm="$confirmPassword" (${confirmPassword.length})');
     } else {
-      print('Passwords match: password="${state.password}", confirm="$confirmPassword"');
+      print(
+          'Passwords match: password="${state.password}", confirm="$confirmPassword"');
     }
 
     emit(state.copyWith(
@@ -118,12 +120,14 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(status: SignUpStatus.loading));
 
     try {
-      print('SignUp: email="${state.email}", password="${state.password}" (${state.password.length} chars)');
-      
+      print(
+          'SignUp: email="${state.email}", password="${state.password}" (${state.password.length} chars)');
+
       final email = Email.fromString(state.email);
       final password = Password.fromString(state.password);
 
-      print('SignUp: Calling use case with email=${email.value}, password length=${password.value.length}');
+      print(
+          'SignUp: Calling use case with email=${email.value}, password length=${password.value.length}');
 
       final result = await _signUpUseCase(
         email: email,
@@ -140,7 +144,10 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         },
         (user) {
           print('SignUp success!');
-          emit(state.copyWith(status: SignUpStatus.success));
+          emit(state.copyWith(
+            status: SignUpStatus.success,
+            user: () => user,
+          ));
         },
       );
     } catch (e) {
@@ -168,7 +175,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   String _getFailureMessage(dynamic failure) {
     if (failure.runtimeType.toString().contains('ServerFailure')) {
       return (failure as dynamic).message;
-    } else if (failure.runtimeType.toString().contains('AuthenticationFailure')) {
+    } else if (failure.runtimeType
+        .toString()
+        .contains('AuthenticationFailure')) {
       return (failure as dynamic).message;
     } else if (failure.runtimeType.toString().contains('NetworkFailure')) {
       return (failure as dynamic).message;

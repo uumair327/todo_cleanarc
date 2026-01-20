@@ -15,7 +15,8 @@
   - Define enums: TaskCategory, TaskPriority, TaskStatus
   - _Requirements: 4.1, 6.1, 9.1_
 
-- [ ]* 2.2 Write property test for domain entities
+- [x] 2.2 Write property test for domain entities
+
   - **Property 3: Task persistence round trip**
   - **Validates: Requirements 4.2, 6.2, 6.3**
 
@@ -32,11 +33,13 @@
   - SyncTasksUseCase for offline-online synchronization
   - _Requirements: 1.1, 2.1, 4.2, 5.4, 7.3_
 
-- [ ]* 2.5 Write property test for authentication use cases
+- [x] 2.5 Write property test for authentication use cases
+
   - **Property 1: Authentication round trip**
   - **Validates: Requirements 1.1, 2.1**
 
-- [ ]* 2.6 Write property test for input validation
+- [x] 2.6 Write property test for input validation
+
   - **Property 2: Input validation consistency**
   - **Validates: Requirements 1.2, 1.3, 4.3**
 
@@ -67,11 +70,13 @@
   - Implement conflict resolution using timestamp comparison
   - _Requirements: 6.5, 7.3, 7.4_
 
-- [ ]* 3.5 Write property test for sync functionality
+- [x] 3.5 Write property test for sync functionality
+
   - **Property 4: Offline-online sync consistency**
   - **Validates: Requirements 6.5, 7.3, 7.4**
 
-- [ ]* 3.6 Write property test for performance requirements
+- [x] 3.6 Write property test for performance requirements
+
   - **Property 8: Performance bounds**
   - **Validates: Requirements 3.5, 7.1, 10.1, 10.4**
 
@@ -93,7 +98,8 @@
   - CustomButton with consistent styling
   - _Requirements: 5.3, 8.4, 8.5_
 
-- [ ]* 5.3 Write property test for UI theme consistency
+- [x] 5.3 Write property test for UI theme consistency
+
   - **Property 7: UI theme consistency**
   - **Validates: Requirements 8.1, 8.3, 8.4**
 
@@ -111,7 +117,8 @@
   - Implement navigation flow between auth screens
   - _Requirements: 1.2, 1.3, 2.2, 8.5_
 
-- [ ]* 6.3 Write property test for session management
+- [x] 6.3 Write property test for session management
+
   - **Property 9: Session management integrity**
   - **Validates: Requirements 2.3, 9.2, 9.5**
 
@@ -129,15 +136,18 @@
   - TaskFormScreen for creating and editing tasks
   - _Requirements: 3.1, 4.1, 5.1, 5.2, 6.1_
 
-- [ ]* 7.3 Write property test for dashboard statistics
+- [x] 7.3 Write property test for dashboard statistics
+
   - **Property 5: Dashboard statistics accuracy**
   - **Validates: Requirements 3.2**
 
-- [ ]* 7.4 Write property test for search and filtering
+- [x] 7.4 Write property test for search and filtering
+
   - **Property 6: Search and filter correctness**
   - **Validates: Requirements 5.2, 5.4**
 
-- [ ]* 7.5 Write property test for form population
+- [x] 7.5 Write property test for form population
+
   - **Property 10: Form population accuracy**
   - **Validates: Requirements 6.1**
 

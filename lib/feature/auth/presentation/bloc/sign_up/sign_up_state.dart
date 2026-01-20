@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../domain/entities/user_entity.dart';
 
 enum SignUpStatus { initial, loading, success, failure }
 
@@ -12,6 +13,7 @@ class SignUpState extends Equatable {
   final String? confirmPasswordError;
   final String? errorMessage;
   final bool isFormValid;
+  final UserEntity? user;
 
   const SignUpState({
     this.status = SignUpStatus.initial,
@@ -23,6 +25,7 @@ class SignUpState extends Equatable {
     this.confirmPasswordError,
     this.errorMessage,
     this.isFormValid = false,
+    this.user,
   });
 
   SignUpState copyWith({
@@ -35,6 +38,7 @@ class SignUpState extends Equatable {
     String? Function()? confirmPasswordError,
     String? Function()? errorMessage,
     bool? isFormValid,
+    UserEntity? Function()? user,
   }) {
     return SignUpState(
       status: status ?? this.status,
@@ -42,10 +46,14 @@ class SignUpState extends Equatable {
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       emailError: emailError != null ? emailError() : this.emailError,
-      passwordError: passwordError != null ? passwordError() : this.passwordError,
-      confirmPasswordError: confirmPasswordError != null ? confirmPasswordError() : this.confirmPasswordError,
+      passwordError:
+          passwordError != null ? passwordError() : this.passwordError,
+      confirmPasswordError: confirmPasswordError != null
+          ? confirmPasswordError()
+          : this.confirmPasswordError,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       isFormValid: isFormValid ?? this.isFormValid,
+      user: user != null ? user() : this.user,
     );
   }
 
@@ -60,5 +68,6 @@ class SignUpState extends Equatable {
         confirmPasswordError,
         errorMessage,
         isFormValid,
+        user,
       ];
 }

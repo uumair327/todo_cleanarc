@@ -1,7 +1,6 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../domain/usecases/sign_out_usecase.dart';
-import '../../../domain/entities/user_entity.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -25,7 +24,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    
+
     try {
       final result = await _authRepository.getCurrentUser();
       result.fold(
@@ -48,7 +47,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    
+
     try {
       final result = await _signOutUseCase();
       result.fold(
@@ -65,11 +64,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) {
     if (event.user != null) {
-      // Convert the user data to UserEntity if needed
-      // For now, assuming it's already a UserEntity
-      if (event.user is UserEntity) {
-        emit(AuthAuthenticated(event.user as UserEntity));
-      }
+      emit(AuthAuthenticated(event.user!));
     } else {
       emit(const AuthUnauthenticated());
     }
@@ -79,7 +74,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   AuthState? fromJson(Map<String, dynamic> json) {
     try {
       final stateType = json['type'] as String?;
-      
+
       switch (stateType) {
         case 'authenticated':
           // For security reasons, we don't persist user data
@@ -112,7 +107,9 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   String _getFailureMessage(dynamic failure) {
     if (failure.runtimeType.toString().contains('ServerFailure')) {
       return (failure as dynamic).message;
-    } else if (failure.runtimeType.toString().contains('AuthenticationFailure')) {
+    } else if (failure.runtimeType
+        .toString()
+        .contains('AuthenticationFailure')) {
       return (failure as dynamic).message;
     } else if (failure.runtimeType.toString().contains('NetworkFailure')) {
       return (failure as dynamic).message;

@@ -65,8 +65,10 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async {
     if (!state.isFormValid) {
       // Debug: show why form is invalid
-      print('SignIn: Form not valid - email: "${state.email}", password length: ${state.password.length}');
-      print('SignIn: emailError: ${state.emailError}, passwordError: ${state.passwordError}');
+      print(
+          'SignIn: Form not valid - email: "${state.email}", password length: ${state.password.length}');
+      print(
+          'SignIn: emailError: ${state.emailError}, passwordError: ${state.passwordError}');
       return;
     }
 
@@ -92,7 +94,10 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         },
         (user) {
           print('SignIn: Success!');
-          emit(state.copyWith(status: SignInStatus.success));
+          emit(state.copyWith(
+            status: SignInStatus.success,
+            user: () => user,
+          ));
         },
       );
     } catch (e) {
@@ -118,7 +123,9 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   String _getFailureMessage(dynamic failure) {
     if (failure.runtimeType.toString().contains('ServerFailure')) {
       return (failure as dynamic).message;
-    } else if (failure.runtimeType.toString().contains('AuthenticationFailure')) {
+    } else if (failure.runtimeType
+        .toString()
+        .contains('AuthenticationFailure')) {
       return (failure as dynamic).message;
     } else if (failure.runtimeType.toString().contains('NetworkFailure')) {
       return (failure as dynamic).message;

@@ -5,6 +5,9 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../bloc/auth/auth_bloc.dart';
+import '../bloc/auth/auth_event.dart';
 import '../bloc/sign_in/sign_in_bloc.dart';
 import '../bloc/sign_in/sign_in_event.dart';
 import '../bloc/sign_in/sign_in_state.dart';
@@ -36,13 +39,16 @@ class _SignInScreenState extends State<SignInScreen> {
       body: SafeArea(
         child: BlocListener<SignInBloc, SignInState>(
           listener: (context, state) {
-            if (state.status == SignInStatus.success) {
+            if (state.status == SignInStatus.success && state.user != null) {
+              // Notify AuthBloc about the authenticated user
+              context.read<AuthBloc>().add(AuthUserChanged(state.user!));
               // Navigate to dashboard
               context.go('/dashboard');
             } else if (state.status == SignInStatus.failure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.errorMessage ?? 'Sign in failed'),
+                  content:
+                      Text(state.errorMessage ?? AppStrings.unexpectedError),
                   backgroundColor: AppColors.error,
                 ),
               );
@@ -77,7 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Welcome Back',
+          AppStrings.signInTitle,
           style: AppTypography.h1.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
@@ -85,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'Sign in to continue managing your tasks',
+          AppStrings.signInSubtitle,
           style: AppTypography.bodyLarge.copyWith(
             color: AppColors.textSecondary,
           ),
@@ -104,7 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) setState(() {});
         });
-        
+
         return Column(
           children: [
             _buildEmailField(state),
@@ -121,7 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email Address',
+          AppStrings.emailLabel,
           style: AppTypography.labelMedium.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -136,7 +142,7 @@ class _SignInScreenState extends State<SignInScreen> {
             context.read<SignInBloc>().add(SignInEmailChanged(value));
           },
           decoration: InputDecoration(
-            hintText: 'Enter your email address',
+            hintText: AppStrings.emailHint,
             prefixIcon: const Icon(Icons.email_outlined),
             errorText: state.emailError,
             border: OutlineInputBorder(
@@ -153,7 +159,7 @@ class _SignInScreenState extends State<SignInScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Password',
+          AppStrings.passwordLabel,
           style: AppTypography.labelMedium.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -174,14 +180,15 @@ class _SignInScreenState extends State<SignInScreen> {
             }
           },
           decoration: InputDecoration(
-            hintText: 'Enter your password',
+            hintText: AppStrings.passwordHint,
             prefixIcon: const Icon(Icons.lock_outlined),
             errorText: state.passwordError,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),
             suffixIcon: IconButton(
-              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+              icon: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _obscurePassword = !_obscurePassword;
@@ -198,7 +205,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return BlocBuilder<SignInBloc, SignInState>(
       builder: (context, state) {
         return PrimaryButton(
-          text: 'Sign In',
+          text: AppStrings.signInButton,
           isLoading: state.status == SignInStatus.loading,
           onPressed: state.isFormValid
               ? () {
@@ -216,13 +223,13 @@ class _SignInScreenState extends State<SignInScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Don't have an account? ",
+            AppStrings.noAccountText,
             style: AppTypography.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
           ),
           TextCustomButton(
-            text: 'Sign Up',
+            text: AppStrings.signUpLink,
             onPressed: () {
               context.go('/sign-up');
             },

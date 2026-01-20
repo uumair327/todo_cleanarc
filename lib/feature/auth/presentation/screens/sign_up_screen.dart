@@ -5,6 +5,9 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../bloc/auth/auth_bloc.dart';
+import '../bloc/auth/auth_event.dart';
 import '../bloc/sign_up/sign_up_bloc.dart';
 import '../bloc/sign_up/sign_up_event.dart';
 import '../bloc/sign_up/sign_up_state.dart';
@@ -39,13 +42,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: BlocListener<SignUpBloc, SignUpState>(
           listener: (context, state) {
-            if (state.status == SignUpStatus.success) {
-              // Navigate to dashboard or sign in screen
+            if (state.status == SignUpStatus.success && state.user != null) {
+              // Notify AuthBloc about the authenticated user
+              context.read<AuthBloc>().add(AuthUserChanged(state.user!));
+              // Navigate to dashboard
               context.go('/dashboard');
             } else if (state.status == SignUpStatus.failure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.errorMessage ?? 'Sign up failed'),
+                  content:
+                      Text(state.errorMessage ?? AppStrings.unexpectedError),
                   backgroundColor: AppColors.error,
                 ),
               );
@@ -80,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Create Account',
+          AppStrings.signUpTitle,
           style: AppTypography.h1.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
@@ -88,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'Sign up to get started with your task management',
+          AppStrings.signUpSubtitle,
           style: AppTypography.bodyLarge.copyWith(
             color: AppColors.textSecondary,
           ),
@@ -122,7 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email Address',
+          AppStrings.emailLabel,
           style: AppTypography.labelMedium.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -137,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             context.read<SignUpBloc>().add(SignUpEmailChanged(value));
           },
           decoration: InputDecoration(
-            hintText: 'Enter your email address',
+            hintText: AppStrings.emailHint,
             prefixIcon: const Icon(Icons.email_outlined),
             errorText: state.emailError,
             border: OutlineInputBorder(
@@ -176,7 +182,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               borderRadius: BorderRadius.circular(8.0),
             ),
             suffixIcon: IconButton(
-              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+              icon: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _obscurePassword = !_obscurePassword;
@@ -222,7 +229,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               borderRadius: BorderRadius.circular(8.0),
             ),
             suffixIcon: IconButton(
-              icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
+              icon: Icon(_obscureConfirmPassword
+                  ? Icons.visibility
+                  : Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _obscureConfirmPassword = !_obscureConfirmPassword;
@@ -239,7 +248,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
         return PrimaryButton(
-          text: 'Create Account',
+          text: AppStrings.signUpButton,
           isLoading: state.status == SignUpStatus.loading,
           onPressed: state.isFormValid
               ? () {
@@ -257,13 +266,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Already have an account? ',
+            AppStrings.alreadyHaveAccountText,
             style: AppTypography.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
           ),
           TextCustomButton(
-            text: 'Sign In',
+            text: AppStrings.signInLink,
             onPressed: () {
               context.go('/sign-in');
             },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../bloc/auth/auth_bloc.dart';
@@ -59,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               const SizedBox(height: AppSpacing.xl),
               Text(
-                'TaskFlow',
+                AppStrings.appName,
                 style: AppTypography.h1.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
@@ -67,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Organize your life, one task at a time',
+                AppStrings.splashTagline,
                 style: AppTypography.bodyLarge.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -78,7 +79,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 builder: (context, state) {
                   if (state is AuthLoading) {
                     return CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.primary),
                     );
                   }
                   return const SizedBox.shrink();

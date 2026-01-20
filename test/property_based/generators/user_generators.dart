@@ -75,7 +75,10 @@ class UserGenerators {
   /// Generates a valid Email
   static Email _generateValidEmail() {
     final domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'example.com'];
-    final username = _faker.internet.userName().toLowerCase();
+    // Generate username without special characters that might fail validation
+    final username = _faker.internet.userName()
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9._+-]'), ''); // Remove invalid characters
     final domain = domains[_random.nextInt(domains.length)];
     return Email.fromString('$username@$domain');
   }
@@ -137,7 +140,9 @@ class UserGenerators {
       'SecurePass!',
       'MyPassword2024',
       'TestPass123!',
-      '${_faker.lorem.word()}123!',
+      'ValidPass123!',
+      'SecureTest2024',
+      'MyTest123456',
     ];
     return passwords[_random.nextInt(passwords.length)];
   }
