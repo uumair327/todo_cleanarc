@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../bloc/dashboard/dashboard_bloc.dart';
 import '../bloc/dashboard/dashboard_event.dart';
@@ -29,7 +30,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            context.read<DashboardBloc>().add(const DashboardRefreshRequested());
+            context
+                .read<DashboardBloc>()
+                .add(const DashboardRefreshRequested());
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -66,7 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Error loading dashboard',
+            AppStrings.errorLoadingDashboard,
             style: AppTheme.textTheme.headlineSmall?.copyWith(
               color: AppColors.error,
             ),
@@ -81,7 +84,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 24),
           CustomButton(
-            text: 'Retry',
+            text: AppStrings.retry,
             onPressed: () {
               context.read<DashboardBloc>().add(const DashboardLoadRequested());
             },
@@ -98,11 +101,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // User Greeting
         _buildGreetingSection(state.userGreeting),
         const SizedBox(height: 24),
-        
+
         // Category Statistics
         _buildCategoryStatsSection(state),
         const SizedBox(height: 24),
-        
+
         // Recent Tasks
         _buildRecentTasksSection(state),
       ],
@@ -143,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Let\'s make today productive!',
+            AppStrings.dashProductiveTagline,
             style: AppTheme.textTheme.bodyLarge?.copyWith(
               color: Colors.white.withOpacity(0.9),
             ),
@@ -158,7 +161,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Task Overview',
+          AppStrings.taskOverview,
           style: AppTheme.textTheme.headlineSmall?.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
@@ -174,25 +177,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
           childAspectRatio: 1.2,
           children: [
             _buildCategoryCard(
-              'Ongoing',
+              AppStrings.ongoing,
               state.stats.ongoingCount,
               AppColors.ongoing,
               Icons.play_circle_outline,
             ),
             _buildCategoryCard(
-              'Completed',
+              AppStrings.completed,
               state.stats.completedCount,
               AppColors.completed,
               Icons.check_circle_outline,
             ),
             _buildCategoryCard(
-              'In Process',
+              AppStrings.inProcess,
               state.stats.inProcessCount,
               AppColors.inProcess,
               Icons.hourglass_empty,
             ),
             _buildCategoryCard(
-              'Canceled',
+              AppStrings.canceled,
               state.stats.canceledCount,
               AppColors.canceled,
               Icons.cancel_outlined,
@@ -266,7 +269,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Recent Tasks',
+              AppStrings.recentTasks,
               style: AppTheme.textTheme.headlineSmall?.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
@@ -278,7 +281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 // This will be implemented when navigation is set up
               },
               child: Text(
-                'View All',
+                AppStrings.viewAll,
                 style: AppTheme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
@@ -307,12 +310,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onComplete: () {
                   // Handle task completion
                   // This will trigger a dashboard refresh
-                  context.read<DashboardBloc>().add(const DashboardRefreshRequested());
+                  context
+                      .read<DashboardBloc>()
+                      .add(const DashboardRefreshRequested());
                 },
                 onDelete: () {
                   // Handle task deletion
                   // This will trigger a dashboard refresh
-                  context.read<DashboardBloc>().add(const DashboardRefreshRequested());
+                  context
+                      .read<DashboardBloc>()
+                      .add(const DashboardRefreshRequested());
                 },
               );
             },
@@ -345,14 +352,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No tasks yet',
+            AppStrings.noTasksYet,
             style: AppTheme.textTheme.titleMedium?.copyWith(
               color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Create your first task to get started!',
+            AppStrings.createFirstTask,
             style: AppTheme.textTheme.bodyMedium?.copyWith(
               color: AppColors.textSecondary.withOpacity(0.7),
             ),

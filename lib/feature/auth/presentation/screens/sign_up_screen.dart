@@ -160,7 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Password',
+          AppStrings.passwordLabel,
           style: AppTypography.labelMedium.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -175,7 +175,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             context.read<SignUpBloc>().add(SignUpPasswordChanged(value));
           },
           decoration: InputDecoration(
-            hintText: 'Enter your password (min 6 characters)',
+            hintText: AppStrings.passwordHint,
             prefixIcon: const Icon(Icons.lock_outlined),
             errorText: state.passwordError,
             border: OutlineInputBorder(
@@ -201,7 +201,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Confirm Password',
+          AppStrings.confirmPasswordLabel,
           style: AppTypography.labelMedium.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -222,7 +222,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             }
           },
           decoration: InputDecoration(
-            hintText: 'Confirm your password',
+            hintText: AppStrings.confirmPasswordHint,
             prefixIcon: const Icon(Icons.lock_outlined),
             errorText: state.confirmPasswordError,
             border: OutlineInputBorder(

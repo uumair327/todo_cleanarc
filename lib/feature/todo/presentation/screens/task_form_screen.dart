@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../core/domain/enums/task_enums.dart';
 import '../../domain/entities/task_entity.dart';
@@ -55,7 +56,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(widget.task != null ? 'Edit Task' : 'Create Task'),
+        title: Text(
+            widget.task != null ? AppStrings.editTask : AppStrings.createTask),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -65,11 +67,13 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               return TextButton(
                 onPressed: state.isValid && !state.isLoading
                     ? () {
-                        context.read<TaskFormBloc>().add(const TaskFormSubmitted());
+                        context
+                            .read<TaskFormBloc>()
+                            .add(const TaskFormSubmitted());
                       }
                     : null,
                 child: Text(
-                  'Save',
+                  AppStrings.save,
                   style: TextStyle(
                     color: state.isValid && !state.isLoading
                         ? Colors.white
@@ -87,7 +91,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           if (state.isSubmissionSuccess) {
             Navigator.of(context).pop(true); // Return true to indicate success
           }
-          
+
           // Update controllers when state changes (for edit mode)
           if (_titleController.text != state.title) {
             _titleController.text = state.title;
@@ -120,7 +124,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.error.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                          border: Border.all(
+                              color: AppColors.error.withOpacity(0.3)),
                         ),
                         child: Text(
                           state.errorMessage!,
@@ -131,16 +136,18 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                       ),
 
                     // Title Field
-                    _buildSectionTitle('Task Title'),
+                    _buildSectionTitle(AppStrings.taskTitleLabel),
                     CustomTextField(
                       controller: _titleController,
-                      hint: 'Enter task title',
+                      hint: AppStrings.taskTitleHint,
                       onChanged: (value) {
-                        context.read<TaskFormBloc>().add(TaskFormTitleChanged(value));
+                        context
+                            .read<TaskFormBloc>()
+                            .add(TaskFormTitleChanged(value));
                       },
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Title is required';
+                          return AppStrings.titleRequired;
                         }
                         return null;
                       },
@@ -148,17 +155,19 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     const SizedBox(height: 20),
 
                     // Description Field
-                    _buildSectionTitle('Description'),
+                    _buildSectionTitle(AppStrings.descriptionLabel),
                     CustomTextField(
                       controller: _descriptionController,
-                      hint: 'Enter task description',
+                      hint: AppStrings.descriptionHint,
                       maxLines: 3,
                       onChanged: (value) {
-                        context.read<TaskFormBloc>().add(TaskFormDescriptionChanged(value));
+                        context
+                            .read<TaskFormBloc>()
+                            .add(TaskFormDescriptionChanged(value));
                       },
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Description is required';
+                          return AppStrings.descriptionRequired;
                         }
                         return null;
                       },
@@ -172,7 +181,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildSectionTitle('Due Date'),
+                              _buildSectionTitle(AppStrings.dueDateLabel),
                               _buildDateSelector(state),
                             ],
                           ),
@@ -182,7 +191,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildSectionTitle('Due Time'),
+                              _buildSectionTitle(AppStrings.dueTimeLabel),
                               _buildTimeSelector(state),
                             ],
                           ),
@@ -192,18 +201,18 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     const SizedBox(height: 20),
 
                     // Category Selection
-                    _buildSectionTitle('Category'),
+                    _buildSectionTitle(AppStrings.categoryLabel),
                     _buildCategorySelector(state),
                     const SizedBox(height: 20),
 
                     // Priority Selection
-                    _buildSectionTitle('Priority'),
+                    _buildSectionTitle(AppStrings.priorityLabel),
                     _buildPrioritySelector(state),
                     const SizedBox(height: 20),
 
                     // Progress Slider (only for edit mode)
                     if (state.isEditing) ...[
-                      _buildSectionTitle('Progress'),
+                      _buildSectionTitle(AppStrings.progressLabel),
                       _buildProgressSlider(state),
                       const SizedBox(height: 20),
                     ],
@@ -213,11 +222,16 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: CustomButton(
-                        text: state.isEditing ? 'Update Task' : 'Create Task',
+                        text: state.isEditing
+                            ? AppStrings.updateTask
+                            : AppStrings.createTask,
                         onPressed: state.isValid && !state.isLoading
                             ? () {
-                                if (_formKey.currentState?.validate() ?? false) {
-                                  context.read<TaskFormBloc>().add(const TaskFormSubmitted());
+                                if (_formKey.currentState?.validate() ??
+                                    false) {
+                                  context
+                                      .read<TaskFormBloc>()
+                                      .add(const TaskFormSubmitted());
                                 }
                               }
                             : null,
@@ -332,7 +346,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       children: TaskCategory.values.map((category) {
         final isSelected = state.category == category;
         final color = _getCategoryColor(category);
-        
+
         return InkWell(
           onTap: () {
             context.read<TaskFormBloc>().add(TaskFormCategoryChanged(category));
@@ -367,7 +381,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       children: TaskPriority.values.map((priority) {
         final isSelected = state.priority == priority;
         final color = _getPriorityColor(priority);
-        
+
         return InkWell(
           onTap: () {
             context.read<TaskFormBloc>().add(TaskFormPriorityChanged(priority));
@@ -402,7 +416,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Progress: ${state.progressPercentage}%',
+              '${AppStrings.progressLabel}: ${state.progressPercentage}%',
               style: AppTheme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.textPrimary,
               ),
@@ -432,8 +446,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           activeColor: AppColors.primary,
           onChanged: (value) {
             context.read<TaskFormBloc>().add(
-              TaskFormProgressChanged(value.round()),
-            );
+                  TaskFormProgressChanged(value.round()),
+                );
           },
         ),
       ],
@@ -456,13 +470,13 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   String _getCategoryDisplayName(TaskCategory category) {
     switch (category) {
       case TaskCategory.ongoing:
-        return 'Ongoing';
+        return AppStrings.ongoing;
       case TaskCategory.completed:
-        return 'Completed';
+        return AppStrings.completed;
       case TaskCategory.inProcess:
-        return 'In Process';
+        return AppStrings.inProcess;
       case TaskCategory.canceled:
-        return 'Canceled';
+        return AppStrings.canceled;
     }
   }
 
@@ -484,15 +498,15 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   String _getPriorityDisplayName(TaskPriority priority) {
     switch (priority) {
       case TaskPriority.low:
-        return 'Low';
+        return AppStrings.low;
       case TaskPriority.medium:
-        return 'Medium';
+        return AppStrings.medium;
       case TaskPriority.high:
-        return 'High';
+        return AppStrings.high;
       case TaskPriority.urgent:
-        return 'Urgent';
+        return AppStrings.urgent;
       case TaskPriority.critical:
-        return 'Critical';
+        return AppStrings.critical;
     }
   }
 }

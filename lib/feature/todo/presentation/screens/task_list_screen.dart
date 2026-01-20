@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../core/utils/pagination_helper.dart';
 import '../../../../core/utils/loading_manager.dart';
@@ -30,9 +31,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     context.read<TaskListBloc>().add(TaskListLoadPaginatedRequested(
-      page: _paginationHelper.currentPage,
-      pageSize: _paginationHelper.pageSize,
-    ));
+          page: _paginationHelper.currentPage,
+          pageSize: _paginationHelper.pageSize,
+        ));
   }
 
   @override
@@ -43,7 +44,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= 
+    if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.8) {
       _loadMoreTasks();
     }
@@ -54,15 +55,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
       setState(() {
         _isLoadingMore = true;
       });
-      
+
       _paginationHelper.nextPage();
       context.read<TaskListBloc>().add(TaskListLoadMoreRequested(
-        page: _paginationHelper.currentPage,
-        pageSize: _paginationHelper.pageSize,
-        searchQuery: _searchController.text.isEmpty ? null : _searchController.text,
-        startDate: _selectedStartDate,
-        endDate: _selectedEndDate,
-      ));
+            page: _paginationHelper.currentPage,
+            pageSize: _paginationHelper.pageSize,
+            searchQuery:
+                _searchController.text.isEmpty ? null : _searchController.text,
+            startDate: _selectedStartDate,
+            endDate: _selectedEndDate,
+          ));
     }
   }
 
@@ -71,7 +73,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Tasks'),
+        title: const Text(AppStrings.tasks),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -89,7 +91,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         children: [
           // Search and Filter Section
           _buildSearchAndFilterSection(),
-          
+
           // Task List
           Expanded(
             child: BlocBuilder<TaskListBloc, TaskListState>(
@@ -97,12 +99,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 return StreamBuilder<LoadingState>(
                   stream: loadingManager.stateStream,
                   builder: (context, loadingSnapshot) {
-                    final loadingState = loadingSnapshot.data ?? const LoadingState.idle();
-                    
+                    final loadingState =
+                        loadingSnapshot.data ?? const LoadingState.idle();
+
                     if (state is TaskListLoading) {
                       return LoadingWidget(
-                        message: loadingState.message ?? 'Loading tasks...',
-                        progress: loadingState.progress > 0 ? loadingState.progress : null,
+                        message:
+                            loadingState.message ?? AppStrings.loadingTasks,
+                        progress: loadingState.progress > 0
+                            ? loadingState.progress
+                            : null,
                         showProgress: loadingState.progress > 0,
                       );
                     } else if (state is TaskListError) {
@@ -132,7 +138,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
           // Search Bar
           CustomTextField(
             controller: _searchController,
-            hint: 'Search tasks...',
+            hint: AppStrings.searchTasksHint,
             prefixIcon: const Icon(Icons.search),
             onChanged: (value) {
               // Debounce search to avoid too many API calls
@@ -140,14 +146,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 if (_searchController.text == value) {
                   _paginationHelper.reset();
                   context.read<TaskListBloc>().add(
-                    TaskListLoadPaginatedRequested(
-                      page: 0,
-                      pageSize: _paginationHelper.pageSize,
-                      searchQuery: value.isEmpty ? null : value,
-                      startDate: _selectedStartDate,
-                      endDate: _selectedEndDate,
-                    ),
-                  );
+                        TaskListLoadPaginatedRequested(
+                          page: 0,
+                          pageSize: _paginationHelper.pageSize,
+                          searchQuery: value.isEmpty ? null : value,
+                          startDate: _selectedStartDate,
+                          endDate: _selectedEndDate,
+                        ),
+                      );
                 }
               });
             },
@@ -158,25 +164,25 @@ class _TaskListScreenState extends State<TaskListScreen> {
                       _searchController.clear();
                       _paginationHelper.reset();
                       context.read<TaskListBloc>().add(
-                        TaskListLoadPaginatedRequested(
-                          page: 0,
-                          pageSize: _paginationHelper.pageSize,
-                          startDate: _selectedStartDate,
-                          endDate: _selectedEndDate,
-                        ),
-                      );
+                            TaskListLoadPaginatedRequested(
+                              page: 0,
+                              pageSize: _paginationHelper.pageSize,
+                              startDate: _selectedStartDate,
+                              endDate: _selectedEndDate,
+                            ),
+                          );
                     },
                   )
                 : null,
           ),
           const SizedBox(height: 12),
-          
+
           // Filter Row
           Row(
             children: [
               Expanded(
                 child: _buildDateFilterButton(
-                  'Start Date',
+                  AppStrings.startDate,
                   _selectedStartDate,
                   (date) {
                     setState(() {
@@ -189,7 +195,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildDateFilterButton(
-                  'End Date',
+                  AppStrings.endDate,
                   _selectedEndDate,
                   (date) {
                     setState(() {
@@ -203,7 +209,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               IconButton(
                 icon: const Icon(Icons.clear_all),
                 onPressed: _clearFilters,
-                tooltip: 'Clear Filters',
+                tooltip: AppStrings.clearFilters,
               ),
             ],
           ),
@@ -262,14 +268,15 @@ class _TaskListScreenState extends State<TaskListScreen> {
   void _applyDateFilter() {
     _paginationHelper.reset();
     context.read<TaskListBloc>().add(
-      TaskListLoadPaginatedRequested(
-        page: 0,
-        pageSize: _paginationHelper.pageSize,
-        searchQuery: _searchController.text.isEmpty ? null : _searchController.text,
-        startDate: _selectedStartDate,
-        endDate: _selectedEndDate,
-      ),
-    );
+          TaskListLoadPaginatedRequested(
+            page: 0,
+            pageSize: _paginationHelper.pageSize,
+            searchQuery:
+                _searchController.text.isEmpty ? null : _searchController.text,
+            startDate: _selectedStartDate,
+            endDate: _selectedEndDate,
+          ),
+        );
   }
 
   void _clearFilters() {
@@ -280,19 +287,19 @@ class _TaskListScreenState extends State<TaskListScreen> {
     _searchController.clear();
     _paginationHelper.reset();
     context.read<TaskListBloc>().add(
-      TaskListLoadPaginatedRequested(
-        page: 0,
-        pageSize: _paginationHelper.pageSize,
-      ),
-    );
+          TaskListLoadPaginatedRequested(
+            page: 0,
+            pageSize: _paginationHelper.pageSize,
+          ),
+        );
   }
 
   Widget _buildErrorState(String message) {
     // Determine if this is a network error
-    final isNetworkError = message.toLowerCase().contains('network') || 
-                          message.toLowerCase().contains('internet') ||
-                          message.toLowerCase().contains('connection');
-    
+    final isNetworkError = message.toLowerCase().contains('network') ||
+        message.toLowerCase().contains('internet') ||
+        message.toLowerCase().contains('connection');
+
     if (isNetworkError) {
       return NetworkErrorWidget(
         message: message,
@@ -300,53 +307,53 @@ class _TaskListScreenState extends State<TaskListScreen> {
           _paginationHelper.reset();
           loadingManager.clearError();
           context.read<TaskListBloc>().add(
-            TaskListLoadPaginatedRequested(
-              page: 0,
-              pageSize: _paginationHelper.pageSize,
-            ),
-          );
+                TaskListLoadPaginatedRequested(
+                  page: 0,
+                  pageSize: _paginationHelper.pageSize,
+                ),
+              );
         },
         onGoOffline: () {
           // Show cached data or offline mode
-          SnackBarHelper.showInfo(context, 'Working in offline mode');
+          SnackBarHelper.showInfo(context, AppStrings.workingOffline);
         },
       );
     }
-    
+
     return ErrorRetryWidget(
       message: message,
       onRetry: () {
         _paginationHelper.reset();
         loadingManager.clearError();
         context.read<TaskListBloc>().add(
-          TaskListLoadPaginatedRequested(
-            page: 0,
-            pageSize: _paginationHelper.pageSize,
-          ),
-        );
+              TaskListLoadPaginatedRequested(
+                page: 0,
+                pageSize: _paginationHelper.pageSize,
+              ),
+            );
       },
     );
   }
 
   Widget _buildEmptyState() {
-    final hasFilters = _searchController.text.isNotEmpty || 
-                      _selectedStartDate != null || 
-                      _selectedEndDate != null;
-    
+    final hasFilters = _searchController.text.isNotEmpty ||
+        _selectedStartDate != null ||
+        _selectedEndDate != null;
+
     return EmptyStateWidget(
-      title: hasFilters ? 'No matching tasks' : 'No tasks yet',
-      message: hasFilters 
-          ? 'Try adjusting your search or date filters'
-          : 'Create your first task to get started',
+      title: hasFilters ? AppStrings.noMatchingTasks : AppStrings.noTasksYet,
+      message:
+          hasFilters ? AppStrings.adjustFilters : AppStrings.createFirstTask,
       icon: hasFilters ? Icons.search_off : Icons.task_alt,
-      actionText: hasFilters ? 'Clear Filters' : 'Create Task',
+      actionText: hasFilters ? AppStrings.clearFilters : AppStrings.createTask,
       onAction: () {
         if (hasFilters) {
           _clearFilters();
         } else {
           // Navigate to task form for creation
           // This will be implemented when navigation is set up
-          SnackBarHelper.showInfo(context, 'Task creation will be available soon');
+          SnackBarHelper.showInfo(
+              context, 'Task creation will be available soon');
         }
       },
     );
@@ -360,14 +367,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
           _isLoadingMore = false;
         });
         context.read<TaskListBloc>().add(
-          TaskListLoadPaginatedRequested(
-            page: 0,
-            pageSize: _paginationHelper.pageSize,
-            searchQuery: _searchController.text.isEmpty ? null : _searchController.text,
-            startDate: _selectedStartDate,
-            endDate: _selectedEndDate,
-          ),
-        );
+              TaskListLoadPaginatedRequested(
+                page: 0,
+                pageSize: _paginationHelper.pageSize,
+                searchQuery: _searchController.text.isEmpty
+                    ? null
+                    : _searchController.text,
+                startDate: _selectedStartDate,
+                endDate: _selectedEndDate,
+              ),
+            );
       },
       child: ListView.separated(
         controller: _scrollController,
@@ -387,7 +396,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               ),
             );
           }
-          
+
           final task = state.tasks[index];
           return TaskCard(
             task: task,
@@ -397,8 +406,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
             },
             onComplete: () {
               context.read<TaskListBloc>().add(
-                TaskListTaskCompleted(task),
-              );
+                    TaskListTaskCompleted(task),
+                  );
             },
             onDelete: () {
               _showDeleteConfirmation(task.id.value, task.title);
@@ -413,28 +422,28 @@ class _TaskListScreenState extends State<TaskListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Task'),
-        content: Text('Are you sure you want to delete "$taskTitle"?'),
+        title: const Text(AppStrings.deleteTaskTitle),
+        content: Text('${AppStrings.deleteTaskConfirm}"$taskTitle"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text(AppStrings.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               context.read<TaskListBloc>().add(
-                TaskListTaskDeleted(
-                  // Convert string back to TaskId
-                  // This is a temporary solution until proper navigation is implemented
-                  taskId as dynamic,
-                ),
-              );
+                    TaskListTaskDeleted(
+                      // Convert string back to TaskId
+                      // This is a temporary solution until proper navigation is implemented
+                      taskId as dynamic,
+                    ),
+                  );
             },
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
             ),
-            child: const Text('Delete'),
+            child: const Text(AppStrings.delete),
           ),
         ],
       ),

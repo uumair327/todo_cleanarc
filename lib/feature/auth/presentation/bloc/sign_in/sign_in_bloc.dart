@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/domain/value_objects/email.dart';
 import '../../../../../core/domain/value_objects/password.dart';
+import '../../../../../core/constants/app_strings.dart';
 import '../../../domain/usecases/sign_in_usecase.dart';
 import 'sign_in_event.dart';
 import 'sign_in_state.dart';
@@ -26,9 +27,9 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
     // Validate email format
     if (email.isEmpty) {
-      emailError = 'Email is required';
+      emailError = AppStrings.emailRequired;
     } else if (!_isValidEmail(email)) {
-      emailError = 'Please enter a valid email address';
+      emailError = AppStrings.emailInvalid;
     }
 
     final newState = state.copyWith(
@@ -48,7 +49,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
     // Validate password
     if (password.isEmpty) {
-      passwordError = 'Password is required';
+      passwordError = AppStrings.passwordRequired;
     }
 
     final newState = state.copyWith(
@@ -132,6 +133,6 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     } else if (failure.runtimeType.toString().contains('CacheFailure')) {
       return (failure as dynamic).message;
     }
-    return 'An unexpected error occurred';
+    return AppStrings.unexpectedError;
   }
 }
