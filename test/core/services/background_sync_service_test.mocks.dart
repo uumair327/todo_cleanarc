@@ -6,6 +6,7 @@
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
+<<<<<<< HEAD
 import 'package:glimfo_todo/core/domain/value_objects/email.dart' as _i12;
 import 'package:glimfo_todo/core/domain/value_objects/password.dart' as _i13;
 import 'package:glimfo_todo/core/domain/value_objects/task_id.dart' as _i8;
@@ -14,12 +15,23 @@ import 'package:glimfo_todo/core/error/failures.dart' as _i5;
 import 'package:glimfo_todo/core/network/network_info.dart' as _i14;
 import 'package:glimfo_todo/core/utils/pagination_helper.dart' as _i7;
 import 'package:glimfo_todo/feature/auth/domain/entities/user_entity.dart'
+=======
+import 'package:mockito/mockito.dart' as _i1;
+import 'package:todo_cleanarc/core/domain/value_objects/email.dart' as _i12;
+import 'package:todo_cleanarc/core/domain/value_objects/password.dart' as _i13;
+import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart' as _i8;
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart' as _i9;
+import 'package:todo_cleanarc/core/error/failures.dart' as _i5;
+import 'package:todo_cleanarc/core/network/network_info.dart' as _i14;
+import 'package:todo_cleanarc/core/utils/pagination_helper.dart' as _i7;
+import 'package:todo_cleanarc/feature/auth/domain/entities/user_entity.dart'
+>>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
     as _i11;
-import 'package:glimfo_todo/feature/auth/domain/repositories/auth_repository.dart'
+import 'package:todo_cleanarc/feature/auth/domain/repositories/auth_repository.dart'
     as _i10;
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart'
+import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart'
     as _i6;
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart'
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart'
     as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -506,6 +518,24 @@ class MockAuthRepository extends _i1.Mock implements _i10.AuthRepository {
           Invocation.method(
             #deleteAccount,
             [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> resendVerificationEmail(
+          String? email) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #resendVerificationEmail,
+          [email],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #resendVerificationEmail,
+            [email],
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, void>>);

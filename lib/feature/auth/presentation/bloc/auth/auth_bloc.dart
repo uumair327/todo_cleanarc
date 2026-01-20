@@ -1,6 +1,7 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../domain/usecases/sign_out_usecase.dart';
+import '../../../../../core/constants/app_strings.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -116,6 +117,6 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     } else if (failure.runtimeType.toString().contains('CacheFailure')) {
       return (failure as dynamic).message;
     }
-    return 'An unexpected error occurred';
+    return AppStrings.unexpectedError;
   }
 }

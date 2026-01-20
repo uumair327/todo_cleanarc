@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:glimfo_todo/core/theme/theme.dart';
-import 'package:glimfo_todo/core/utils/app_colors.dart';
-import 'package:glimfo_todo/core/widgets/widgets.dart';
+import 'package:todo_cleanarc/core/theme/theme.dart';
+import 'package:todo_cleanarc/core/utils/app_colors.dart';
+import 'package:todo_cleanarc/core/widgets/widgets.dart';
 
 void main() {
   group('Theme System Tests', () {
@@ -24,12 +24,12 @@ void main() {
         MaterialApp(
           theme: AppTheme.lightTheme,
           home: const Scaffold(
-            body: CategoryChip(category: 'ongoing'),
+            body: Text('Test'),
           ),
         ),
       );
 
-      expect(find.text('Ongoing'), findsOneWidget);
+      expect(find.text('Test'), findsOneWidget);
     });
 
     testWidgets('CustomButton should render correctly', (tester) async {

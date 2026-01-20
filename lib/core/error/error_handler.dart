@@ -65,13 +65,13 @@ class ErrorHandler {
     } else if (exception is ValidationException) {
       return ValidationFailure(_getValidationErrorMessage(exception));
     } else if (exception is SocketException) {
-      return NetworkFailure(message: 'No internet connection. Please check your network settings.');
+      return const NetworkFailure(message: 'No internet connection. Please check your network settings.');
     } else if (exception is TimeoutException) {
-      return NetworkFailure(message: 'Request timed out. Please try again.');
+      return const NetworkFailure(message: 'Request timed out. Please try again.');
     } else if (exception is FormatException) {
-      return ServerFailure(message: 'Invalid data format received from server.');
+      return const ServerFailure(message: 'Invalid data format received from server.');
     } else {
-      return ServerFailure(message: 'An unexpected error occurred. Please try again.');
+      return const ServerFailure(message: 'An unexpected error occurred. Please try again.');
     }
   }
 

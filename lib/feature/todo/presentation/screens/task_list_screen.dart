@@ -143,7 +143,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             onChanged: (value) {
               // Debounce search to avoid too many API calls
               Future.delayed(const Duration(milliseconds: 500), () {
-                if (_searchController.text == value) {
+                if (_searchController.text == value && mounted) {
                   _paginationHelper.reset();
                   context.read<TaskListBloc>().add(
                         TaskListLoadPaginatedRequested(
@@ -241,7 +241,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         ),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.calendar_today,
               size: 16,
               color: AppColors.textSecondary,

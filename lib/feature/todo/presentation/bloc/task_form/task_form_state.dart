@@ -32,8 +32,10 @@ class TaskFormState extends Equatable {
     this.isValid = false,
     this.errorMessage,
     this.isSubmissionSuccess = false,
-  })  : dueDate = dueDate ?? DateTime.now(),
-        dueTime = dueTime ?? const TimeOfDay(hour: 9, minute: 0);
+  }) : dueDate = dueDate ?? _defaultDate(),
+       dueTime = dueTime ?? const TimeOfDay(hour: 9, minute: 0);
+
+  static DateTime _defaultDate() => DateTime.now();
 
   @override
   List<Object?> get props => [

@@ -161,7 +161,7 @@ class PropertyTestRunner {
     buffer.writeln();
     
     // Show first few failures for debugging
-    final maxFailuresToShow = 5;
+    const maxFailuresToShow = 5;
     final failuresToShow = failures.take(maxFailuresToShow);
     
     for (final failure in failuresToShow) {
@@ -205,7 +205,7 @@ class PropertyTestRunner {
     buffer.writeln();
     
     // Show first few failures for debugging
-    final maxFailuresToShow = 5;
+    const maxFailuresToShow = 5;
     final failuresToShow = failures.take(maxFailuresToShow);
     
     for (final failure in failuresToShow) {

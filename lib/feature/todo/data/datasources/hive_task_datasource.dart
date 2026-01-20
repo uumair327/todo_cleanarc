@@ -50,7 +50,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   @override
   Future<List<TaskModel>> getAllTasks() async {
     try {
-      final cacheKey = 'all_tasks';
+      const cacheKey = 'all_tasks';
       final cached = memoryManager.getCachedItem<List<TaskModel>>(cacheKey);
       if (cached != null) return cached;
 
@@ -163,7 +163,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       final taskBox = await box;
       final existingTask = taskBox.get(task.id);
       if (existingTask == null) {
-        throw CacheException(message: 'Task not found for update');
+        throw const CacheException(message: 'Task not found for update');
       }
       
       task.needsSync = true;
@@ -182,7 +182,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       final taskBox = await box;
       final task = taskBox.get(id);
       if (task == null) {
-        throw CacheException(message: 'Task not found for deletion');
+        throw const CacheException(message: 'Task not found for deletion');
       }
       
       // Soft delete - mark as deleted and needs sync
@@ -363,7 +363,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   @override
   Future<int> getTaskCount() async {
     try {
-      final cacheKey = 'task_count';
+      const cacheKey = 'task_count';
       final cached = memoryManager.getCachedItem<int>(cacheKey);
       if (cached != null) return cached;
 
@@ -463,7 +463,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       // Remove from all indexes
       for (final entry in indexBox.toMap().entries) {
         final data = entry.value;
-        if (data is Map<String, dynamic> && data.containsKey('ids')) {
+        if (data.containsKey('ids')) {
           final ids = List<String>.from(data['ids'] ?? []);
           if (ids.remove(taskId)) {
             data['ids'] = ids;

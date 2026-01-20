@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/domain/value_objects/email.dart';
 import '../../../../../core/domain/value_objects/password.dart';
+import '../../../../../core/constants/app_strings.dart';
 import '../../../domain/usecases/sign_up_usecase.dart';
 import 'sign_up_event.dart';
 import 'sign_up_state.dart';
@@ -27,9 +28,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     // Validate email format
     if (email.isEmpty) {
-      emailError = 'Email is required';
+      emailError = AppStrings.emailRequired;
     } else if (!_isValidEmail(email)) {
-      emailError = 'Please enter a valid email address';
+      emailError = AppStrings.emailInvalid;
     }
 
     final newState = state.copyWith(
@@ -49,17 +50,15 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     // Validate password (Supabase minimum is 6 characters)
     if (password.isEmpty) {
-      passwordError = 'Password is required';
+      passwordError = AppStrings.passwordRequired;
     } else if (password.length < 6) {
-      passwordError = 'Password must be at least 6 characters long';
+      passwordError = AppStrings.passwordTooShort;
     }
 
     // Re-validate confirm password with the new password
     String? confirmPasswordError;
-    if (state.confirmPassword.isNotEmpty) {
-      if (state.confirmPassword != password) {
-        confirmPasswordError = 'Passwords do not match';
-      }
+    if (state.confirmPassword.isNotEmpty && state.confirmPassword != password) {
+      confirmPasswordError = AppStrings.passwordsDoNotMatch;
     }
 
     emit(state.copyWith(
@@ -86,15 +85,18 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     // Validate confirm password
     if (confirmPassword.isEmpty) {
-      confirmPasswordError = 'Please confirm your password';
+      confirmPasswordError = AppStrings.confirmPasswordHint;
     } else if (confirmPassword != state.password) {
-      confirmPasswordError = 'Passwords do not match';
+      confirmPasswordError = AppStrings.passwordsDoNotMatch;
+<<<<<<< HEAD
       // Debug: Print to see what's happening
       print(
           'Password mismatch: password="${state.password}" (${state.password.length}), confirm="$confirmPassword" (${confirmPassword.length})');
     } else {
       print(
           'Passwords match: password="${state.password}", confirm="$confirmPassword"');
+=======
+>>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
     }
 
     emit(state.copyWith(
@@ -120,6 +122,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(status: SignUpStatus.loading));
 
     try {
+<<<<<<< HEAD
       print(
           'SignUp: email="${state.email}", password="${state.password}" (${state.password.length} chars)');
 
@@ -129,6 +132,11 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       print(
           'SignUp: Calling use case with email=${email.value}, password length=${password.value.length}');
 
+=======
+      final email = Email.fromString(state.email);
+      final password = Password.fromString(state.password);
+
+>>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
       final result = await _signUpUseCase(
         email: email,
         password: password,
@@ -136,22 +144,24 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
       result.fold(
         (failure) {
-          print('SignUp failed: ${_getFailureMessage(failure)}');
           emit(state.copyWith(
             status: SignUpStatus.failure,
             errorMessage: () => _getFailureMessage(failure),
           ));
         },
         (user) {
+<<<<<<< HEAD
           print('SignUp success!');
           emit(state.copyWith(
             status: SignUpStatus.success,
             user: () => user,
           ));
+=======
+          emit(state.copyWith(status: SignUpStatus.success));
+>>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
         },
       );
     } catch (e) {
-      print('SignUp exception: $e');
       emit(state.copyWith(
         status: SignUpStatus.failure,
         errorMessage: () => e.toString(),
@@ -184,6 +194,6 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     } else if (failure.runtimeType.toString().contains('CacheFailure')) {
       return (failure as dynamic).message;
     }
-    return 'An unexpected error occurred';
+    return AppStrings.unexpectedError;
   }
 }

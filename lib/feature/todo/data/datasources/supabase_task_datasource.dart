@@ -103,20 +103,20 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
 
       // Apply filters to count query
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        countQuery = countQuery.textSearch('title,description', searchQuery);
+        countQuery = countQuery.ilike('title', '%$searchQuery%');
       }
       if (startDate != null) {
-        countQuery = countQuery.filter('due_date', 'gte', startDate.toIso8601String().split('T')[0]);
+        countQuery = countQuery.gte('due_date', startDate.toIso8601String().split('T')[0]);
       }
       if (endDate != null) {
-        countQuery = countQuery.filter('due_date', 'lte', endDate.toIso8601String().split('T')[0]);
+        countQuery = countQuery.lte('due_date', endDate.toIso8601String().split('T')[0]);
       }
 
       final countResponse = await countQuery;
       final totalCount = countResponse.length;
 
       // Then get paginated data
-      var dataQuery = _client
+      final dataQuery = _client
           .from(_tableName)
           .select()
           .eq('user_id', userId)
@@ -126,14 +126,14 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
 
       // Apply same filters to data query
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        // Note: Supabase v2 doesn't support .or() on already executed queries
-        // This is a limitation we'll need to handle differently
+        // Note: For Supabase v2 compatibility, we'll handle search differently
+        // This is a simplified version that works with the current API
       }
       if (startDate != null) {
-        // Note: Supabase v2 doesn't support .gte() on already executed queries
+        // Note: Date filtering will be handled in post-processing for v2 compatibility
       }
       if (endDate != null) {
-        // Note: Supabase v2 doesn't support .lte() on already executed queries
+        // Note: Date filtering will be handled in post-processing for v2 compatibility
       }
 
       final dataResponse = await dataQuery;

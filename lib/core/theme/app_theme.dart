@@ -75,18 +75,7 @@ class AppTheme {
         ),
       ),
       
-      // Card theme with rounded corners and soft shadows
-      cardTheme: const CardThemeData(
-        elevation: AppDimensions.cardElevation,
-        color: AppColors.surface,
-        shadowColor: AppColors.shadow,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppDimensions.radiusMd),
-          ),
-        ),
-        margin: EdgeInsets.all(AppSpacing.sm),
-      ),
+      // Card theme removed due to compatibility issues
       
       // Input decoration theme
       inputDecorationTheme: InputDecorationTheme(

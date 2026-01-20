@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:glimfo_todo/feature/todo/domain/entities/category_entity.dart';
-import 'package:glimfo_todo/core/domain/enums/task_enums.dart';
+import 'package:todo_cleanarc/feature/todo/domain/entities/category_entity.dart';
+import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
 
 /// Property-based test generators for CategoryEntity and related objects
 class CategoryGenerators {

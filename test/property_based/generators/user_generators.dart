@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:glimfo_todo/feature/auth/domain/entities/user_entity.dart';
-import 'package:glimfo_todo/core/domain/value_objects/user_id.dart';
-import 'package:glimfo_todo/core/domain/value_objects/email.dart';
+import 'package:todo_cleanarc/feature/auth/domain/entities/user_entity.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/email.dart';
 
 /// Property-based test generators for UserEntity and related objects
 class UserGenerators {

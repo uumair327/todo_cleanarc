@@ -4,10 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../feature/auth/presentation/auth_presentation.dart';
 import '../../feature/todo/presentation/todo_presentation.dart';
-import '../../feature/todo/presentation/bloc/task_form/task_form_bloc.dart';
-import '../../feature/auth/presentation/bloc/profile/profile_bloc.dart';
-import '../../feature/auth/presentation/screens/profile_screen.dart';
-import '../../feature/auth/presentation/screens/settings_screen.dart';
+
+import '../../feature/auth/presentation/screens/email_verification_screen.dart';
+import '../../feature/auth/presentation/screens/auth_callback_screen.dart';
 import '../services/injection_container.dart' as di;
 import '../widgets/widgets.dart';
 
@@ -45,12 +44,78 @@ class AppRouter {
           name: 'splash',
           builder: (context, state) => const SplashScreen(),
         ),
+<<<<<<< HEAD
         GoRoute(
           path: '/sign-in',
           name: 'signIn',
           builder: (context, state) => BlocProvider(
             create: (context) => di.sl<SignInBloc>(),
             child: const SignInScreen(),
+=======
+      ),
+      GoRoute(
+        path: '/sign-up',
+        name: 'signUp',
+        builder: (context, state) => BlocProvider(
+          create: (context) => di.sl<SignUpBloc>(),
+          child: const SignUpScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/email-verification',
+        name: 'emailVerification',
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'] ?? '';
+          return EmailVerificationScreen(email: email);
+        },
+      ),
+      GoRoute(
+        path: '/auth/callback',
+        name: 'authCallback',
+        builder: (context, state) => const AuthCallbackScreen(),
+      ),
+      
+      // Main App Shell with Bottom Navigation
+      ShellRoute(
+        builder: (context, state, child) => MainAppShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/dashboard',
+            name: 'dashboard',
+            builder: (context, state) => BlocProvider(
+              create: (context) => di.sl<DashboardBloc>(),
+              child: const DashboardScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/tasks',
+            name: 'tasks',
+            builder: (context, state) => BlocProvider(
+              create: (context) => di.sl<TaskListBloc>(),
+              child: const TaskListScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/profile',
+            name: 'profile',
+            builder: (context, state) => BlocProvider(
+              create: (context) => di.sl<ProfileBloc>(),
+              child: const ProfileScreen(),
+            ),
+          ),
+        ],
+      ),
+      
+      // Task Form Routes (Modal-style)
+      GoRoute(
+        path: '/task/new',
+        name: 'newTask',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          fullscreenDialog: true,
+          child: BlocProvider(
+            create: (context) => _createTaskFormBloc(context),
+            child: const TaskFormScreen(),
+>>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
           ),
         ),
         GoRoute(

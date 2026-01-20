@@ -10,6 +10,16 @@ import 'sync_manager.dart';
 import '../../feature/auth/data/models/user_model.dart';
 import '../../feature/todo/data/models/task_model.dart';
 
+// Color system imports
+import '../domain/repositories/color_repository.dart';
+import '../domain/repositories/theme_repository.dart';
+import '../infrastructure/color/color_storage_impl.dart';
+import '../infrastructure/theme/theme_storage_impl.dart';
+import 'color_resolver_service.dart';
+import 'color_resolver_service_impl.dart';
+import 'theme_provider_service.dart';
+import 'theme_provider_service_impl.dart';
+
 // Auth imports
 import '../../feature/auth/data/datasources/hive_auth_datasource.dart';
 import '../../feature/auth/data/datasources/supabase_auth_datasource.dart';
@@ -39,7 +49,7 @@ import '../../feature/todo/domain/usecases/search_tasks_usecase.dart';
 import '../../feature/todo/domain/usecases/get_dashboard_stats_usecase.dart';
 import '../../feature/todo/domain/usecases/sync_tasks_usecase.dart';
 import '../../feature/todo/presentation/bloc/task_list/task_list_bloc.dart';
-import '../../feature/todo/presentation/bloc/task_form/task_form_bloc.dart';
+
 import '../../feature/todo/presentation/bloc/dashboard/dashboard_bloc.dart';
 
 final sl = GetIt.instance;
@@ -66,8 +76,18 @@ Future<void> init() async {
     anonKey: AppConstants.supabaseAnonKey,
   );
   
+  // Initialize color system services
+  await _initializeColorServices();
+  
   // Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
+  
+  // Color System - Application Layer
+  sl.registerLazySingleton<ColorResolverService>(
+    () => ColorResolverServiceImpl(
+      colorRepository: sl(),
+    ),
+  );
   
   // External
   sl.registerLazySingleton(() => Supabase.instance.client);
@@ -178,4 +198,72 @@ Future<void> init() async {
     getDashboardStatsUseCase: sl(),
     authRepository: sl(),
   ));
+}
+
+/// Initializes color system services with proper dependency setup
+/// 
+/// This function handles the initialization of theme storage and
+/// theme provider service with proper error handling.
+Future<void> _initializeColorServices() async {
+  try {
+    // First register the repositories
+    sl.registerLazySingleton<ColorRepository>(() => ColorStorageImpl());
+    sl.registerLazySingleton<ThemeRepository>(() => ThemeStorageImpl());
+    
+    // Initialize theme storage
+    final themeRepository = sl<ThemeRepository>();
+    if (themeRepository is ThemeStorageImpl) {
+      await themeRepository.initialize();
+    }
+    
+    // Get default theme for theme provider initialization
+    final defaultThemeResult = await themeRepository.getDefaultTheme();
+    final defaultTheme = defaultThemeResult.fold(
+      (failure) => throw Exception('Failed to get default theme: $failure'),
+      (theme) => theme,
+    );
+    
+    // Register theme provider service with proper initial theme
+    sl.registerLazySingleton<ThemeProviderService>(
+      () => ThemeProviderServiceImpl(
+        themeRepository: sl(),
+        initialTheme: defaultTheme,
+      ),
+    );
+    
+    // Initialize the theme provider service
+    final themeProvider = sl<ThemeProviderService>();
+    final initResult = await themeProvider.initialize();
+    initResult.fold(
+      (failure) => throw Exception('Failed to initialize theme provider: $failure'),
+      (_) => null,
+    );
+  } catch (e) {
+    // Log error but don't crash the app - use fallback theme
+    print('Warning: Color system initialization failed: $e');
+    print('Continuing with default theme configuration');
+  }
+}
+
+/// Cleanup function for dependency injection container
+/// 
+/// Should be called when the application is shutting down to
+/// properly dispose of services and clear resources.
+void dispose() {
+  try {
+    // Dispose theme provider service
+    final themeProvider = sl<ThemeProviderService>();
+    themeProvider.dispose();
+    
+    // Clear color resolver cache
+    final colorResolver = sl<ColorResolverService>();
+    if (colorResolver is ColorResolverServiceImpl) {
+      colorResolver.clearCache();
+    }
+  } catch (e) {
+    print('Warning: Error during service cleanup: $e');
+  }
+  
+  // Reset GetIt instance
+  sl.reset();
 }

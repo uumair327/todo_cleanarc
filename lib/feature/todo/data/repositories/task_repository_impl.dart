@@ -35,6 +35,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
       // Try to sync in the background if connected
       if (await _networkInfo.isConnected) {
+        // ignore: unawaited_futures
         _syncInBackground();
       }
 
@@ -74,6 +75,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
       // Try to sync in the background if connected
       if (await _networkInfo.isConnected) {
+        // ignore: unawaited_futures
         _syncInBackground();
       }
 
@@ -211,7 +213,7 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   ResultVoid syncWithRemote() async {
     if (!await _networkInfo.isConnected) {
-      return Left(NetworkFailure(message: 'No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {

@@ -1,4 +1,5 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import '../../../../../core/constants/app_strings.dart';
 import '../../../domain/usecases/get_dashboard_stats_usecase.dart';
 import '../../../../auth/domain/repositories/auth_repository.dart';
 import 'dashboard_event.dart';
@@ -37,14 +38,14 @@ class DashboardBloc extends HydratedBloc<DashboardEvent, DashboardState> {
     try {
       // Get current user for greeting
       final userResult = await _authRepository.getCurrentUser();
-      
+
       // Get dashboard statistics
       final statsResult = await _getDashboardStatsUseCase();
 
       // Combine results
       final userGreeting = userResult.fold(
         (failure) => _getTimeBasedGreeting(),
-        (user) => user != null 
+        (user) => user != null
             ? _getPersonalizedGreeting(user.email.value)
             : _getTimeBasedGreeting(),
       );
@@ -62,27 +63,26 @@ class DashboardBloc extends HydratedBloc<DashboardEvent, DashboardState> {
   }
 
   String _getPersonalizedGreeting(String email) {
-    final hour = DateTime.now().hour;
     final timeGreeting = _getTimeBasedGreeting();
-    
+
     // Extract name from email (part before @)
     final name = email.split('@').first;
-    final capitalizedName = name.isNotEmpty 
+    final capitalizedName = name.isNotEmpty
         ? name[0].toUpperCase() + name.substring(1).toLowerCase()
-        : 'User';
-    
+        : AppStrings.defaultUser;
+
     return '$timeGreeting, $capitalizedName!';
   }
 
   String _getTimeBasedGreeting() {
     final hour = DateTime.now().hour;
-    
+
     if (hour < 12) {
-      return 'Good Morning';
+      return AppStrings.goodMorning;
     } else if (hour < 17) {
-      return 'Good Afternoon';
+      return AppStrings.goodAfternoon;
     } else {
-      return 'Good Evening';
+      return AppStrings.goodEvening;
     }
   }
 
@@ -90,7 +90,7 @@ class DashboardBloc extends HydratedBloc<DashboardEvent, DashboardState> {
   DashboardState? fromJson(Map<String, dynamic> json) {
     try {
       final stateType = json['type'] as String?;
-      
+
       switch (stateType) {
         case 'loaded':
           // For offline persistence, we'll restore to initial state
@@ -124,6 +124,6 @@ class DashboardBloc extends HydratedBloc<DashboardEvent, DashboardState> {
     } else if (failure.runtimeType.toString().contains('CacheFailure')) {
       return (failure as dynamic).message;
     }
-    return 'An unexpected error occurred while loading dashboard data';
+    return AppStrings.unexpectedError;
   }
 }

@@ -58,6 +58,10 @@ class AppStrings {
   static const String createFirstTask =
       'Create your first task to get started!';
   static const String errorLoadingDashboard = 'Error loading dashboard';
+  static const String goodMorning = 'Good Morning';
+  static const String goodAfternoon = 'Good Afternoon';
+  static const String goodEvening = 'Good Evening';
+  static const String defaultUser = 'User';
 
   // Task List
   static const String tasks = 'Tasks';

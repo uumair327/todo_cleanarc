@@ -33,4 +33,7 @@ abstract class AuthRepository {
   
   // Account management
   ResultVoid deleteAccount();
+  
+  // Email verification
+  ResultVoid resendVerificationEmail(String email);
 }

@@ -42,11 +42,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: BlocListener<SignUpBloc, SignUpState>(
           listener: (context, state) {
+<<<<<<< HEAD
             if (state.status == SignUpStatus.success && state.user != null) {
               // Notify AuthBloc about the authenticated user
               context.read<AuthBloc>().add(AuthUserChanged(state.user!));
               // Navigate to dashboard
               context.go('/dashboard');
+=======
+            if (state.status == SignUpStatus.success) {
+              // Navigate to email verification screen
+              context.go('/email-verification?email=${Uri.encodeComponent(state.email)}');
+>>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
             } else if (state.status == SignUpStatus.failure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

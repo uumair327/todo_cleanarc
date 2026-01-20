@@ -28,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultFuture<UserEntity> signUp({required Email email, required Password password}) async {
     if (!await _networkInfo.isConnected) {
-      return Left(NetworkFailure(message: 'No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {
@@ -197,9 +197,10 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
   ResultVoid deleteAccount() async {
     if (!await _networkInfo.isConnected) {
-      return Left(NetworkFailure(message: 'Internet connection required for account deletion'));
+      return const Left(NetworkFailure(message: 'Internet connection required for account deletion'));
     }
 
     try {
@@ -234,7 +235,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(localUser.toEntity());
       }
 
-      return Left(AuthenticationFailure(message: 'No cached credentials available'));
+      return const Left(AuthenticationFailure(message: 'No cached credentials available'));
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
@@ -314,6 +315,26 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
       return Left(CacheFailure(message: 'Unexpected error: $e'));
+    }
+  }
+
+  @override
+  ResultVoid resendVerificationEmail(String email) async {
+    if (!await _networkInfo.isConnected) {
+      return const Left(NetworkFailure(message: 'No internet connection'));
+    }
+
+    try {
+      await _supabaseDataSource.resendVerificationEmail(email);
+      return const Right(null);
+    } on AuthenticationException catch (e) {
+      return Left(AuthenticationFailure(message: e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(message: 'Unexpected error: $e'));
     }
   }
 }

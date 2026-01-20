@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:glimfo_todo/core/services/injection_container.dart' as di;
+import 'package:todo_cleanarc/core/services/injection_container.dart' as di;
 
 /// Integration test configuration and utilities
 class IntegrationTestConfig {

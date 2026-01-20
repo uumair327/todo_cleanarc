@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+
 
 /// Loading state manager for tracking multiple concurrent operations
 class LoadingManager {
@@ -163,14 +163,7 @@ class LoadingState {
   final double progress;
   final int operationCount;
 
-  const LoadingState._({
-    required this.isLoading,
-    required this.hasError,
-    this.message,
-    this.errorMessage,
-    this.progress = 0.0,
-    this.operationCount = 0,
-  });
+
 
   const LoadingState.idle()
       : isLoading = false,
@@ -181,21 +174,17 @@ class LoadingState {
         operationCount = 0;
 
   const LoadingState.loading({
-    String? message,
-    double progress = 0.0,
-    int operationCount = 1,
+    this.message,
+    this.progress = 0.0,
+    this.operationCount = 1,
   }) : isLoading = true,
         hasError = false,
-        message = message,
-        errorMessage = null,
-        progress = progress,
-        operationCount = operationCount;
+        errorMessage = null;
 
-  const LoadingState.error(String errorMessage)
+  const LoadingState.error(this.errorMessage)
       : isLoading = false,
         hasError = true,
         message = null,
-        errorMessage = errorMessage,
         progress = 0.0,
         operationCount = 0;
 

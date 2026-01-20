@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
+<<<<<<< HEAD
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+=======
+import '../../../../core/theme/build_context_color_extension.dart';
+>>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
 import '../../../../core/widgets/widgets.dart';
 import '../bloc/dashboard/dashboard_bloc.dart';
 import '../bloc/dashboard/dashboard_event.dart';
@@ -26,7 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.surfaceSecondary,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -65,20 +69,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Icon(
             Icons.error_outline,
             size: 64,
-            color: AppColors.error,
+            color: context.colorScheme.error,
           ),
           const SizedBox(height: 16),
           Text(
             AppStrings.errorLoadingDashboard,
             style: AppTheme.textTheme.headlineSmall?.copyWith(
-              color: AppColors.error,
+              color: context.colorScheme.error,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
             style: AppTheme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
+              color: context.onSurfaceSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -119,8 +123,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.primary,
-            AppColors.primary.withOpacity(0.8),
+            context.ongoingTaskColor,
+            context.appColors.ongoingTask.toFlutterColor().withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -128,7 +132,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: context.appColors.ongoingTask.toFlutterColor().withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -140,7 +144,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             greeting,
             style: AppTheme.textTheme.headlineMedium?.copyWith(
-              color: Colors.white,
+              color: context.onOngoingTaskColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -148,7 +152,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             AppStrings.dashProductiveTagline,
             style: AppTheme.textTheme.bodyLarge?.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: context.appColors.onOngoingTask.toFlutterColor().withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -163,7 +167,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           AppStrings.taskOverview,
           style: AppTheme.textTheme.headlineSmall?.copyWith(
-            color: AppColors.textPrimary,
+            color: context.onSurfacePrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -179,25 +183,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildCategoryCard(
               AppStrings.ongoing,
               state.stats.ongoingCount,
-              AppColors.ongoing,
+              context.ongoingTaskColor,
               Icons.play_circle_outline,
             ),
             _buildCategoryCard(
               AppStrings.completed,
               state.stats.completedCount,
-              AppColors.completed,
+              context.completedTaskColor,
               Icons.check_circle_outline,
             ),
             _buildCategoryCard(
               AppStrings.inProcess,
               state.stats.inProcessCount,
-              AppColors.inProcess,
+              context.inProcessTaskColor,
               Icons.hourglass_empty,
             ),
             _buildCategoryCard(
               AppStrings.canceled,
               state.stats.canceledCount,
-              AppColors.canceled,
+              context.canceledTaskColor,
               Icons.cancel_outlined,
             ),
           ],
@@ -215,11 +219,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surfacePrimary,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: context.onSurfacePrimaryOpacity40,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -231,7 +235,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -244,7 +248,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             count.toString(),
             style: AppTheme.textTheme.headlineMedium?.copyWith(
-              color: AppColors.textPrimary,
+              color: context.onSurfacePrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -252,7 +256,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             title,
             style: AppTheme.textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
+              color: context.onSurfaceSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -271,7 +275,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Text(
               AppStrings.recentTasks,
               style: AppTheme.textTheme.headlineSmall?.copyWith(
-                color: AppColors.textPrimary,
+                color: context.onSurfacePrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -283,7 +287,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Text(
                 AppStrings.viewAll,
                 style: AppTheme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.primary,
+                  color: context.ongoingTaskColor,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -333,11 +337,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surfacePrimary,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: context.onSurfacePrimaryOpacity40,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -348,20 +352,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Icon(
             Icons.task_alt,
             size: 48,
-            color: AppColors.textSecondary.withOpacity(0.5),
+            color: context.appColors.onSurfaceSecondary.toFlutterColor().withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             AppStrings.noTasksYet,
             style: AppTheme.textTheme.titleMedium?.copyWith(
-              color: AppColors.textSecondary,
+              color: context.onSurfaceSecondary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             AppStrings.createFirstTask,
             style: AppTheme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary.withOpacity(0.7),
+              color: context.appColors.onSurfaceSecondary.toFlutterColor().withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
