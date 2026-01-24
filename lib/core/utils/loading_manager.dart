@@ -1,10 +1,11 @@
 import 'dart:async';
-
+import '../theme/app_durations.dart';
 
 /// Loading state manager for tracking multiple concurrent operations
 class LoadingManager {
   final Map<String, LoadingOperation> _operations = {};
-  final StreamController<LoadingState> _stateController = StreamController.broadcast();
+  final StreamController<LoadingState> _stateController =
+      StreamController.broadcast();
 
   /// Stream of loading state changes
   Stream<LoadingState> get stateStream => _stateController.stream;
@@ -17,8 +18,10 @@ class LoadingManager {
 
     final operations = _operations.values.toList();
     final hasError = operations.any((op) => op.hasError);
-    final totalProgress = operations.fold<double>(0, (sum, op) => sum + op.progress) / operations.length;
-    
+    final totalProgress =
+        operations.fold<double>(0, (sum, op) => sum + op.progress) /
+            operations.length;
+
     if (hasError) {
       final errorOp = operations.firstWhere((op) => op.hasError);
       return LoadingState.error(errorOp.errorMessage ?? 'An error occurred');
@@ -86,16 +89,16 @@ class LoadingManager {
   /// Get the primary loading message to display
   String _getPrimaryLoadingMessage() {
     if (_operations.isEmpty) return 'Loading...';
-    
+
     // Prioritize operations with custom messages
     final operationsWithMessages = _operations.values
         .where((op) => op.message.isNotEmpty && op.message != 'Loading...')
         .toList();
-    
+
     if (operationsWithMessages.isNotEmpty) {
       return operationsWithMessages.first.message;
     }
-    
+
     return _operations.values.first.message;
   }
 
@@ -151,7 +154,7 @@ class LoadingOperation {
   Duration get duration => DateTime.now().difference(startTime);
 
   /// Whether operation is taking too long
-  bool get isStale => duration > const Duration(seconds: 30);
+  bool get isStale => duration > AppDurations.timeoutLong;
 }
 
 /// Loading state representation
@@ -162,8 +165,6 @@ class LoadingState {
   final String? errorMessage;
   final double progress;
   final int operationCount;
-
-
 
   const LoadingState.idle()
       : isLoading = false,
@@ -177,7 +178,7 @@ class LoadingState {
     this.message,
     this.progress = 0.0,
     this.operationCount = 1,
-  }) : isLoading = true,
+  })  : isLoading = true,
         hasError = false,
         errorMessage = null;
 
@@ -191,7 +192,8 @@ class LoadingState {
   @override
   String toString() {
     if (hasError) return 'LoadingState.error($errorMessage)';
-    if (isLoading) return 'LoadingState.loading($message, ${(progress * 100).toInt()}%)';
+    if (isLoading)
+      return 'LoadingState.loading($message, ${(progress * 100).toInt()}%)';
     return 'LoadingState.idle()';
   }
 }

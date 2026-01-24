@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/theme/app_durations.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/app_colors.dart';
@@ -26,11 +27,11 @@ class _AuthCallbackScreenState extends State<AuthCallbackScreen> {
     try {
       // Get the current session
       final session = Supabase.instance.client.auth.currentSession;
-      
+
       if (session != null) {
         // User is authenticated, trigger auth check
         context.read<AuthBloc>().add(const AuthCheckRequested());
-        
+
         // Show success message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -40,9 +41,9 @@ class _AuthCallbackScreenState extends State<AuthCallbackScreen> {
             ),
           );
         }
-        
+
         // Navigate to dashboard
-        await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(AppDurations.simulatedNetworkDelay);
         if (mounted) {
           context.go('/dashboard');
         }

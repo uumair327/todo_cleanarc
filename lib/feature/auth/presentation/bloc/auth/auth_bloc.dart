@@ -29,7 +29,11 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     try {
       final result = await _authRepository.getCurrentUser();
       result.fold(
-        (failure) => emit(const AuthUnauthenticated()),
+        (failure) {
+          // For any failure during auth check, just proceed to unauthenticated state
+          // This allows the app to work offline and handles server errors gracefully
+          emit(const AuthUnauthenticated());
+        },
         (user) {
           if (user != null) {
             emit(AuthAuthenticated(user));
@@ -39,7 +43,9 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
         },
       );
     } catch (e) {
-      emit(AuthError(e.toString()));
+      // On any unexpected error, proceed to unauthenticated state
+      // This prevents the app from getting stuck on the splash screen
+      emit(const AuthUnauthenticated());
     }
   }
 

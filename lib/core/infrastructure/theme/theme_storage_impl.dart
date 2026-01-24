@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../theme/app_durations.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,14 +42,14 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultFuture<AppThemeConfig> getCurrentTheme() async {
     try {
       _ensureInitialized();
-      
+
       final themeJson = _prefs.getString(_currentThemeKey);
       if (themeJson != null) {
         final themeMap = jsonDecode(themeJson) as Map<String, dynamic>;
         final theme = _themeFromMap(themeMap);
         return Right(theme);
       }
-      
+
       // Return default theme if none is saved
       final defaultTheme = await getDefaultTheme();
       return defaultTheme;
@@ -61,11 +62,11 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultVoid saveTheme(AppThemeConfig theme) async {
     try {
       _ensureInitialized();
-      
+
       final themeMap = _themeToMap(theme);
       final themeJson = jsonEncode(themeMap);
       await _prefs.setString(_currentThemeKey, themeJson);
-      
+
       return const Right(null);
     } catch (e) {
       return Left(CacheFailure(message: 'Failed to save theme: $e'));
@@ -76,12 +77,12 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultFuture<List<AppThemeConfig>> getAvailableThemes() async {
     try {
       _ensureInitialized();
-      
+
       final themes = <AppThemeConfig>[];
-      
+
       // Add built-in themes
       themes.addAll(await _getBuiltInThemes());
-      
+
       // Add custom themes
       final customThemesJson = _prefs.getString(_customThemesKey);
       if (customThemesJson != null) {
@@ -90,7 +91,7 @@ class ThemeStorageImpl implements ThemeRepository {
           themes.add(_themeFromMap(themeMap as Map<String, dynamic>));
         }
       }
-      
+
       return Right(themes);
     } catch (e) {
       return Left(CacheFailure(message: 'Failed to get available themes: $e'));
@@ -101,22 +102,22 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultVoid addCustomTheme(AppThemeConfig theme) async {
     try {
       _ensureInitialized();
-      
+
       final customThemesJson = _prefs.getString(_customThemesKey) ?? '[]';
       final customThemesList = jsonDecode(customThemesJson) as List<dynamic>;
-      
+
       // Check if theme already exists
-      final existingIndex = customThemesList.indexWhere(
-        (themeMap) => themeMap['name'] == theme.name
-      );
-      
+      final existingIndex = customThemesList
+          .indexWhere((themeMap) => themeMap['name'] == theme.name);
+
       if (existingIndex != -1) {
-        return Left(ValidationFailure('Theme with name "${theme.name}" already exists'));
+        return Left(ValidationFailure(
+            'Theme with name "${theme.name}" already exists'));
       }
-      
+
       customThemesList.add(_themeToMap(theme));
       await _prefs.setString(_customThemesKey, jsonEncode(customThemesList));
-      
+
       return const Right(null);
     } catch (e) {
       return Left(CacheFailure(message: 'Failed to add custom theme: $e'));
@@ -127,13 +128,13 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultVoid removeCustomTheme(String themeName) async {
     try {
       _ensureInitialized();
-      
+
       final customThemesJson = _prefs.getString(_customThemesKey) ?? '[]';
       final customThemesList = jsonDecode(customThemesJson) as List<dynamic>;
-      
+
       customThemesList.removeWhere((themeMap) => themeMap['name'] == themeName);
       await _prefs.setString(_customThemesKey, jsonEncode(customThemesList));
-      
+
       return const Right(null);
     } catch (e) {
       return Left(CacheFailure(message: 'Failed to remove custom theme: $e'));
@@ -144,21 +145,21 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultVoid updateCustomTheme(AppThemeConfig theme) async {
     try {
       _ensureInitialized();
-      
+
       final customThemesJson = _prefs.getString(_customThemesKey) ?? '[]';
       final customThemesList = jsonDecode(customThemesJson) as List<dynamic>;
-      
-      final existingIndex = customThemesList.indexWhere(
-        (themeMap) => themeMap['name'] == theme.name
-      );
-      
+
+      final existingIndex = customThemesList
+          .indexWhere((themeMap) => themeMap['name'] == theme.name);
+
       if (existingIndex == -1) {
-        return Left(ValidationFailure('Theme with name "${theme.name}" not found'));
+        return Left(
+            ValidationFailure('Theme with name "${theme.name}" not found'));
       }
-      
+
       customThemesList[existingIndex] = _themeToMap(theme);
       await _prefs.setString(_customThemesKey, jsonEncode(customThemesList));
-      
+
       return const Right(null);
     } catch (e) {
       return Left(CacheFailure(message: 'Failed to update custom theme: $e'));
@@ -168,7 +169,7 @@ class ThemeStorageImpl implements ThemeRepository {
   @override
   Stream<ThemeMode> watchSystemTheme() {
     // Create a stream that listens to system theme changes
-    return Stream.periodic(const Duration(seconds: 1), (_) {
+    return Stream.periodic(AppDurations.monitorInterval, (_) {
       return _getCurrentSystemThemeMode();
     }).distinct();
   }
@@ -187,11 +188,12 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultFuture<bool> getSystemThemeEnabled() async {
     try {
       _ensureInitialized();
-      
+
       final enabled = _prefs.getBool(_systemThemeEnabledKey) ?? true;
       return Right(enabled);
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to get system theme enabled: $e'));
+      return Left(
+          CacheFailure(message: 'Failed to get system theme enabled: $e'));
     }
   }
 
@@ -199,11 +201,12 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultVoid setSystemThemeEnabled(bool enabled) async {
     try {
       _ensureInitialized();
-      
+
       await _prefs.setBool(_systemThemeEnabledKey, enabled);
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure(message: 'Failed to set system theme enabled: $e'));
+      return Left(
+          CacheFailure(message: 'Failed to set system theme enabled: $e'));
     }
   }
 
@@ -241,7 +244,8 @@ class ThemeStorageImpl implements ThemeRepository {
         return saveThemeResult;
       }
 
-      final setSystemThemeResult = await setSystemThemeEnabled(state.isSystemThemeEnabled);
+      final setSystemThemeResult =
+          await setSystemThemeEnabled(state.isSystemThemeEnabled);
       if (setSystemThemeResult.isLeft()) {
         return setSystemThemeResult;
       }
@@ -256,11 +260,11 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultVoid resetToDefaults() async {
     try {
       _ensureInitialized();
-      
+
       await _prefs.remove(_currentThemeKey);
       await _prefs.remove(_systemThemeEnabledKey);
       await _prefs.remove(_customThemesKey);
-      
+
       return const Right(null);
     } catch (e) {
       return Left(CacheFailure(message: 'Failed to reset to defaults: $e'));
@@ -272,7 +276,7 @@ class ThemeStorageImpl implements ThemeRepository {
     try {
       // Check that theme has a valid name
       if (theme.name.isEmpty) {
-        return Left(ValidationFailure('Theme name cannot be empty'));
+        return const Left(ValidationFailure('Theme name cannot be empty'));
       }
 
       // Check that theme has required color tokens
@@ -285,7 +289,8 @@ class ThemeStorageImpl implements ThemeRepository {
 
       for (final tokenName in requiredTokens) {
         if (!theme.colorTokens.containsKey(tokenName)) {
-          return Left(ValidationFailure('Theme missing required color token: $tokenName'));
+          return Left(ValidationFailure(
+              'Theme missing required color token: $tokenName'));
         }
       }
 
@@ -306,7 +311,8 @@ class ThemeStorageImpl implements ThemeRepository {
   }
 
   @override
-  ResultFuture<AppThemeConfig> importTheme(Map<String, dynamic> themeData) async {
+  ResultFuture<AppThemeConfig> importTheme(
+      Map<String, dynamic> themeData) async {
     try {
       final theme = _themeFromMap(themeData);
       return Right(theme);
@@ -332,14 +338,14 @@ class ThemeStorageImpl implements ThemeRepository {
   ResultFuture<AppThemeConfig> getDefaultTheme() async {
     try {
       final colorTokens = _colorRegistry.getAllTokens();
-      
+
       final defaultTheme = AppThemeConfig(
         name: 'Default',
         mode: ThemeMode.system,
         colorTokens: colorTokens,
         isSystemDefault: true,
       );
-      
+
       return Right(defaultTheme);
     } catch (e) {
       return Left(CacheFailure(message: 'Failed to get default theme: $e'));
@@ -349,7 +355,8 @@ class ThemeStorageImpl implements ThemeRepository {
   /// Gets the current system theme mode by checking platform brightness
   ThemeMode _getCurrentSystemThemeMode() {
     try {
-      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      final brightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
       return brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
     } catch (e) {
       // Fallback to light mode if detection fails
@@ -360,7 +367,7 @@ class ThemeStorageImpl implements ThemeRepository {
   /// Gets the built-in themes
   Future<List<AppThemeConfig>> _getBuiltInThemes() async {
     final colorTokens = _colorRegistry.getAllTokens();
-    
+
     return [
       AppThemeConfig(
         name: 'Light',
@@ -390,19 +397,19 @@ class ThemeStorageImpl implements ThemeRepository {
       'mode': theme.mode.name,
       'isSystemDefault': theme.isSystemDefault,
       'colorTokens': theme.colorTokens.map((key, token) => MapEntry(key, {
-        'name': token.name,
-        'lightValue': {
-          'value': token.lightValue.value,
-          'semanticName': token.lightValue.semanticName,
-          'opacity': token.lightValue.opacity,
-        },
-        'darkValue': {
-          'value': token.darkValue.value,
-          'semanticName': token.darkValue.semanticName,
-          'opacity': token.darkValue.opacity,
-        },
-        'role': token.role.name,
-      })),
+            'name': token.name,
+            'lightValue': {
+              'value': token.lightValue.value,
+              'semanticName': token.lightValue.semanticName,
+              'opacity': token.lightValue.opacity,
+            },
+            'darkValue': {
+              'value': token.darkValue.value,
+              'semanticName': token.darkValue.semanticName,
+              'opacity': token.darkValue.opacity,
+            },
+            'role': token.role.name,
+          })),
     };
   }
 

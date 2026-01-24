@@ -4,6 +4,7 @@ import '../../domain/repositories/task_repository.dart';
 import '../datasources/hive_task_datasource.dart';
 import '../datasources/supabase_task_datasource.dart';
 import '../models/task_model.dart';
+import '../services/task_export_import_service.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/error_handler.dart';
@@ -17,14 +18,17 @@ class TaskRepositoryImpl implements TaskRepository {
   final HiveTaskDataSource _hiveDataSource;
   final SupabaseTaskDataSource _supabaseDataSource;
   final NetworkInfo _networkInfo;
+  final TaskExportImportService _exportImportService;
 
   TaskRepositoryImpl({
     required HiveTaskDataSource hiveDataSource,
     required SupabaseTaskDataSource supabaseDataSource,
     required NetworkInfo networkInfo,
+    TaskExportImportService? exportImportService,
   })  : _hiveDataSource = hiveDataSource,
         _supabaseDataSource = supabaseDataSource,
-        _networkInfo = networkInfo;
+        _networkInfo = networkInfo,
+        _exportImportService = exportImportService ?? TaskExportImportService();
 
   @override
   ResultFuture<List<TaskEntity>> getAllTasks() async {
@@ -92,9 +96,9 @@ class TaskRepositoryImpl implements TaskRepository {
       final taskModel = await _hiveDataSource.getTaskById(id.toString());
       return Right(taskModel?.toEntity());
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Failed to retrieve task: ${e.message}'));
     } catch (e) {
-      return Left(CacheFailure(message: 'Unexpected error: $e'));
+      return Left(CacheFailure(message: 'Unable to retrieve task. Please try again.'));
     }
   }
 
@@ -122,9 +126,9 @@ class TaskRepositoryImpl implements TaskRepository {
 
       return const Right(null);
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Failed to create task: ${e.message}'));
     } catch (e) {
-      return Left(CacheFailure(message: 'Unexpected error: $e'));
+      return Left(CacheFailure(message: 'Unable to create task. Please try again.'));
     }
   }
 
@@ -152,9 +156,9 @@ class TaskRepositoryImpl implements TaskRepository {
 
       return const Right(null);
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Failed to update task: ${e.message}'));
     } catch (e) {
-      return Left(CacheFailure(message: 'Unexpected error: $e'));
+      return Left(CacheFailure(message: 'Unable to update task. Please try again.'));
     }
   }
 
@@ -178,9 +182,9 @@ class TaskRepositoryImpl implements TaskRepository {
 
       return const Right(null);
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Failed to delete task: ${e.message}'));
     } catch (e) {
-      return Left(CacheFailure(message: 'Unexpected error: $e'));
+      return Left(CacheFailure(message: 'Unable to delete task. Please try again.'));
     }
   }
 
@@ -191,9 +195,9 @@ class TaskRepositoryImpl implements TaskRepository {
       final taskEntities = localTasks.map((model) => model.toEntity()).toList();
       return Right(taskEntities);
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Failed to retrieve tasks by date: ${e.message}'));
     } catch (e) {
-      return Left(CacheFailure(message: 'Unexpected error: $e'));
+      return Left(CacheFailure(message: 'Unable to retrieve tasks. Please try again.'));
     }
   }
 
@@ -204,16 +208,16 @@ class TaskRepositoryImpl implements TaskRepository {
       final taskEntities = localTasks.map((model) => model.toEntity()).toList();
       return Right(taskEntities);
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Search failed: ${e.message}'));
     } catch (e) {
-      return Left(CacheFailure(message: 'Unexpected error: $e'));
+      return Left(CacheFailure(message: 'Unable to search tasks. Please try again.'));
     }
   }
 
   @override
   ResultVoid syncWithRemote() async {
     if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure(message: 'No internet connection'));
+      return const Left(NetworkFailure(message: 'Cannot sync: No internet connection. Your changes will be synced when you\'re back online.'));
     }
 
     try {
@@ -242,13 +246,13 @@ class TaskRepositoryImpl implements TaskRepository {
 
       return const Right(null);
     } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
+      return Left(NetworkFailure(message: 'Sync failed: ${e.message}. Your changes are saved locally and will sync when connection is restored.'));
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(message: 'Server error during sync: ${e.message}. Please try again later.'));
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Local storage error during sync: ${e.message}'));
     } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error: $e'));
+      return Left(ServerFailure(message: 'Unable to sync tasks. Your changes are saved locally.'));
     }
   }
 
@@ -340,6 +344,77 @@ class TaskRepositoryImpl implements TaskRepository {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
       return Left(CacheFailure(message: 'Unexpected error: $e'));
+    }
+  }
+
+  @override
+  ResultFuture<String> exportTasks(String format) async {
+    try {
+      // Get all tasks from local storage
+      final localTasks = await _hiveDataSource.getAllTasks();
+      final taskEntities = localTasks.map((model) => model.toEntity()).toList();
+
+      // Export based on format
+      final String exportedData;
+      if (format.toLowerCase() == 'csv') {
+        exportedData = _exportImportService.exportToCsv(taskEntities);
+      } else if (format.toLowerCase() == 'json') {
+        exportedData = _exportImportService.exportToJson(taskEntities);
+      } else {
+        return const Left(ValidationFailure('Unsupported export format. Use "csv" or "json".'));
+      }
+
+      return Right(exportedData);
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: 'Failed to export tasks: ${e.message}'));
+    } catch (e) {
+      return Left(CacheFailure(message: 'Unable to export tasks. Please try again.'));
+    }
+  }
+
+  @override
+  ResultFuture<int> importTasks(String data, String format) async {
+    try {
+      // Parse tasks based on format
+      final List<TaskEntity> tasks;
+      if (format.toLowerCase() == 'csv') {
+        tasks = _exportImportService.importFromCsv(data);
+      } else if (format.toLowerCase() == 'json') {
+        tasks = _exportImportService.importFromJson(data);
+      } else {
+        return const Left(ValidationFailure('Unsupported import format. Use "csv" or "json".'));
+      }
+
+      if (tasks.isEmpty) {
+        return const Right(0);
+      }
+
+      // Import tasks to local storage
+      int importedCount = 0;
+      for (final task in tasks) {
+        try {
+          final taskModel = TaskModel.fromEntity(task);
+          await _hiveDataSource.createTask(taskModel);
+          importedCount++;
+        } catch (e) {
+          // Skip invalid tasks but continue importing
+          continue;
+        }
+      }
+
+      // Try to sync to remote if connected
+      if (await _networkInfo.isConnected) {
+        // ignore: unawaited_futures
+        _syncInBackground();
+      }
+
+      return Right(importedCount);
+    } on FormatException catch (e) {
+      return Left(ValidationFailure('Invalid data format: ${e.message}'));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: 'Failed to import tasks: ${e.message}'));
+    } catch (e) {
+      return Left(CacheFailure(message: 'Unable to import tasks. Please try again.'));
     }
   }
 }

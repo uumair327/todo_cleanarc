@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/constants/app_strings.dart';
 
 import '../../../domain/usecases/create_task_usecase.dart';
 import '../../../domain/usecases/update_task_usecase.dart';
@@ -80,7 +81,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
 
     try {
       final result = await _getTaskByIdUseCase(TaskId.fromString(event.taskId));
-      
+
       result.fold(
         (failure) => emit(state.copyWith(
           isLoading: false,
@@ -104,7 +105,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
           } else {
             emit(state.copyWith(
               isLoading: false,
-              errorMessage: 'Task not found',
+              errorMessage: AppStrings.taskNotFound,
             ));
           }
         },
@@ -121,70 +122,84 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
     TaskFormTitleChanged event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(state.copyWith(
-      title: event.title,
-      clearError: true,
-    ).validateForm());
+    emit(state
+        .copyWith(
+          title: event.title,
+          clearError: true,
+        )
+        .validateForm());
   }
 
   void _onTaskFormDescriptionChanged(
     TaskFormDescriptionChanged event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(state.copyWith(
-      description: event.description,
-      clearError: true,
-    ).validateForm());
+    emit(state
+        .copyWith(
+          description: event.description,
+          clearError: true,
+        )
+        .validateForm());
   }
 
   void _onTaskFormDueDateChanged(
     TaskFormDueDateChanged event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(state.copyWith(
-      dueDate: event.dueDate,
-      clearError: true,
-    ).validateForm());
+    emit(state
+        .copyWith(
+          dueDate: event.dueDate,
+          clearError: true,
+        )
+        .validateForm());
   }
 
   void _onTaskFormDueTimeChanged(
     TaskFormDueTimeChanged event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(state.copyWith(
-      dueTime: event.dueTime,
-      clearError: true,
-    ).validateForm());
+    emit(state
+        .copyWith(
+          dueTime: event.dueTime,
+          clearError: true,
+        )
+        .validateForm());
   }
 
   void _onTaskFormCategoryChanged(
     TaskFormCategoryChanged event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(state.copyWith(
-      category: event.category,
-      clearError: true,
-    ).validateForm());
+    emit(state
+        .copyWith(
+          category: event.category,
+          clearError: true,
+        )
+        .validateForm());
   }
 
   void _onTaskFormPriorityChanged(
     TaskFormPriorityChanged event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(state.copyWith(
-      priority: event.priority,
-      clearError: true,
-    ).validateForm());
+    emit(state
+        .copyWith(
+          priority: event.priority,
+          clearError: true,
+        )
+        .validateForm());
   }
 
   void _onTaskFormProgressChanged(
     TaskFormProgressChanged event,
     Emitter<TaskFormState> emit,
   ) {
-    emit(state.copyWith(
-      progressPercentage: event.progressPercentage,
-      clearError: true,
-    ).validateForm());
+    emit(state
+        .copyWith(
+          progressPercentage: event.progressPercentage,
+          clearError: true,
+        )
+        .validateForm());
   }
 
   Future<void> _onTaskFormSubmitted(
@@ -193,7 +208,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
   ) async {
     if (!state.isValid) {
       emit(state.copyWith(
-        errorMessage: 'Please fill in all required fields correctly',
+        errorMessage: AppStrings.fillRequiredFields,
       ));
       return;
     }
@@ -215,7 +230,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
         );
 
         final result = await _updateTaskUseCase(updatedTask);
-        
+
         result.fold(
           (failure) => emit(state.copyWith(
             isLoading: false,
@@ -243,7 +258,7 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
         );
 
         final result = await _createTaskUseCase(newTask);
-        
+
         result.fold(
           (failure) => emit(state.copyWith(
             isLoading: false,
@@ -280,6 +295,6 @@ class TaskFormBloc extends Bloc<TaskFormEvent, TaskFormState> {
     } else if (failure.runtimeType.toString().contains('ValidationFailure')) {
       return (failure as dynamic).message;
     }
-    return 'An unexpected error occurred';
+    return AppStrings.unexpectedError;
   }
 }

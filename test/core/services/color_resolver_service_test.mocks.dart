@@ -6,12 +6,13 @@
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
-import 'package:flutter/material.dart' as _i6;
+import 'package:flutter/material.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:todo_cleanarc/core/domain/entities/color_token.dart' as _i5;
+import 'package:todo_cleanarc/core/domain/entities/color_token.dart' as _i6;
+import 'package:todo_cleanarc/core/domain/enums/color_enums.dart' as _i8;
 import 'package:todo_cleanarc/core/domain/repositories/color_repository.dart'
     as _i3;
-import 'package:todo_cleanarc/core/error/failures.dart' as _i7;
+import 'package:todo_cleanarc/core/error/failures.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -45,53 +46,47 @@ class MockColorRepository extends _i1.Mock implements _i3.ColorRepository {
   }
 
   @override
-  _i4.Future<_i2.Either<_i7.Failure, _i5.ColorToken?>> getColorToken(
-    String? tokenName,
-    _i6.ThemeMode? mode,
-  ) =>
+  _i4.Future<
+      _i2.Either<_i5.Failure, Map<String, _i6.ColorToken>>> getColorTokens(
+          _i7.ThemeMode? mode) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getColorToken,
-          [
-            tokenName,
-            mode,
-          ],
+          #getColorTokens,
+          [mode],
         ),
-        returnValue: _i4.Future<_i2.Either<_i7.Failure, _i5.ColorToken?>>.value(
-            _FakeEither_0<_i7.Failure, _i5.ColorToken?>(
+        returnValue: _i4
+            .Future<_i2.Either<_i5.Failure, Map<String, _i6.ColorToken>>>.value(
+            _FakeEither_0<_i5.Failure, Map<String, _i6.ColorToken>>(
           this,
           Invocation.method(
-            #getColorToken,
-            [
-              tokenName,
-              mode,
-            ],
+            #getColorTokens,
+            [mode],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i7.Failure, _i5.ColorToken?>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, Map<String, _i6.ColorToken>>>);
 
   @override
-  _i4.Future<_i2.Either<_i7.Failure, Map<String, _i5.ColorToken>>>
-      getColorTokens(_i6.ThemeMode? mode) => (super.noSuchMethod(
-            Invocation.method(
-              #getColorTokens,
-              [mode],
-            ),
-            returnValue: _i4.Future<
-                    _i2.Either<_i7.Failure, Map<String, _i5.ColorToken>>>.value(
-                _FakeEither_0<_i7.Failure, Map<String, _i5.ColorToken>>(
-              this,
-              Invocation.method(
-                #getColorTokens,
-                [mode],
-              ),
-            )),
-          ) as _i4.Future<_i2.Either<_i7.Failure, Map<String, _i5.ColorToken>>>);
+  _i4.Future<_i2.Either<_i5.Failure, void>> validateColorTokens(
+          Map<String, _i6.ColorToken>? tokens) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #validateColorTokens,
+          [tokens],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #validateColorTokens,
+            [tokens],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 
   @override
-  _i4.Future<_i2.Either<_i7.Failure, bool>> checkAccessibilityCompliance(
-    _i5.ColorToken? foreground,
-    _i5.ColorToken? background,
+  _i4.Future<_i2.Either<_i5.Failure, bool>> checkAccessibilityCompliance(
+    _i6.ColorToken? foreground,
+    _i6.ColorToken? background,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -101,8 +96,8 @@ class MockColorRepository extends _i1.Mock implements _i3.ColorRepository {
             background,
           ],
         ),
-        returnValue: _i4.Future<_i2.Either<_i7.Failure, bool>>.value(
-            _FakeEither_0<_i7.Failure, bool>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, bool>>.value(
+            _FakeEither_0<_i5.Failure, bool>(
           this,
           Invocation.method(
             #checkAccessibilityCompliance,
@@ -112,67 +107,192 @@ class MockColorRepository extends _i1.Mock implements _i3.ColorRepository {
             ],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i7.Failure, bool>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, bool>>);
 
   @override
-  _i4.Future<_i2.Either<_i7.Failure, void>> validateRequiredTokens(
-    Map<String, _i5.ColorToken>? tokens,
-    List<String>? requiredTokens,
+  _i4.Future<_i2.Either<_i5.Failure, double>> calculateContrastRatio(
+    _i6.ColorToken? foreground,
+    _i6.ColorToken? background,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #calculateContrastRatio,
+          [
+            foreground,
+            background,
+          ],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, double>>.value(
+            _FakeEither_0<_i5.Failure, double>(
+          this,
+          Invocation.method(
+            #calculateContrastRatio,
+            [
+              foreground,
+              background,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, double>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i6.ColorToken?>> getColorToken(
+    String? tokenName,
+    _i7.ThemeMode? mode,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getColorToken,
+          [
+            tokenName,
+            mode,
+          ],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.ColorToken?>>.value(
+            _FakeEither_0<_i5.Failure, _i6.ColorToken?>(
+          this,
+          Invocation.method(
+            #getColorToken,
+            [
+              tokenName,
+              mode,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.ColorToken?>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, bool>> hasColorToken(
+    String? tokenName,
+    _i7.ThemeMode? mode,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #hasColorToken,
+          [
+            tokenName,
+            mode,
+          ],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, bool>>.value(
+            _FakeEither_0<_i5.Failure, bool>(
+          this,
+          Invocation.method(
+            #hasColorToken,
+            [
+              tokenName,
+              mode,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, bool>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, List<_i6.ColorToken>>>
+      getColorTokensByRole(
+    _i8.ColorRole? role,
+    _i7.ThemeMode? mode,
+  ) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #getColorTokensByRole,
+              [
+                role,
+                mode,
+              ],
+            ),
+            returnValue:
+                _i4.Future<_i2.Either<_i5.Failure, List<_i6.ColorToken>>>.value(
+                    _FakeEither_0<_i5.Failure, List<_i6.ColorToken>>(
+              this,
+              Invocation.method(
+                #getColorTokensByRole,
+                [
+                  role,
+                  mode,
+                ],
+              ),
+            )),
+          ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.ColorToken>>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> validateRequiredTokens(
+    Map<String, _i6.ColorToken>? tokens,
+    List<String>? requiredTokenNames,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #validateRequiredTokens,
           [
             tokens,
-            requiredTokens,
+            requiredTokenNames,
           ],
         ),
-        returnValue: _i4.Future<_i2.Either<_i7.Failure, void>>.value(
-            _FakeEither_0<_i7.Failure, void>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
             #validateRequiredTokens,
             [
               tokens,
-              requiredTokens,
+              requiredTokenNames,
             ],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i7.Failure, void>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 
   @override
-  _i4.Future<_i2.Either<_i7.Failure, void>> validateTokenNaming(
-          Map<String, _i5.ColorToken>? tokens) =>
+  _i4.Future<_i2.Either<_i5.Failure, Map<String, _i6.ColorToken>>>
+      getDefaultColorTokens() => (super.noSuchMethod(
+            Invocation.method(
+              #getDefaultColorTokens,
+              [],
+            ),
+            returnValue: _i4.Future<
+                    _i2.Either<_i5.Failure, Map<String, _i6.ColorToken>>>.value(
+                _FakeEither_0<_i5.Failure, Map<String, _i6.ColorToken>>(
+              this,
+              Invocation.method(
+                #getDefaultColorTokens,
+                [],
+              ),
+            )),
+          ) as _i4
+              .Future<_i2.Either<_i5.Failure, Map<String, _i6.ColorToken>>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> validateTokenNaming(
+          Map<String, _i6.ColorToken>? tokens) =>
       (super.noSuchMethod(
         Invocation.method(
           #validateTokenNaming,
           [tokens],
         ),
-        returnValue: _i4.Future<_i2.Either<_i7.Failure, void>>.value(
-            _FakeEither_0<_i7.Failure, void>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
             #validateTokenNaming,
             [tokens],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i7.Failure, void>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 
   @override
-  _i4.Future<_i2.Either<_i7.Failure, void>> validateTokenDependencies(
-          Map<String, _i5.ColorToken>? tokens) =>
+  _i4.Future<_i2.Either<_i5.Failure, void>> validateTokenDependencies(
+          Map<String, _i6.ColorToken>? tokens) =>
       (super.noSuchMethod(
         Invocation.method(
           #validateTokenDependencies,
           [tokens],
         ),
-        returnValue: _i4.Future<_i2.Either<_i7.Failure, void>>.value(
-            _FakeEither_0<_i7.Failure, void>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
             #validateTokenDependencies,
             [tokens],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i7.Failure, void>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 }

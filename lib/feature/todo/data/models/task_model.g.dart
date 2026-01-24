@@ -30,13 +30,14 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       updatedAt: fields[10] as DateTime,
       isDeleted: fields[11] as bool,
       needsSync: fields[12] as bool,
+      attachmentIds: (fields[13] as List).cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, TaskModel obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,7 +63,9 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       ..writeByte(11)
       ..write(obj.isDeleted)
       ..writeByte(12)
-      ..write(obj.needsSync);
+      ..write(obj.needsSync)
+      ..writeByte(13)
+      ..write(obj.attachmentIds);
   }
 
   @override

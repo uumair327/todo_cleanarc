@@ -14,11 +14,11 @@ class AppStrings {
   static const String splashTagline = 'Organize your life, one task at a time';
 
   // Auth - Common
-  static const String emailLabel = 'Email Address';
-  static const String emailHint = 'Enter your email address';
-  static const String passwordLabel = 'Password';
+  static const String emailLabel = 'Enter Email ID*';
+  static const String emailHint = 'Enter Email ID';
+  static const String passwordLabel = 'Password*';
   static const String passwordHint = 'Enter your password';
-  static const String confirmPasswordLabel = 'Confirm Password';
+  static const String confirmPasswordLabel = 'Confirm Password*';
   static const String confirmPasswordHint = 'Confirm your password';
 
   // Sign In
@@ -81,9 +81,9 @@ class AppStrings {
   static const String createTask = 'Create Task';
   static const String editTask = 'Edit Task';
   static const String updateTask = 'Update Task';
-  static const String taskTitleLabel = 'Task Title';
+  static const String taskTitleLabel = 'Task Title*';
   static const String taskTitleHint = 'Enter task title';
-  static const String descriptionLabel = 'Description';
+  static const String descriptionLabel = 'Description*';
   static const String descriptionHint = 'Enter task description';
   static const String dueDateLabel = 'Due Date';
   static const String dueTimeLabel = 'Due Time';
@@ -107,4 +107,7 @@ class AppStrings {
   static const String userNotAuthenticated = 'User not authenticated';
   static const String somethingWentWrong = 'Something went wrong';
   static const String unknownError = 'Unknown error occurred';
+  static const String taskNotFound = 'Task not found';
+  static const String fillRequiredFields =
+      'Please fill in all required fields correctly';
 }

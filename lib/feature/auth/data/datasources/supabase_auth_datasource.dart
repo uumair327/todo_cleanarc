@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/constants/auth_constants.dart';
+import '../../../../core/theme/app_durations.dart';
 
 abstract class SupabaseAuthDataSource {
   Future<UserModel> signUp(String email, String password);
@@ -21,7 +22,7 @@ abstract class SupabaseAuthDataSource {
 class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
   final SupabaseClient _client;
   static const int _maxRetries = 3;
-  static const Duration _retryDelay = Duration(seconds: 2);
+  static const Duration _retryDelay = AppDurations.retryBase;
 
   SupabaseAuthDataSourceImpl(this._client);
 
@@ -53,7 +54,7 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
 
   String _getAuthErrorMessage(AuthException e) {
     final message = e.message.toLowerCase();
-    if (message.contains('invalid login credentials') || 
+    if (message.contains('invalid login credentials') ||
         message.contains('invalid email or password')) {
       return 'Invalid email or password. Please check your credentials.';
     } else if (message.contains('email not confirmed')) {
@@ -76,7 +77,8 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
       );
 
       if (response.user == null) {
-        throw const AuthenticationException(message: 'Failed to create user account');
+        throw const AuthenticationException(
+            message: 'Failed to create user account');
       }
 
       // For email confirmation flow, we create a basic user model
@@ -101,7 +103,8 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
       );
 
       if (response.user == null) {
-        throw const AuthenticationException(message: 'Invalid email or password');
+        throw const AuthenticationException(
+            message: 'Invalid email or password');
       }
 
       // Get user profile from the users table
@@ -133,11 +136,11 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
             .select()
             .eq('id', response.user!.id)
             .maybeSingle();
-        
+
         if (retryProfile != null) {
           return UserModel.fromJson(retryProfile);
         }
-        
+
         // Return a basic user model if all else fails
         return UserModel(
           id: response.user!.id,
@@ -163,11 +166,8 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
       if (user == null) return null;
 
       // Get user profile from the users table
-      final userProfile = await _client
-          .from('users')
-          .select()
-          .eq('id', user.id)
-          .maybeSingle();
+      final userProfile =
+          await _client.from('users').select().eq('id', user.id).maybeSingle();
 
       return userProfile != null ? UserModel.fromJson(userProfile) : null;
     } catch (e) {
@@ -197,20 +197,15 @@ class SupabaseAuthDataSourceImpl implements SupabaseAuthDataSource {
     return _executeWithRetry(() async {
       final user = _client.auth.currentUser;
       if (user == null) {
-        throw const AuthenticationException(message: 'No authenticated user found');
+        throw const AuthenticationException(
+            message: 'No authenticated user found');
       }
 
       // Delete user data from tasks table
-      await _client
-          .from('tasks')
-          .delete()
-          .eq('user_id', user.id);
+      await _client.from('tasks').delete().eq('user_id', user.id);
 
       // Delete user profile
-      await _client
-          .from('users')
-          .delete()
-          .eq('id', user.id);
+      await _client.from('users').delete().eq('id', user.id);
 
       // Delete the auth user (this requires admin privileges in production)
       // In a real app, you'd typically call an edge function or admin API

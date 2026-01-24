@@ -2,14 +2,16 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import '../theme/app_durations.dart';
+import '../services/app_logger.dart';
 import 'exceptions.dart';
 import 'failures.dart';
 
 /// Enhanced error handler with retry mechanisms and user-friendly messages
 class ErrorHandler {
   static const int _maxRetries = 3;
-  static const Duration _baseDelay = Duration(seconds: 1);
-  static const Duration _maxDelay = Duration(seconds: 30);
+  static const Duration _baseDelay = AppDurations.retryQuick;
+  static const Duration _maxDelay = AppDurations.retryMax;
 
   /// Execute an operation with exponential backoff retry
   static Future<T> executeWithRetry<T>(
@@ -27,15 +29,17 @@ class ErrorHandler {
         return await operation();
       } catch (error) {
         attempts++;
-        
+
         // Check if we should retry this error
-        if (attempts >= maxRetries || (shouldRetry != null && !shouldRetry(error))) {
+        if (attempts >= maxRetries ||
+            (shouldRetry != null && !shouldRetry(error))) {
           rethrow;
         }
 
         // Log the retry attempt
         if (kDebugMode) {
-          print('Retry attempt $attempts/$maxRetries after error: $error');
+          final logger = AppLogger();
+          logger.debug('Retry attempt $attempts/$maxRetries after error', error);
         }
 
         // Wait before retrying with exponential backoff
@@ -65,20 +69,25 @@ class ErrorHandler {
     } else if (exception is ValidationException) {
       return ValidationFailure(_getValidationErrorMessage(exception));
     } else if (exception is SocketException) {
-      return const NetworkFailure(message: 'No internet connection. Please check your network settings.');
+      return const NetworkFailure(
+          message:
+              'No internet connection. Please check your network settings.');
     } else if (exception is TimeoutException) {
-      return const NetworkFailure(message: 'Request timed out. Please try again.');
+      return const NetworkFailure(
+          message: 'Request timed out. Please try again.');
     } else if (exception is FormatException) {
-      return const ServerFailure(message: 'Invalid data format received from server.');
+      return const ServerFailure(
+          message: 'Invalid data format received from server.');
     } else {
-      return const ServerFailure(message: 'An unexpected error occurred. Please try again.');
+      return const ServerFailure(
+          message: 'An unexpected error occurred. Please try again.');
     }
   }
 
   /// Get user-friendly network error message
   static String _getNetworkErrorMessage(NetworkException exception) {
     final message = exception.message.toLowerCase();
-    
+
     if (message.contains('no internet') || message.contains('network')) {
       return 'No internet connection. Please check your network settings and try again.';
     } else if (message.contains('timeout')) {
@@ -93,7 +102,7 @@ class ErrorHandler {
   /// Get user-friendly server error message
   static String _getServerErrorMessage(ServerException exception) {
     final message = exception.message.toLowerCase();
-    
+
     if (message.contains('500') || message.contains('internal server')) {
       return 'Server is temporarily unavailable. Please try again later.';
     } else if (message.contains('404') || message.contains('not found')) {
@@ -112,7 +121,7 @@ class ErrorHandler {
   /// Get user-friendly cache error message
   static String _getCacheErrorMessage(CacheException exception) {
     final message = exception.message.toLowerCase();
-    
+
     if (message.contains('storage') || message.contains('disk')) {
       return 'Storage error occurred. Please free up some space and try again.';
     } else if (message.contains('corrupt') || message.contains('invalid')) {
@@ -125,8 +134,9 @@ class ErrorHandler {
   /// Get user-friendly authentication error message
   static String _getAuthErrorMessage(AuthenticationException exception) {
     final message = exception.message.toLowerCase();
-    
-    if (message.contains('invalid credentials') || message.contains('wrong password')) {
+
+    if (message.contains('invalid credentials') ||
+        message.contains('wrong password')) {
       return 'Invalid email or password. Please check your credentials and try again.';
     } else if (message.contains('user not found')) {
       return 'No account found with this email address.';
@@ -144,7 +154,7 @@ class ErrorHandler {
   /// Get user-friendly validation error message
   static String _getValidationErrorMessage(ValidationException exception) {
     final message = exception.message.toLowerCase();
-    
+
     if (message.contains('email')) {
       return 'Please enter a valid email address.';
     } else if (message.contains('password')) {
@@ -163,16 +173,16 @@ class ErrorHandler {
     } else if (error is ServerException) {
       final message = error.message.toLowerCase();
       // Don't retry client errors (4xx), but retry server errors (5xx)
-      return message.contains('500') || 
-             message.contains('502') || 
-             message.contains('503') || 
-             message.contains('504');
+      return message.contains('500') ||
+          message.contains('502') ||
+          message.contains('503') ||
+          message.contains('504');
     } else if (error is SocketException) {
       return true; // Retry connection errors
     } else if (error is TimeoutException) {
       return true; // Retry timeouts
     }
-    
+
     return false; // Don't retry other errors
   }
 }

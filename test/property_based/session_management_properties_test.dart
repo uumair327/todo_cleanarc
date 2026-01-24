@@ -2,11 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
-import 'package:glimfo_todo/feature/auth/domain/repositories/auth_repository.dart';
-import 'package:glimfo_todo/feature/auth/domain/usecases/sign_in_usecase.dart';
-import 'package:glimfo_todo/feature/auth/domain/usecases/sign_out_usecase.dart';
-import 'package:glimfo_todo/core/domain/value_objects/email.dart';
-import 'package:glimfo_todo/core/domain/value_objects/password.dart';
+import 'package:todo_cleanarc/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:todo_cleanarc/feature/auth/domain/usecases/sign_in_usecase.dart';
+import 'package:todo_cleanarc/feature/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/email.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/password.dart';
 
 import 'generators/user_generators.dart';
 import 'session_management_properties_test.mocks.dart';

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/domain/value_objects/email.dart';
 import '../../../../../core/domain/value_objects/password.dart';
 import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/utils/validation_utils.dart';
 import '../../../domain/usecases/sign_up_usecase.dart';
 import 'sign_up_event.dart';
 import 'sign_up_state.dart';
@@ -24,14 +25,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) {
     final email = event.email;
-    String? emailError;
-
-    // Validate email format
-    if (email.isEmpty) {
-      emailError = AppStrings.emailRequired;
-    } else if (!_isValidEmail(email)) {
-      emailError = AppStrings.emailInvalid;
-    }
+    final emailError = ValidationUtils.validateEmail(email);
 
     final newState = state.copyWith(
       email: email,
@@ -46,20 +40,15 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) {
     final password = event.password;
-    String? passwordError;
-
-    // Validate password (Supabase minimum is 6 characters)
-    if (password.isEmpty) {
-      passwordError = AppStrings.passwordRequired;
-    } else if (password.length < 6) {
-      passwordError = AppStrings.passwordTooShort;
-    }
+    final passwordError = ValidationUtils.validatePassword(password, minLength: 6);
 
     // Re-validate confirm password with the new password
-    String? confirmPasswordError;
-    if (state.confirmPassword.isNotEmpty && state.confirmPassword != password) {
-      confirmPasswordError = AppStrings.passwordsDoNotMatch;
-    }
+    final confirmPasswordError = state.confirmPassword.isNotEmpty
+        ? ValidationUtils.validatePasswordConfirmation(
+            state.confirmPassword,
+            password,
+          )
+        : null;
 
     emit(state.copyWith(
       password: password,
@@ -81,23 +70,10 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) {
     final confirmPassword = event.confirmPassword;
-    String? confirmPasswordError;
-
-    // Validate confirm password
-    if (confirmPassword.isEmpty) {
-      confirmPasswordError = AppStrings.confirmPasswordHint;
-    } else if (confirmPassword != state.password) {
-      confirmPasswordError = AppStrings.passwordsDoNotMatch;
-<<<<<<< HEAD
-      // Debug: Print to see what's happening
-      print(
-          'Password mismatch: password="${state.password}" (${state.password.length}), confirm="$confirmPassword" (${confirmPassword.length})');
-    } else {
-      print(
-          'Passwords match: password="${state.password}", confirm="$confirmPassword"');
-=======
->>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
-    }
+    final confirmPasswordError = ValidationUtils.validatePasswordConfirmation(
+      confirmPassword,
+      state.password,
+    );
 
     emit(state.copyWith(
       confirmPassword: confirmPassword,
@@ -122,21 +98,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(status: SignUpStatus.loading));
 
     try {
-<<<<<<< HEAD
-      print(
-          'SignUp: email="${state.email}", password="${state.password}" (${state.password.length} chars)');
-
       final email = Email.fromString(state.email);
       final password = Password.fromString(state.password);
 
-      print(
-          'SignUp: Calling use case with email=${email.value}, password length=${password.value.length}');
-
-=======
-      final email = Email.fromString(state.email);
-      final password = Password.fromString(state.password);
-
->>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
       final result = await _signUpUseCase(
         email: email,
         password: password,
@@ -150,15 +114,10 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
           ));
         },
         (user) {
-<<<<<<< HEAD
-          print('SignUp success!');
           emit(state.copyWith(
             status: SignUpStatus.success,
             user: () => user,
           ));
-=======
-          emit(state.copyWith(status: SignUpStatus.success));
->>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
         },
       );
     } catch (e) {
@@ -167,10 +126,6 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         errorMessage: () => e.toString(),
       ));
     }
-  }
-
-  bool _isValidEmail(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
   bool _isFormValid(SignUpState state) {

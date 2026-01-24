@@ -27,72 +27,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Profile',
-          style: AppTypography.headlineMedium.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
-      ),
-      backgroundColor: AppColors.background,
-      body: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          if (state is ProfileLogoutSuccess) {
-            // Trigger auth state change
-            context.read<AuthBloc>().add(const AuthCheckRequested());
-            // Navigate to sign in
-            context.go('/signin');
-          } else if (state is ProfileDeleteAccountSuccess) {
-            // Trigger auth state change
-            context.read<AuthBloc>().add(const AuthCheckRequested());
-            // Navigate to sign in
-            context.go('/signin');
-            // Show success message
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account deleted successfully'),
-                backgroundColor: AppColors.success,
-              ),
-            );
-          } else if (state is ProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is ProfileLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ),
-            );
-          }
-
-          if (state is ProfileLoaded) {
-            return _buildProfileContent(context, state);
-          }
-
-          if (state is ProfileError) {
-            return _buildErrorContent(context, state.message);
-          }
-
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileLogoutSuccess) {
+          // Trigger auth state change
+          context.read<AuthBloc>().add(const AuthCheckRequested());
+          // Navigate to sign in
+          context.go('/signin');
+        } else if (state is ProfileDeleteAccountSuccess) {
+          // Trigger auth state change
+          context.read<AuthBloc>().add(const AuthCheckRequested());
+          // Navigate to sign in
+          context.go('/signin');
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account deleted successfully'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        } else if (state is ProfileError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is ProfileLoading) {
           return const Center(
             child: CircularProgressIndicator(
               color: AppColors.primary,
             ),
           );
-        },
-      ),
+        }
+
+        if (state is ProfileLoaded) {
+          return _buildProfileContent(context, state);
+        }
+
+        if (state is ProfileError) {
+          return _buildErrorContent(context, state.message);
+        }
+
+        return const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primary,
+          ),
+        );
+      },
     );
   }
 
@@ -114,11 +99,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 color: AppColors.surface,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.textSecondary.withOpacity(0.1),
-                    blurRadius: 8,
+                    color: AppColors.textSecondary.withValues(alpha: 0.1),
+                    blurRadius: AppDimensions.radiusSm,
                     offset: const Offset(0, 2),
                   ),
                 ],
@@ -129,15 +114,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     children: [
                       Container(
-                        width: 60,
-                        height: 60,
+                        width: AppDimensions.avatarSizeMedium,
+                        height: AppDimensions.avatarSizeMedium,
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(30),
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(
+                              AppDimensions.avatarSizeMedium / 2),
                         ),
                         child: const Icon(
                           Icons.person,
-                          size: 30,
+                          size: AppDimensions.avatarSizeMedium / 2,
                           color: AppColors.primary,
                         ),
                       ),
@@ -238,10 +224,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textSecondary.withOpacity(0.1),
+            color: AppColors.textSecondary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -250,18 +236,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: ListTile(
         contentPadding: const EdgeInsets.all(AppSpacing.md),
         leading: Container(
-          width: 48,
-          height: 48,
+          width: AppSpacing.xxl,
+          height: AppSpacing.xxl,
           decoration: BoxDecoration(
-            color: isDestructive 
-                ? AppColors.error.withOpacity(0.1)
-                : AppColors.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(24),
+            color: isDestructive
+                ? AppColors.error.withValues(alpha: 0.1)
+                : AppColors.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppSpacing.xxl / 2),
           ),
           child: Icon(
             icon,
             color: isDestructive ? AppColors.error : AppColors.primary,
-            size: 24,
+            size: AppDimensions.iconSize,
           ),
         ),
         title: Text(
@@ -295,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             const Icon(
               Icons.error_outline,
-              size: 64,
+              size: AppSpacing.xxxl,
               color: AppColors.error,
             ),
             const SizedBox(height: AppSpacing.md),
@@ -404,7 +390,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              context.read<ProfileBloc>().add(const ProfileDeleteAccountRequested());
+              context
+                  .read<ProfileBloc>()
+                  .add(const ProfileDeleteAccountRequested());
             },
             child: Text(
               'Delete',
@@ -421,8 +409,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   String _formatDate(DateTime date) {
     final months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ];
     return '${months[date.month - 1]} ${date.year}';
   }

@@ -7,6 +7,7 @@ import '../../../../core/error/error_handler.dart';
 import '../../../../core/utils/typedef.dart';
 import '../../../../core/utils/pagination_helper.dart';
 import '../../../../core/utils/loading_manager.dart';
+import '../../../../core/theme/app_durations.dart';
 
 abstract class SupabaseTaskDataSource {
   Future<List<TaskModel>> getAllTasks(String userId);
@@ -22,7 +23,8 @@ abstract class SupabaseTaskDataSource {
   Future<TaskModel> createTask(TaskModel task);
   Future<TaskModel> updateTask(TaskModel task);
   Future<void> deleteTask(String id);
-  Future<List<TaskModel>> getTasksByDateRange(String userId, DateTime start, DateTime end);
+  Future<List<TaskModel>> getTasksByDateRange(
+      String userId, DateTime start, DateTime end);
   Future<List<TaskModel>> searchTasks(String userId, String query);
   Future<void> batchCreateTasks(List<TaskModel> tasks);
   Future<void> batchUpdateTasks(List<TaskModel> tasks);
@@ -36,7 +38,7 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
   final SupabaseClient _client;
   static const String _tableName = 'tasks';
   static const int _maxRetries = 3;
-  static const Duration _retryDelay = Duration(seconds: 2);
+  static const Duration _retryDelay = AppDurations.retryBase;
 
   SupabaseTaskDataSourceImpl(this._client);
 
@@ -53,7 +55,7 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
   Future<List<TaskModel>> getAllTasks(String userId) async {
     const operationId = 'get_all_tasks';
     loadingManager.startOperation(operationId, message: 'Loading tasks...');
-    
+
     try {
       final result = await _executeWithRetry(() async {
         final response = await _client
@@ -63,17 +65,15 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
             .eq('is_deleted', false)
             .order('updated_at', ascending: false);
 
-        return response
-            .map((json) => TaskModel.fromJson(json))
-            .toList();
+        return response.map((json) => TaskModel.fromJson(json)).toList();
       });
-      
+
       loadingManager.completeOperation(operationId);
       return result;
     } catch (e) {
       final failure = ErrorHandler.handleException(e);
       loadingManager.failOperation(operationId, failure.toString());
-      
+
       if (e is PostgrestException) {
         throw ServerException(message: 'Database error: ${e.message}');
       } else if (e is SocketException || e.toString().contains('network')) {
@@ -106,10 +106,12 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
         countQuery = countQuery.ilike('title', '%$searchQuery%');
       }
       if (startDate != null) {
-        countQuery = countQuery.gte('due_date', startDate.toIso8601String().split('T')[0]);
+        countQuery = countQuery.gte(
+            'due_date', startDate.toIso8601String().split('T')[0]);
       }
       if (endDate != null) {
-        countQuery = countQuery.lte('due_date', endDate.toIso8601String().split('T')[0]);
+        countQuery =
+            countQuery.lte('due_date', endDate.toIso8601String().split('T')[0]);
       }
 
       final countResponse = await countQuery;
@@ -137,9 +139,8 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
       }
 
       final dataResponse = await dataQuery;
-      final tasks = dataResponse
-          .map((json) => TaskModel.fromJson(json))
-          .toList();
+      final tasks =
+          dataResponse.map((json) => TaskModel.fromJson(json)).toList();
 
       return PaginatedResult<TaskModel>(
         data: tasks,
@@ -169,31 +170,29 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
   Future<TaskModel> createTask(TaskModel task) async {
     const operationId = 'create_task';
     loadingManager.startOperation(operationId, message: 'Creating task...');
-    
+
     try {
       final result = await _executeWithRetry(() async {
         final taskJson = task.toJson();
         taskJson.remove('needs_sync'); // Remove local-only field
-        
-        final response = await _client
-            .from(_tableName)
-            .insert(taskJson)
-            .select()
-            .single();
+
+        final response =
+            await _client.from(_tableName).insert(taskJson).select().single();
 
         return TaskModel.fromJson(response);
       });
-      
+
       loadingManager.completeOperation(operationId);
       return result;
     } catch (e) {
       final failure = ErrorHandler.handleException(e);
       loadingManager.failOperation(operationId, failure.toString());
-      
+
       if (e is PostgrestException) {
         throw ServerException(message: 'Failed to create task: ${e.message}');
       } else if (e is SocketException || e.toString().contains('network')) {
-        throw NetworkException(message: 'Network error while creating task: $e');
+        throw NetworkException(
+            message: 'Network error while creating task: $e');
       } else {
         throw ServerException(message: 'Server error while creating task: $e');
       }
@@ -206,7 +205,7 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
       final taskJson = task.toJson();
       taskJson.remove('needs_sync'); // Remove local-only field
       taskJson['updated_at'] = DateTime.now().toIso8601String();
-      
+
       final response = await _client
           .from(_tableName)
           .update(taskJson)
@@ -221,18 +220,16 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
   @override
   Future<void> deleteTask(String id) async {
     return _executeWithRetry(() async {
-      await _client
-          .from(_tableName)
-          .update({
-            'is_deleted': true,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
-          .eq('id', id);
+      await _client.from(_tableName).update({
+        'is_deleted': true,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', id);
     });
   }
 
   @override
-  Future<List<TaskModel>> getTasksByDateRange(String userId, DateTime start, DateTime end) async {
+  Future<List<TaskModel>> getTasksByDateRange(
+      String userId, DateTime start, DateTime end) async {
     return _executeWithRetry(() async {
       final response = await _client
           .from(_tableName)
@@ -293,13 +290,10 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
   @override
   Future<void> batchDeleteTasks(List<String> ids) async {
     return _executeWithRetry(() async {
-      await _client
-          .from(_tableName)
-          .update({
-            'is_deleted': true,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
-          .inFilter('id', ids);
+      await _client.from(_tableName).update({
+        'is_deleted': true,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).inFilter('id', ids);
     });
   }
 
@@ -310,7 +304,8 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
         .stream(primaryKey: ['id'])
         .order('updated_at', ascending: false)
         .map((data) => data
-            .where((json) => json['user_id'] == userId && json['is_deleted'] == false)
+            .where((json) =>
+                json['user_id'] == userId && json['is_deleted'] == false)
             .map((json) => TaskModel.fromJson(json))
             .toList());
   }
@@ -327,7 +322,7 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
 
       for (final localTask in localTasks) {
         final remoteTask = remoteTasksMap[localTask.id];
-        
+
         if (remoteTask == null) {
           // Task doesn't exist remotely, create it
           tasksToCreate.add(localTask);
@@ -341,7 +336,7 @@ class SupabaseTaskDataSourceImpl implements SupabaseTaskDataSource {
       if (tasksToCreate.isNotEmpty) {
         await batchCreateTasks(tasksToCreate);
       }
-      
+
       if (tasksToUpdate.isNotEmpty) {
         await batchUpdateTasks(tasksToUpdate);
       }

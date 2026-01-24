@@ -3,10 +3,14 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
 
-import 'package:glimfo_todo/feature/todo/domain/usecases/get_tasks_usecase.dart';
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart';
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart';
-import 'package:glimfo_todo/core/error/failures.dart';
+import 'package:todo_cleanarc/feature/todo/domain/usecases/get_tasks_usecase.dart';
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart';
+import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart';
+import 'package:todo_cleanarc/core/error/failures.dart';
+
+import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
+import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
 
 import 'get_tasks_usecase_test.mocks.dart';
 
@@ -17,30 +21,32 @@ void main() {
 
   setUp(() {
     mockRepository = MockTaskRepository();
-    useCase = GetTasksUseCase(repository: mockRepository);
+    useCase = GetTasksUseCase(mockRepository);
   });
 
   final testTasks = [
     TaskEntity(
-      id: '1',
-      userId: 'user123',
+      id: const TaskId('1'),
+      userId: UserId.fromString('user123'),
       title: 'Task 1',
       description: 'Description 1',
       dueDate: DateTime.now(),
-      category: 'ongoing',
-      priority: 3,
+      dueTime: const DomainTime(hour: 9, minute: 0),
+      category: TaskCategory.ongoing,
+      priority: TaskPriority.medium,
       progressPercentage: 0,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     ),
     TaskEntity(
-      id: '2',
-      userId: 'user123',
+      id: const TaskId('2'),
+      userId: UserId.fromString('user123'),
       title: 'Task 2',
       description: 'Description 2',
       dueDate: DateTime.now(),
-      category: 'completed',
-      priority: 2,
+      dueTime: const DomainTime(hour: 17, minute: 0),
+      category: TaskCategory.completed,
+      priority: TaskPriority.low,
       progressPercentage: 100,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
@@ -77,7 +83,7 @@ void main() {
 
     test('should return StorageFailure when retrieval fails', () async {
       // Arrange
-      const failure = StorageFailure(message: 'Failed to retrieve tasks');
+      const failure = CacheFailure(message: 'Failed to retrieve tasks');
       when(mockRepository.getAllTasks())
           .thenAnswer((_) async => const Left(failure));
 

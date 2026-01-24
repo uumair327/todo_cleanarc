@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../utils/app_colors.dart';
+import '../theme/app_durations.dart';
+import '../theme/app_spacing.dart';
 import 'custom_button.dart';
 
 /// Widget for displaying errors with retry functionality
@@ -26,32 +28,32 @@ class ErrorRetryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon ?? Icons.error_outline,
-              size: 64,
+              size: AppSpacing.xxxl,
               color: AppColors.error,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Oops! Something went wrong',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: AppColors.error,
-              ),
+                    color: AppColors.error,
+                  ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+                    color: AppColors.textSecondary,
+                  ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             if (customAction != null)
               customAction!
             else if (showRetryButton && onRetry != null)
@@ -94,7 +96,7 @@ class NetworkErrorWidget extends StatelessWidget {
               backgroundColor: AppColors.primary,
             ),
           if (onGoOffline != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.mdSm),
             CustomButton(
               text: 'Continue Offline',
               onPressed: onGoOffline!,
@@ -126,7 +128,7 @@ class LoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -142,22 +144,22 @@ class LoadingWidget extends StatelessWidget {
                 strokeWidth: 3,
               ),
             if (message != null) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 message!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                      color: AppColors.textSecondary,
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],
             if (showProgress && progress != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 '${(progress! * 100).toInt()}%',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                      color: AppColors.textSecondary,
+                    ),
               ),
             ],
           ],
@@ -188,33 +190,33 @@ class EmptyStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon ?? Icons.inbox_outlined,
-              size: 64,
-              color: AppColors.textSecondary.withOpacity(0.5),
+              size: AppSpacing.xxxl,
+              color: AppColors.textSecondary.withValues(alpha: 0.5),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+                    color: AppColors.textSecondary,
+                  ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary.withOpacity(0.7),
-              ),
+                    color: AppColors.textSecondary.withValues(alpha: 0.7),
+                  ),
               textAlign: TextAlign.center,
             ),
             if (onAction != null && actionText != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               CustomButton(
                 text: actionText!,
                 onPressed: onAction!,
@@ -229,13 +231,14 @@ class EmptyStateWidget extends StatelessWidget {
 
 /// Snackbar helper for showing user-friendly messages
 class SnackBarHelper {
-  static void showError(BuildContext context, String message, {VoidCallback? onRetry}) {
+  static void showError(BuildContext context, String message,
+      {VoidCallback? onRetry}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
             const Icon(Icons.error_outline, color: Colors.white),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(child: Text(message)),
           ],
         ),
@@ -248,7 +251,7 @@ class SnackBarHelper {
                 onPressed: onRetry,
               )
             : null,
-        duration: const Duration(seconds: 4),
+        duration: AppDurations.snackBar,
       ),
     );
   }
@@ -259,13 +262,13 @@ class SnackBarHelper {
         content: Row(
           children: [
             const Icon(Icons.check_circle_outline, color: Colors.white),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(child: Text(message)),
           ],
         ),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
+        duration: AppDurations.snackBarShort,
       ),
     );
   }
@@ -276,7 +279,7 @@ class SnackBarHelper {
         content: Row(
           children: [
             const Icon(Icons.info_outline, color: Colors.white),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(child: Text(message)),
           ],
         ),
@@ -293,7 +296,7 @@ class SnackBarHelper {
         content: Row(
           children: [
             const Icon(Icons.warning_outlined, color: Colors.white),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(child: Text(message)),
           ],
         ),

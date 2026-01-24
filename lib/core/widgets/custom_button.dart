@@ -3,19 +3,102 @@ import '../utils/app_colors.dart';
 import '../theme/app_typography.dart';
 import '../theme/app_spacing.dart';
 
-enum ButtonVariant { primary, secondary, outlined, text }
-enum ButtonSize { small, medium, large }
+/// Button style variants following the design system.
+enum ButtonVariant { 
+  /// Filled button with primary color (default)
+  primary, 
+  /// Filled button with secondary color
+  secondary, 
+  /// Button with border and no fill
+  outlined, 
+  /// Text-only button with no border or fill
+  text 
+}
 
+/// Button size variants.
+enum ButtonSize { 
+  /// Small button (32px height)
+  small, 
+  /// Medium button (40px height, default)
+  medium, 
+  /// Large button (48px height)
+  large 
+}
+
+/// A customizable button widget following the app's design system.
+///
+/// This widget provides a consistent button implementation across the app
+/// with support for different variants, sizes, loading states, and icons.
+///
+/// **Features:**
+/// - Multiple style variants (primary, secondary, outlined, text)
+/// - Three size options (small, medium, large)
+/// - Loading state with spinner
+/// - Optional leading icon
+/// - Full-width or auto-width
+/// - Custom colors support
+///
+/// **Usage Examples:**
+/// ```dart
+/// // Primary button (default)
+/// CustomButton(
+///   text: 'Save Task',
+///   onPressed: () => saveTask(),
+/// )
+///
+/// // Outlined button with icon
+/// CustomButton(
+///   text: 'Delete',
+///   variant: ButtonVariant.outlined,
+///   icon: Icon(Icons.delete),
+///   onPressed: () => deleteTask(),
+/// )
+///
+/// // Loading state
+/// CustomButton(
+///   text: 'Saving...',
+///   isLoading: true,
+///   onPressed: () => saveTask(),
+/// )
+///
+/// // Small text button
+/// CustomButton(
+///   text: 'Cancel',
+///   variant: ButtonVariant.text,
+///   size: ButtonSize.small,
+///   isFullWidth: false,
+///   onPressed: () => Navigator.pop(context),
+/// )
+/// ```
 class CustomButton extends StatelessWidget {
+  /// The text to display on the button.
   final String text;
+  
+  /// Callback when the button is pressed. If null, button is disabled.
   final VoidCallback? onPressed;
+  
+  /// The visual style variant of the button.
   final ButtonVariant variant;
+  
+  /// The size of the button.
   final ButtonSize size;
+  
+  /// Optional icon to display before the text.
   final Widget? icon;
+  
+  /// Whether to show a loading spinner instead of the icon.
   final bool isLoading;
+  
+  /// Whether the button should take full width of its parent.
   final bool isFullWidth;
+  
+  /// Custom background color (overrides variant color).
   final Color? backgroundColor;
+  
+  /// Custom foreground/text color (overrides variant color).
   final Color? foregroundColor;
+  
+  /// Custom padding (overrides size padding).
   final EdgeInsets? padding;
 
   const CustomButton({
@@ -76,7 +159,7 @@ class CustomButton extends StatelessWidget {
 
   ButtonStyle _getButtonStyle() {
     final (height, textStyle, buttonPadding) = _getSizeProperties();
-    
+
     switch (variant) {
       case ButtonVariant.primary:
         return ElevatedButton.styleFrom(
@@ -86,7 +169,7 @@ class CustomButton extends StatelessWidget {
           shadowColor: AppColors.shadow,
           minimumSize: Size(isFullWidth ? double.infinity : 0, height),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
           ),
           textStyle: textStyle,
           padding: padding ?? buttonPadding,
@@ -99,7 +182,7 @@ class CustomButton extends StatelessWidget {
           shadowColor: AppColors.shadowLight,
           minimumSize: Size(isFullWidth ? double.infinity : 0, height),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
           ),
           textStyle: textStyle,
           padding: padding ?? buttonPadding,
@@ -113,7 +196,7 @@ class CustomButton extends StatelessWidget {
           ),
           minimumSize: Size(isFullWidth ? double.infinity : 0, height),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
           ),
           textStyle: textStyle,
           padding: padding ?? buttonPadding,
@@ -165,13 +248,13 @@ class CustomButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 16,
-            height: 16,
+            width: AppDimensions.iconSizeSmall,
+            height: AppDimensions.iconSizeSmall,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                variant == ButtonVariant.primary 
-                    ? AppColors.textOnPrimary 
+                variant == ButtonVariant.primary
+                    ? AppColors.textOnPrimary
                     : AppColors.primary,
               ),
             ),

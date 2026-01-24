@@ -247,7 +247,7 @@
   - Add performance benchmarking tests for critical operations
   - _Requirements: All requirements_
 
-- [-] 13.2 Write comprehensive unit tests
+- [x] 13.2 Write comprehensive unit tests
 
   - Unit tests for all BLoCs and use cases not yet covered
   - Widget tests for UI components and screens

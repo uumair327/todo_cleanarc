@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(60),
                 ),
                 child: const Icon(
@@ -78,14 +78,9 @@ class _SplashScreenState extends State<SplashScreen> {
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   if (state is AuthLoading) {
-<<<<<<< HEAD
-                    return CircularProgressIndicator(
+                    return const CircularProgressIndicator(
                       valueColor:
                           AlwaysStoppedAnimation<Color>(AppColors.primary),
-=======
-                    return const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
->>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
                     );
                   }
                   return const SizedBox.shrink();

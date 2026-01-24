@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_colors.dart';
+import '../../../../core/utils/validation_utils.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../../../core/domain/enums/task_enums.dart';
@@ -10,6 +12,9 @@ import '../bloc/task_form/task_form_bloc.dart';
 import '../bloc/task_form/task_form_event.dart';
 import '../bloc/task_form/task_form_state.dart';
 
+/// TaskForm screen using reusable widgets for consistent UI.
+///
+/// Follows SOLID principles by delegating UI concerns to specialized widgets.
 class TaskFormScreen extends StatefulWidget {
   final TaskEntity? task; // null for create, TaskEntity for edit
   final String? taskId; // Task ID for edit mode
@@ -77,7 +82,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   style: TextStyle(
                     color: state.isValid && !state.isLoading
                         ? Colors.white
-                        : Colors.white.withOpacity(0.5),
+                        : Colors.white.withValues(alpha: 0.5),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -102,42 +107,25 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         },
         child: BlocBuilder<TaskFormBloc, TaskFormState>(
           builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+            if (state.isLoading && widget.taskId != null) {
+              // Show skeleton only when loading an existing task
+              return _buildLoadingSkeleton();
             }
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Error Message
+                    // Error Message using ErrorBanner widget
                     if (state.errorMessage != null)
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                              color: AppColors.error.withOpacity(0.3)),
-                        ),
-                        child: Text(
-                          state.errorMessage!,
-                          style: AppTheme.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.error,
-                          ),
-                        ),
-                      ),
+                      ErrorBanner(message: state.errorMessage!),
 
                     // Title Field
-                    _buildSectionTitle(AppStrings.taskTitleLabel),
                     CustomTextField(
+                      label: AppStrings.taskTitleLabel,
                       controller: _titleController,
                       hint: AppStrings.taskTitleHint,
                       onChanged: (value) {
@@ -145,18 +133,13 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                             .read<TaskFormBloc>()
                             .add(TaskFormTitleChanged(value));
                       },
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return AppStrings.titleRequired;
-                        }
-                        return null;
-                      },
+                      validator: ValidationUtils.validateTaskTitle,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.mdLg),
 
                     // Description Field
-                    _buildSectionTitle(AppStrings.descriptionLabel),
                     CustomTextField(
+                      label: AppStrings.descriptionLabel,
                       controller: _descriptionController,
                       hint: AppStrings.descriptionHint,
                       maxLines: 3,
@@ -165,60 +148,79 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                             .read<TaskFormBloc>()
                             .add(TaskFormDescriptionChanged(value));
                       },
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return AppStrings.descriptionRequired;
-                        }
-                        return null;
-                      },
+                      validator: ValidationUtils.validateTaskDescription,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.mdLg),
 
-                    // Due Date and Time
+                    // Due Date and Time using reusable pickers
                     Row(
                       children: [
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildSectionTitle(AppStrings.dueDateLabel),
-                              _buildDateSelector(state),
-                            ],
+                          child: DatePickerField(
+                            label: AppStrings.dueDateLabel,
+                            value: state.dueDate,
+                            onChanged: (date) {
+                              context
+                                  .read<TaskFormBloc>()
+                                  .add(TaskFormDueDateChanged(date));
+                            },
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: AppSpacing.md),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildSectionTitle(AppStrings.dueTimeLabel),
-                              _buildTimeSelector(state),
-                            ],
+                          child: TimePickerField(
+                            label: AppStrings.dueTimeLabel,
+                            value: state.dueTime,
+                            onChanged: (time) {
+                              context
+                                  .read<TaskFormBloc>()
+                                  .add(TaskFormDueTimeChanged(time));
+                            },
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.mdLg),
 
-                    // Category Selection
-                    _buildSectionTitle(AppStrings.categoryLabel),
-                    _buildCategorySelector(state),
-                    const SizedBox(height: 20),
+                    // Category Selection using SelectionChipGroup
+                    const SectionTitle(title: AppStrings.categoryLabel),
+                    SelectionChipGroup<TaskCategory>(
+                      items: TaskCategory.values,
+                      selectedItem: state.category,
+                      labelBuilder: _getCategoryDisplayName,
+                      colorBuilder: _getCategoryColor,
+                      onSelected: (category) {
+                        context
+                            .read<TaskFormBloc>()
+                            .add(TaskFormCategoryChanged(category));
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.mdLg),
 
-                    // Priority Selection
-                    _buildSectionTitle(AppStrings.priorityLabel),
-                    _buildPrioritySelector(state),
-                    const SizedBox(height: 20),
+                    // Priority Selection using SelectionChipGroup
+                    const SectionTitle(title: AppStrings.priorityLabel),
+                    SelectionChipGroup<TaskPriority>(
+                      items: TaskPriority.values,
+                      selectedItem: state.priority,
+                      labelBuilder: _getPriorityDisplayName,
+                      colorBuilder: _getPriorityColor,
+                      onSelected: (priority) {
+                        context
+                            .read<TaskFormBloc>()
+                            .add(TaskFormPriorityChanged(priority));
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.mdLg),
 
                     // Progress Slider (only for edit mode)
                     if (state.isEditing) ...[
-                      _buildSectionTitle(AppStrings.progressLabel),
+                      const SectionTitle(title: AppStrings.progressLabel),
                       _buildProgressSlider(state),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.mdLg),
                     ],
 
                     // Submit Button
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.xl),
                     SizedBox(
                       width: double.infinity,
                       child: CustomButton(
@@ -248,164 +250,136 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        title,
-        style: AppTheme.textTheme.titleMedium?.copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
+  Widget _buildLoadingSkeleton() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title field skeleton
+          SkeletonLoader(
+            width: 80,
+            height: 16,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SkeletonLoader(
+            width: double.infinity,
+            height: 48,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+          ),
+          const SizedBox(height: AppSpacing.mdLg),
 
-  Widget _buildDateSelector(TaskFormState state) {
-    return InkWell(
-      onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: state.dueDate,
-          firstDate: DateTime.now(),
-          lastDate: DateTime(2030),
-        );
-        if (date != null && mounted) {
-          context.read<TaskFormBloc>().add(TaskFormDueDateChanged(date));
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.calendar_today,
-              size: 20,
-              color: AppColors.textSecondary,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              '${state.dueDate.day}/${state.dueDate.month}/${state.dueDate.year}',
-              style: AppTheme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textPrimary,
+          // Description field skeleton
+          SkeletonLoader(
+            width: 100,
+            height: 16,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SkeletonLoader(
+            width: double.infinity,
+            height: 96,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+          ),
+          const SizedBox(height: AppSpacing.mdLg),
+
+          // Date and time skeleton
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SkeletonLoader(
+                      width: 70,
+                      height: 16,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    SkeletonLoader(
+                      width: double.infinity,
+                      height: 48,
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimeSelector(TaskFormState state) {
-    return InkWell(
-      onTap: () async {
-        final time = await showTimePicker(
-          context: context,
-          initialTime: state.dueTime,
-        );
-        if (time != null && mounted) {
-          context.read<TaskFormBloc>().add(TaskFormDueTimeChanged(time));
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.access_time,
-              size: 20,
-              color: AppColors.textSecondary,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              state.dueTime.format(context),
-              style: AppTheme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textPrimary,
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SkeletonLoader(
+                      width: 70,
+                      height: 16,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    SkeletonLoader(
+                      width: double.infinity,
+                      height: 48,
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+            ],
+          ),
+          const SizedBox(height: AppSpacing.mdLg),
 
-  Widget _buildCategorySelector(TaskFormState state) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: TaskCategory.values.map((category) {
-        final isSelected = state.category == category;
-        final color = _getCategoryColor(category);
-
-        return InkWell(
-          onTap: () {
-            context.read<TaskFormBloc>().add(TaskFormCategoryChanged(category));
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: isSelected ? color : color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: color,
-                width: isSelected ? 2 : 1,
-              ),
-            ),
-            child: Text(
-              _getCategoryDisplayName(category),
-              style: AppTheme.textTheme.bodyMedium?.copyWith(
-                color: isSelected ? Colors.white : color,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          // Category skeleton
+          SkeletonLoader(
+            width: 80,
+            height: 16,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: List.generate(
+              4,
+              (index) => Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
+                child: SkeletonLoader(
+                  width: 80,
+                  height: 32,
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
             ),
           ),
-        );
-      }).toList(),
-    );
-  }
+          const SizedBox(height: AppSpacing.mdLg),
 
-  Widget _buildPrioritySelector(TaskFormState state) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: TaskPriority.values.map((priority) {
-        final isSelected = state.priority == priority;
-        final color = _getPriorityColor(priority);
-
-        return InkWell(
-          onTap: () {
-            context.read<TaskFormBloc>().add(TaskFormPriorityChanged(priority));
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: isSelected ? color : color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: color,
-                width: isSelected ? 2 : 1,
-              ),
-            ),
-            child: Text(
-              _getPriorityDisplayName(priority),
-              style: AppTheme.textTheme.bodyMedium?.copyWith(
-                color: isSelected ? Colors.white : color,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          // Priority skeleton
+          SkeletonLoader(
+            width: 80,
+            height: 16,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: List.generate(
+              3,
+              (index) => Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
+                child: SkeletonLoader(
+                  width: 70,
+                  height: 32,
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
             ),
           ),
-        );
-      }).toList(),
+          const SizedBox(height: AppSpacing.xl),
+
+          // Button skeleton
+          SkeletonLoader(
+            width: double.infinity,
+            height: 48,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+          ),
+        ],
+      ),
     );
   }
 
@@ -422,10 +396,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
               ),
               child: Text(
                 '${state.progressPercentage}%',
@@ -437,7 +412,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Slider(
           value: state.progressPercentage.toDouble(),
           min: 0,

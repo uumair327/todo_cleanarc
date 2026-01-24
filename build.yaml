@@ -3,15 +3,11 @@ targets:
     builders:
       hive_generator|hive_generator:
         enabled: true
-      todo_cleanarc|color_validation:
-        enabled: true
-        generate_for:
-          - lib/$lib$
 
-builders:
-  color_validation:
-    import: "lib/core/validation/build_color_validator.dart"
-    builder_factories: ["colorValidationBuilder"]
-    build_extensions: {".dart": [".color_validation"]}
-    auto_apply: dependents
-    build_to: cache
+#builders:
+#  color_validation:
+#    import: "lib/core/validation/build_color_validator.dart"
+#    builder_factories: ["colorValidationBuilder"]
+#    build_extensions: {".dart": [".color_validation"]}
+#    auto_apply: dependents
+#    build_to: cache

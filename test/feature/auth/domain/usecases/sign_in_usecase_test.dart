@@ -3,10 +3,13 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
 
-import 'package:glimfo_todo/feature/auth/domain/usecases/sign_in_usecase.dart';
-import 'package:glimfo_todo/feature/auth/domain/repositories/auth_repository.dart';
-import 'package:glimfo_todo/feature/auth/domain/entities/user_entity.dart';
-import 'package:glimfo_todo/core/error/failures.dart';
+import 'package:todo_cleanarc/feature/auth/domain/usecases/sign_in_usecase.dart';
+import 'package:todo_cleanarc/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:todo_cleanarc/feature/auth/domain/entities/user_entity.dart';
+import 'package:todo_cleanarc/core/error/failures.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/email.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/password.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
 
 import 'sign_in_usecase_test.mocks.dart';
 
@@ -17,14 +20,14 @@ void main() {
 
   setUp(() {
     mockRepository = MockAuthRepository();
-    useCase = SignInUseCase(repository: mockRepository);
+    useCase = SignInUseCase(mockRepository);
   });
 
-  const testEmail = 'test@example.com';
-  const testPassword = 'password123';
+  final testEmail = Email.fromString('test@example.com');
+  final testPassword = Password.fromString('password123');
   final testUser = UserEntity(
-    id: '123',
-    email: testEmail,
+    id: UserId.fromString('123'),
+    email: Email.fromString('test@example.com'),
     displayName: 'Test User',
     createdAt: DateTime.now(),
   );
@@ -36,7 +39,8 @@ void main() {
           .thenAnswer((_) async => Right(testUser));
 
       // Act
-      final result = await useCase.call(email: testEmail, password: testPassword);
+      final result =
+          await useCase.call(email: testEmail, password: testPassword);
 
       // Assert
       expect(result, Right(testUser));
@@ -44,14 +48,16 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return AuthFailure when credentials are invalid', () async {
+    test('should return AuthenticationFailure when credentials are invalid',
+        () async {
       // Arrange
-      const failure = AuthFailure(message: 'Invalid credentials');
+      const failure = AuthenticationFailure(message: 'Invalid credentials');
       when(mockRepository.signIn(email: testEmail, password: testPassword))
           .thenAnswer((_) async => const Left(failure));
 
       // Act
-      final result = await useCase.call(email: testEmail, password: testPassword);
+      final result =
+          await useCase.call(email: testEmail, password: testPassword);
 
       // Assert
       expect(result, const Left(failure));
@@ -66,7 +72,8 @@ void main() {
           .thenAnswer((_) async => const Left(failure));
 
       // Act
-      final result = await useCase.call(email: testEmail, password: testPassword);
+      final result =
+          await useCase.call(email: testEmail, password: testPassword);
 
       // Assert
       expect(result, const Left(failure));

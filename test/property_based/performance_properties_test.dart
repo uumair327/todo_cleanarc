@@ -1,11 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
-import 'package:glimfo_todo/feature/todo/data/datasources/hive_task_datasource.dart';
-import 'package:glimfo_todo/feature/todo/data/models/task_model.dart';
+import 'package:todo_cleanarc/feature/todo/data/datasources/hive_task_datasource.dart';
+import 'package:todo_cleanarc/feature/todo/data/models/task_model.dart';
 
 import 'generators/task_generators.dart';
-import 'property_test_runner.dart';
-import 'property_test_config.dart';
 
 /// Helper function to convert TaskEntity to TaskModel
 List<TaskModel> _generateTaskModels(int count) {

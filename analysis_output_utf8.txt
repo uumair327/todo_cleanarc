@@ -1,0 +1,107 @@
+﻿Analyzing todo_cleanarc...                                      
+
+   info - Use 'const' with the constructor to improve performance - lib\core\infrastructure\theme\theme_storage_impl.dart:279:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\infrastructure\theme\theme_storage_impl.dart:279:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\router\app_router.dart:217:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\services\color_resolver_service_impl.dart:153:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\services\color_resolver_service_impl.dart:153:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\services\color_resolver_service_impl.dart:179:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\services\color_resolver_service_impl.dart:179:20 - prefer_const_constructors
+   info - Dangling library doc comment - lib\core\services\color_services.dart:1:1 - dangling_library_doc_comments
+   info - Don't invoke 'print' in production code - lib\core\services\injection_container.dart:243:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\core\services\injection_container.dart:244:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\core\services\injection_container.dart:264:5 - avoid_print
+warning - This default clause is covered by the previous cases - lib\core\services\sync_manager.dart:123:7 - unreachable_switch_default
+   info - Statements in an if should be enclosed in a block - lib\core\utils\loading_manager.dart:196:7 - curly_braces_in_flow_control_structures
+   info - Dangling library doc comment - lib\core\validation\build_color_validator.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'dart:io' - lib\core\validation\build_color_validator.dart:7:8 - unused_import
+   info - The imported package 'build' isn't a dependency of the importing package - lib\core\validation\build_color_validator.dart:8:8 - depend_on_referenced_packages
+   info - Library names are not necessary - lib\core\validation\color_lint_rules.dart:5:9 - unnecessary_library_name
+warning - Unused import: 'dart:convert' - lib\core\validation\color_lint_rules.dart:8:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\core\validation\color_lint_rules.dart:210:7 - avoid_print
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\widgets\error_banner.dart:33:32 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\widgets\error_banner.dart:36:34 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\widgets\error_retry_widget.dart:200:46 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\widgets\error_retry_widget.dart:214:52 - deprecated_member_use
+warning - Unused import: '../utils/app_colors.dart' - lib\core\widgets\selection_chip_group.dart:3:8 - unused_import
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\widgets\selection_chip_group.dart:63:45 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\widgets\selection_chip_group.dart:106:45 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\auth\presentation\screens\email_verification_screen.dart:57:38 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\auth\presentation\screens\profile_screen.dart:120:52 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\auth\presentation\screens\profile_screen.dart:135:52 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\auth\presentation\screens\profile_screen.dart:245:44 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\auth\presentation\screens\profile_screen.dart:258:35 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\auth\presentation\screens\profile_screen.dart:259:37 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\auth\presentation\screens\splash_screen.dart:52:44 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\todo\presentation\screens\task_form_screen.dart:84:40 - deprecated_member_use
+warning - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\feature\todo\presentation\screens\task_form_screen.dart:291:42 - deprecated_member_use
+warning - The label 'fontSize' isn't used - lib\feature\todo\presentation\widgets\task_card.dart:265:9 - unused_label
+  error - Expected to find ';' - lib\feature\todo\presentation\widgets\task_card.dart:265:56 - expected_token
+  error - Expected an identifier - lib\feature\todo\presentation\widgets\task_card.dart:265:58 - missing_identifier
+  error - Unexpected text ',' - lib\feature\todo\presentation\widgets\task_card.dart:265:58 - unexpected_token
+warning - The label 'fontSize' isn't used - lib\feature\todo\presentation\widgets\task_card.dart:272:9 - unused_label
+  error - Expected to find ';' - lib\feature\todo\presentation\widgets\task_card.dart:272:57 - expected_token
+  error - Expected an identifier - lib\feature\todo\presentation\widgets\task_card.dart:272:59 - missing_identifier
+  error - Unexpected text ',' - lib\feature\todo\presentation\widgets\task_card.dart:272:59 - unexpected_token
+warning - The label 'fontSize' isn't used - lib\feature\todo\presentation\widgets\task_card.dart:279:9 - unused_label
+  error - Expected to find ';' - lib\feature\todo\presentation\widgets\task_card.dart:279:56 - expected_token
+  error - Expected an identifier - lib\feature\todo\presentation\widgets\task_card.dart:279:58 - missing_identifier
+  error - Unexpected text ',' - lib\feature\todo\presentation\widgets\task_card.dart:279:58 - unexpected_token
+  error - The non-nullable local variable 'fontSize' must be assigned before it can be used - lib\feature\todo\presentation\widgets\task_card.dart:302:23 - not_assigned_potentially_non_nullable_local_variable
+   info - Dangling library doc comment - scripts\validate_colors.dart:3:1 - dangling_library_doc_comments
+   info - Can't use a relative path to import a library in 'lib' - scripts\validate_colors.dart:11:8 - avoid_relative_lib_imports
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:78:5 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:103:3 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:104:3 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:105:3 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:121:7 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:124:7 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:127:7 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:132:5 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:139:7 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:150:5 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:152:5 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:161:5 - avoid_print
+   info - Don't invoke 'print' in production code - scripts\validate_colors.dart:163:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - test\core\services\theme_provider_service_test.dart:70:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\core\services\theme_provider_service_test.dart:70:43 - prefer_const_constructors
+   info - Can't use a relative path to import a library in 'lib' - test\core\validation\color_lint_rules_test.dart:3:8 - avoid_relative_lib_imports
+   info - Use 'const' with the constructor to improve performance - test\core\validation\color_lint_rules_test.dart:155:9 - prefer_const_constructors
+   info - Assignment to a variable of type 'void' - test\feature\auth\domain\usecases\sign_out_usecase_test.dart:25:74 - void_checks
+   info - Use 'const' with the constructor to improve performance - test\feature\auth\presentation\bloc\sign_in_bloc_test.dart:76:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\feature\auth\presentation\bloc\sign_in_bloc_test.dart:100:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\feature\auth\presentation\bloc\sign_in_bloc_test.dart:125:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\feature\auth\presentation\bloc\sign_up_bloc_test.dart:76:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\feature\auth\presentation\bloc\sign_up_bloc_test.dart:101:19 - prefer_const_constructors
+warning - Unused import: 'package:todo_cleanarc/core/utils/typedef.dart' - test\feature\todo\data\models\task_model_test.dart:7:8 - unused_import
+   info - Assignment to a variable of type 'void' - test\feature\todo\domain\usecases\create_task_usecase_test.dart:45:42 - void_checks
+   info - Assignment to a variable of type 'void' - test\feature\todo\domain\usecases\delete_task_usecase_test.dart:31:48 - void_checks
+   info - Assignment to a variable of type 'void' - test\feature\todo\domain\usecases\update_task_usecase_test.dart:45:42 - void_checks
+   info - Assignment to a variable of type 'void' - test\feature\todo\presentation\bloc\task_form_bloc_test.dart:79:50 - void_checks
+   info - Can't use a relative path to import a library in 'lib' - test\integration\dependency_injection_test.dart:3:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\integration\dependency_injection_test.dart:4:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\integration\dependency_injection_test.dart:5:8 - avoid_relative_lib_imports
+warning - Unused import: '../../lib/core/services/theme_provider_service.dart' - test\integration\dependency_injection_test.dart:5:8 - unused_import
+   info - Can't use a relative path to import a library in 'lib' - test\integration\dependency_injection_test.dart:6:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\integration\dependency_injection_test.dart:7:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\integration\dependency_injection_test.dart:8:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\integration\dependency_injection_test.dart:9:8 - avoid_relative_lib_imports
+warning - Unused import: 'package:dartz/dartz.dart' - test\integration\task_repository_integration_test.dart:4:8 - unused_import
+   info - Use 'const' for final variables initialized to a constant value - test\property_based\color_system_architecture_test.dart:210:5 - prefer_const_declarations
+warning - Unused import: 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart' - test\property_based\dashboard_statistics_properties_test.dart:5:8 - unused_import
+warning - Unused import: 'property_test_config.dart' - test\property_based\dashboard_statistics_properties_test.dart:11:8 - unused_import
+warning - Unused import: 'property_test_config.dart' - test\property_based\input_validation_properties_test.dart:9:8 - unused_import
+   info - Unnecessary braces in a string interpolation - test\property_based\input_validation_properties_test.dart:156:35 - unnecessary_brace_in_string_interps
+warning - Unused import: 'property_test_runner.dart' - test\property_based\performance_properties_test.dart:7:8 - unused_import
+warning - Unused import: 'property_test_config.dart' - test\property_based\performance_properties_test.dart:8:8 - unused_import
+   info - Local variables should be final - test\property_based\search_filter_properties_test.dart:61:13 - prefer_final_locals
+   info - Local variables should be final - test\property_based\search_filter_properties_test.dart:194:13 - prefer_final_locals
+warning - The value of the local variable 'allTasks' isn't used - test\property_based\search_filter_properties_test.dart:212:13 - unused_local_variable
+warning - The value of the local variable 'allTasks' isn't used - test\property_based\search_filter_properties_test.dart:384:13 - unused_local_variable
+   info - Use 'const' for final variables initialized to a constant value - test\property_based\task_persistence_properties_test.dart:136:9 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\property_based\ui_theme_properties_test.dart:94:9 - prefer_const_declarations
+warning - The left operand can't be null, so the right operand is never executed - test\property_based\ui_theme_properties_test.dart:241:47 - dead_null_aware_expression
+   info - Use 'const' for final variables initialized to a constant value - test\property_based\ui_theme_properties_test.dart:351:9 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\property_based\ui_theme_properties_test.dart:352:9 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - test\property_based\ui_theme_properties_test.dart:353:9 - prefer_const_declarations
+

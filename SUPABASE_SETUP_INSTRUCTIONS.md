@@ -8,7 +8,43 @@ Your Supabase credentials have been successfully added to the app:
 
 ## 🔧 Database Setup Required
 
-You need to create the database tables in your Supabase project. Follow these steps:
+You need to create the database tables in your Supabase project. 
+
+### 🚀 Quick Setup (Recommended)
+
+**Option 1: Automated Setup with Supabase CLI**
+
+```bash
+# Install Supabase CLI (if not already installed)
+# macOS/Linux: brew install supabase/tap/supabase
+# Windows: scoop install supabase
+
+# Login and link your project
+supabase login
+supabase link --project-ref szazwyplviajizapiwyc
+
+# Run migrations
+supabase db push
+```
+
+**Option 2: Run Setup Script**
+
+Windows (PowerShell):
+```powershell
+.\scripts\setup_supabase.ps1
+```
+
+Unix/Linux/Mac:
+```bash
+chmod +x scripts/setup_supabase.sh
+./scripts/setup_supabase.sh
+```
+
+For detailed setup instructions, see [docs/supabase-setup-guide.md](docs/supabase-setup-guide.md)
+
+### 📝 Manual Setup
+
+If you prefer manual setup, follow these steps:
 
 ### Step 1: Open Supabase SQL Editor
 

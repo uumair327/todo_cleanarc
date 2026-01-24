@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_durations.dart';
 import '../../domain/entities/task_entity.dart';
 
 class TaskCard extends StatelessWidget {
@@ -19,7 +20,7 @@ class TaskCard extends StatelessWidget {
     this.onDelete,
     this.onEdit,
   });
-  
+
   String get title => task.title;
   String get description => task.description;
   String get category => task.category.name;
@@ -31,7 +32,7 @@ class TaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final categoryColor = AppColors.getCategoryColor(category);
     final categoryLightColor = AppColors.getCategoryLightColor(category);
-    
+
     return Dismissible(
       key: Key(title + DateTime.now().millisecondsSinceEpoch.toString()),
       background: _buildSwipeBackground(
@@ -84,9 +85,9 @@ class TaskCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: AppSpacing.sm),
-                
+
                 // Description
                 if (description.isNotEmpty) ...[
                   Text(
@@ -99,7 +100,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                 ],
-                
+
                 // Due date and time
                 if (dueDate != null) ...[
                   Row(
@@ -120,7 +121,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                 ],
-                
+
                 // Progress bar and percentage
                 Row(
                   children: [
@@ -150,7 +151,8 @@ class TaskCard extends StatelessWidget {
                           LinearProgressIndicator(
                             value: progressPercentage / 100,
                             backgroundColor: categoryLightColor,
-                            valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(categoryColor),
                             minHeight: AppDimensions.progressBarHeight,
                           ),
                         ],
@@ -164,8 +166,8 @@ class TaskCard extends StatelessWidget {
                         iconSize: AppDimensions.iconSizeSmall,
                         color: AppColors.textSecondary,
                         constraints: const BoxConstraints(
-                          minWidth: 32,
-                          minHeight: 32,
+                          minWidth: AppDimensions.iconSizeLarge,
+                          minHeight: AppDimensions.iconSizeLarge,
                         ),
                       ),
                     ],
@@ -206,31 +208,32 @@ class TaskCard extends StatelessWidget {
 
   String _formatDueDateTime() {
     if (dueDate == null) return '';
-    
+
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final taskDate = DateTime(dueDate!.year, dueDate!.month, dueDate!.day);
-    
+
     String dateStr;
     if (taskDate == today) {
       dateStr = 'Today';
-    } else if (taskDate == today.add(const Duration(days: 1))) {
+    } else if (taskDate == today.add(AppDurations.oneDay)) {
       dateStr = 'Tomorrow';
-    } else if (taskDate == today.subtract(const Duration(days: 1))) {
+    } else if (taskDate == today.subtract(AppDurations.oneDay)) {
       dateStr = 'Yesterday';
     } else {
       dateStr = '${dueDate!.day}/${dueDate!.month}/${dueDate!.year}';
     }
-    
+
     if (dueTime != null) {
       final hour = dueTime!.hour;
       final minute = dueTime!.minute;
       final period = hour >= 12 ? 'PM' : 'AM';
       final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-      final timeStr = '$displayHour:${minute.toString().padLeft(2, '0')} $period';
+      final timeStr =
+          '$displayHour:${minute.toString().padLeft(2, '0')} $period';
       return '$dateStr at $timeStr';
     }
-    
+
     return dateStr;
   }
 }
@@ -253,34 +256,34 @@ class CategoryChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final categoryColor = AppColors.getCategoryColor(category);
     final categoryLightColor = AppColors.getCategoryLightColor(category);
-    
+
     double fontSize;
     EdgeInsets padding;
-    
+
     switch (size) {
       case CategoryChipSize.small:
-        fontSize = 10;
+        fontSize = AppTypography.labelSmall.fontSize ?? 10;
         padding = const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
           vertical: AppSpacing.xs / 2,
         );
         break;
       case CategoryChipSize.medium:
-        fontSize = 12;
+        fontSize = AppTypography.labelMedium.fontSize ?? 12;
         padding = const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
           vertical: AppSpacing.xs,
         );
         break;
       case CategoryChipSize.large:
-        fontSize = 14;
+        fontSize = AppTypography.labelLarge.fontSize ?? 14;
         padding = const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.sm,
         );
         break;
     }
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -289,7 +292,7 @@ class CategoryChip extends StatelessWidget {
           color: categoryLightColor,
           borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
           border: Border.all(
-            color: categoryColor.withOpacity(0.3),
+            color: categoryColor.withValues(alpha: 0.3),
             width: 1,
           ),
         ),

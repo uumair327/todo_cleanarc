@@ -48,6 +48,9 @@ class TaskModel extends HiveObject {
   @HiveField(12)
   bool needsSync;
 
+  @HiveField(13)
+  List<String> attachmentIds;
+
   TaskModel({
     required this.id,
     required this.userId,
@@ -62,6 +65,7 @@ class TaskModel extends HiveObject {
     required this.updatedAt,
     this.isDeleted = false,
     this.needsSync = false,
+    this.attachmentIds = const [],
   });
 
   factory TaskModel.fromJson(DataMap json) {
@@ -78,6 +82,9 @@ class TaskModel extends HiveObject {
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       isDeleted: json['is_deleted'] as bool? ?? false,
+      attachmentIds: json['attachment_ids'] != null
+          ? List<String>.from(json['attachment_ids'] as List)
+          : [],
     );
   }
 
@@ -95,6 +102,7 @@ class TaskModel extends HiveObject {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'is_deleted': isDeleted,
+      'attachment_ids': attachmentIds,
     };
   }
 
@@ -119,6 +127,7 @@ class TaskModel extends HiveObject {
       createdAt: createdAt,
       updatedAt: updatedAt,
       isDeleted: isDeleted,
+      attachmentIds: attachmentIds,
     );
   }
 
@@ -136,6 +145,7 @@ class TaskModel extends HiveObject {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       isDeleted: entity.isDeleted,
+      attachmentIds: entity.attachmentIds,
     );
   }
 }

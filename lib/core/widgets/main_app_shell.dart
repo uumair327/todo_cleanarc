@@ -4,11 +4,16 @@ import 'package:go_router/go_router.dart';
 import '../../feature/auth/presentation/auth_presentation.dart';
 
 import '../theme/build_context_color_extension.dart';
+import '../theme/app_durations.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 import '../services/injection_container.dart' as di;
 import '../services/sync_manager.dart';
 import '../services/background_sync_service.dart';
+import '../services/app_logger.dart';
 import 'sync_status_widget.dart';
 import 'global_error_handler.dart';
+import 'offline_mode_banner.dart';
 
 class MainAppShell extends StatefulWidget {
   final Widget child;
@@ -68,7 +73,8 @@ class _MainAppShellState extends State<MainAppShell> {
       await _syncManager.initialize();
     } catch (e) {
       // Handle initialization error silently
-      debugPrint('Failed to initialize sync manager: $e');
+      final logger = AppLogger();
+      logger.error('Failed to initialize sync manager', e);
     }
   }
 
@@ -92,83 +98,126 @@ class _MainAppShellState extends State<MainAppShell> {
   Widget build(BuildContext context) {
     return GlobalErrorHandler(
       child: Scaffold(
-      appBar: AppBar(
-        title: Text(_getAppBarTitle()),
-        backgroundColor: context.ongoingTaskColor,
-        foregroundColor: context.onOngoingTaskColor,
-        elevation: 0,
-        actions: [
-          // Sync status indicator
-          StreamBuilder<SyncManagerStatus>(
-            stream: _syncManager.statusStream,
-            initialData: _syncManager.currentStatus,
-            builder: (context, snapshot) {
-              final status = snapshot.data!;
-              return CompactSyncStatusWidget(
-                syncStatus: status.syncStatus,
-                connectivityStatus: status.connectivityStatus,
-                onTap: () => _showSyncStatusDialog(context, status),
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Notifications feature coming soon!'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      drawer: const AppDrawer(),
-      body: Column(
-        children: [
-          // Sync status banner (shown when there are issues)
-          StreamBuilder<SyncManagerStatus>(
-            stream: _syncManager.statusStream,
-            initialData: _syncManager.currentStatus,
-            builder: (context, snapshot) {
-              final status = snapshot.data!;
-              if (!status.hasIssues) return const SizedBox.shrink();
-              
-              return SyncStatusWidget(
-                syncStatus: status.syncStatus,
-                connectivityStatus: status.connectivityStatus,
-                showDetails: true,
-                onRetryPressed: status.syncStatus == SyncStatus.failed
-                    ? () => _syncManager.triggerSync()
-                    : null,
-              );
-            },
-          ),
-          Expanded(child: widget.child),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: context.ongoingTaskColor,
-        unselectedItemColor: context.onSurfaceSecondary,
-        backgroundColor: context.surfacePrimary,
-        elevation: 8,
-        items: _navigationItems.map((item) => BottomNavigationBarItem(
-          icon: Icon(item.icon),
-          activeIcon: Icon(item.selectedIcon),
-          label: item.label,
-        )).toList(),
-      ),
-      floatingActionButton: _shouldShowFAB() ? FloatingActionButton(
-        onPressed: () => context.push('/task/new'),
-        backgroundColor: context.ongoingTaskColor,
-        foregroundColor: context.onOngoingTaskColor,
-        child: const Icon(Icons.add),
-      ) : null,
+        appBar: AppBar(
+          title: Text(_getAppBarTitle()),
+          backgroundColor: context.ongoingTaskColor,
+          foregroundColor: context.onOngoingTaskColor,
+          elevation: 0,
+          actions: [
+            // Compact offline indicator
+            StreamBuilder<SyncManagerStatus>(
+              stream: _syncManager.statusStream,
+              initialData: _syncManager.currentStatus,
+              builder: (context, snapshot) {
+                final status = snapshot.data!;
+                return CompactOfflineIndicator(
+                  connectivityStatus: status.connectivityStatus,
+                  queuedOperationsCount: 0, // TODO: Get from sync manager
+                );
+              },
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            // Sync status indicator
+            StreamBuilder<SyncManagerStatus>(
+              stream: _syncManager.statusStream,
+              initialData: _syncManager.currentStatus,
+              builder: (context, snapshot) {
+                final status = snapshot.data!;
+                return CompactSyncStatusWidget(
+                  syncStatus: status.syncStatus,
+                  connectivityStatus: status.connectivityStatus,
+                  onTap: () => _showSyncStatusDialog(context, status),
+                );
+              },
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            IconButton(
+              icon: const Icon(Icons.notifications_outlined),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Notifications feature coming soon!'),
+                    duration: AppDurations.snackBarShort,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        drawer: const AppDrawer(),
+        body: Column(
+          children: [
+            // Offline mode banner (persistent when offline)
+            StreamBuilder<SyncManagerStatus>(
+              stream: _syncManager.statusStream,
+              initialData: _syncManager.currentStatus,
+              builder: (context, snapshot) {
+                final status = snapshot.data!;
+                return OfflineModeBanner(
+                  connectivityStatus: status.connectivityStatus,
+                  queuedOperationsCount: 0, // TODO: Get from sync manager
+                  onRetrySync: () => _syncManager.triggerSync(),
+                );
+              },
+            ),
+            // Sync progress indicator (shown when syncing)
+            StreamBuilder<SyncManagerStatus>(
+              stream: _syncManager.statusStream,
+              initialData: _syncManager.currentStatus,
+              builder: (context, snapshot) {
+                final status = snapshot.data!;
+                return SyncProgressIndicator(
+                  syncStatus: status.syncStatus,
+                  totalOperations: 0, // TODO: Get from sync manager
+                  completedOperations: 0, // TODO: Get from sync manager
+                );
+              },
+            ),
+            // Sync status banner (shown when there are issues)
+            StreamBuilder<SyncManagerStatus>(
+              stream: _syncManager.statusStream,
+              initialData: _syncManager.currentStatus,
+              builder: (context, snapshot) {
+                final status = snapshot.data!;
+                if (!status.hasIssues) return const SizedBox.shrink();
+
+                return SyncStatusWidget(
+                  syncStatus: status.syncStatus,
+                  connectivityStatus: status.connectivityStatus,
+                  showDetails: true,
+                  onRetryPressed: status.syncStatus == SyncStatus.failed
+                      ? () => _syncManager.triggerSync()
+                      : null,
+                );
+              },
+            ),
+            Expanded(child: widget.child),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: context.ongoingTaskColor,
+          unselectedItemColor: context.onSurfaceSecondary,
+          backgroundColor: context.surfacePrimary,
+          elevation: 8,
+          items: _navigationItems
+              .map((item) => BottomNavigationBarItem(
+                    icon: Icon(item.icon),
+                    activeIcon: Icon(item.selectedIcon),
+                    label: item.label,
+                  ))
+              .toList(),
+        ),
+        floatingActionButton: _shouldShowFAB()
+            ? FloatingActionButton(
+                onPressed: () => context.push('/task/new'),
+                backgroundColor: context.ongoingTaskColor,
+                foregroundColor: context.onOngoingTaskColor,
+                child: const Icon(Icons.add),
+              )
+            : null,
       ),
     );
   }
@@ -198,7 +247,7 @@ class _MainAppShellState extends State<MainAppShell> {
         title: const Row(
           children: [
             Icon(Icons.sync, size: 24),
-            SizedBox(width: 8),
+            SizedBox(width: AppSpacing.sm),
             Text('Sync Status'),
           ],
         ),
@@ -207,13 +256,14 @@ class _MainAppShellState extends State<MainAppShell> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildStatusRow('Sync Status', status.syncStatus.name),
-            const SizedBox(height: 8),
-            _buildStatusRow('Connectivity', status.connectivityStatus.displayName),
+            const SizedBox(height: AppSpacing.sm),
+            _buildStatusRow(
+                'Connectivity', status.connectivityStatus.displayName),
             if (status.lastError != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               _buildStatusRow('Last Error', status.lastError!.message),
             ],
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               _syncManager.getStatusDescription(),
               style: Theme.of(context).textTheme.bodyMedium,
@@ -287,11 +337,11 @@ class AppDrawer extends StatelessWidget {
             builder: (context, state) {
               String userEmail = 'user@example.com';
               String userName = 'User';
-              
+
               if (state is AuthAuthenticated) {
                 userEmail = state.user.email.value;
-                userName = state.user.displayName.isNotEmpty 
-                    ? state.user.displayName 
+                userName = state.user.displayName.isNotEmpty
+                    ? state.user.displayName
                     : state.user.email.value.split('@')[0];
               }
 
@@ -301,8 +351,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 accountName: Text(
                   userName,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: AppTypography.h6.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -311,8 +360,7 @@ class AppDrawer extends StatelessWidget {
                   backgroundColor: context.onOngoingTaskColor,
                   child: Text(
                     userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
-                    style: TextStyle(
-                      fontSize: 24,
+                    style: AppTypography.h3.copyWith(
                       fontWeight: FontWeight.bold,
                       color: context.ongoingTaskColor,
                     ),
@@ -321,7 +369,7 @@ class AppDrawer extends StatelessWidget {
               );
             },
           ),
-          
+
           // Navigation Items
           ListTile(
             leading: const Icon(Icons.dashboard_outlined),
@@ -347,9 +395,9 @@ class AppDrawer extends StatelessWidget {
               context.go('/profile');
             },
           ),
-          
+
           const Divider(),
-          
+
           // Settings and Actions
           ListTile(
             leading: const Icon(Icons.settings_outlined),
@@ -369,20 +417,21 @@ class AppDrawer extends StatelessWidget {
               );
             },
           ),
-          
+
           const Spacer(),
-          
+
           // Logout
           const Divider(),
           ListTile(
             leading: Icon(Icons.logout, color: context.colorScheme.error),
-            title: Text('Logout', style: TextStyle(color: context.colorScheme.error)),
+            title: Text('Logout',
+                style: TextStyle(color: context.colorScheme.error)),
             onTap: () {
               Navigator.pop(context);
               _showLogoutDialog(context);
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
         ],
       ),
     );
@@ -404,7 +453,8 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(dialogContext).pop();
               context.read<AuthBloc>().add(const AuthSignOutRequested());
             },
-            style: TextButton.styleFrom(foregroundColor: context.colorScheme.error),
+            style: TextButton.styleFrom(
+                foregroundColor: context.colorScheme.error),
             child: const Text('Logout'),
           ),
         ],

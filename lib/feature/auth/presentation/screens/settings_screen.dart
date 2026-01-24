@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_durations.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/services/theme_provider_service.dart';
 import '../../../../core/services/injection_container.dart' as di;
 import '../../../../core/domain/entities/theme_state.dart';
 import '../../../../core/theme/build_context_color_extension.dart';
+import '../../../../core/utils/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -13,7 +16,8 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStateMixin {
+class _SettingsScreenState extends State<SettingsScreen>
+    with TickerProviderStateMixin {
   bool _notificationsEnabled = true;
   bool _syncEnabled = true;
   late final ThemeProviderService _themeProvider;
@@ -24,10 +28,10 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
   void initState() {
     super.initState();
     _themeProvider = di.sl<ThemeProviderService>();
-    
+
     // Initialize theme transition animation
     _themeTransitionController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: AppDurations.animMedium,
       vsync: this,
     );
     _themeTransitionAnimation = CurvedAnimation(
@@ -44,30 +48,22 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<ThemeState>(
-      stream: _themeProvider.themeStream,
-      initialData: _themeProvider.currentTheme,
-      builder: (context, themeSnapshot) {
-        final themeState = themeSnapshot.data!;
-        
-        return AnimatedBuilder(
-          animation: _themeTransitionAnimation,
-          builder: (context, child) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  'Settings',
-                  style: AppTypography.headlineMedium.copyWith(
-                    color: context.onSurfacePrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                backgroundColor: context.surfacePrimary,
-                elevation: 0,
-                iconTheme: IconThemeData(color: context.onSurfacePrimary),
-              ),
-              backgroundColor: context.surfacePrimary,
-              body: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+      ),
+      body: StreamBuilder<ThemeState>(
+        stream: _themeProvider.themeStream,
+        initialData: _themeProvider.currentTheme,
+        builder: (context, themeSnapshot) {
+          final themeState = themeSnapshot.data!;
+
+          return AnimatedBuilder(
+            animation: _themeTransitionAnimation,
+            builder: (context, child) {
+              return SingleChildScrollView(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,11 +138,11 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
 
                     _buildSettingsCard([
                       _buildActionTile(
-                        icon: Icons.download,
-                        title: 'Export Data',
-                        subtitle: 'Download your tasks and data',
+                        icon: Icons.import_export,
+                        title: 'Export / Import Data',
+                        subtitle: 'Backup or restore your tasks',
                         onTap: () {
-                          _showExportDialog(context);
+                          context.push('/export-import');
                         },
                       ),
                       const Divider(height: 1),
@@ -200,11 +196,11 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                     ]),
                   ],
                 ),
-              ),
-            );
-          },
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -212,11 +208,11 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
     return Container(
       decoration: BoxDecoration(
         color: context.surfaceSecondary,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
         boxShadow: [
           BoxShadow(
             color: context.onSurfaceSecondary.withValues(alpha: 0.1),
-            blurRadius: 8,
+            blurRadius: AppDimensions.radiusSm,
             offset: const Offset(0, 2),
           ),
         ],
@@ -232,16 +228,17 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
         vertical: AppSpacing.sm,
       ),
       leading: Container(
-        width: 40,
-        height: 40,
+        width: AppDimensions.avatarSizeSmall,
+        height: AppDimensions.avatarSizeSmall,
         decoration: BoxDecoration(
           color: context.ongoingTaskColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius:
+              BorderRadius.circular(AppDimensions.avatarSizeSmall / 2),
         ),
         child: Icon(
           _getThemeIcon(themeState.currentTheme.mode),
           color: context.ongoingTaskColor,
-          size: 20,
+          size: AppDimensions.iconSize,
         ),
       ),
       title: Text(
@@ -455,7 +452,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
 
   Future<void> _toggleSystemTheme(bool enabled) async {
     await _themeTransitionController.forward();
-    
+
     final result = await _themeProvider.toggleSystemTheme(enabled);
     result.fold(
       (failure) {
@@ -470,13 +467,13 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
         // Success - animation will complete automatically
       },
     );
-    
+
     await _themeTransitionController.reverse();
   }
 
   Future<void> _changeTheme(String themeName) async {
     await _themeTransitionController.forward();
-    
+
     final result = await _themeProvider.setTheme(themeName);
     result.fold(
       (failure) {
@@ -496,7 +493,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
         );
       },
     );
-    
+
     await _themeTransitionController.reverse();
   }
 
@@ -524,7 +521,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                 _changeTheme('Light');
               },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             _buildThemeOption(
               context: dialogContext,
               mode: ThemeMode.dark,
@@ -534,7 +531,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                 _changeTheme('Dark');
               },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             _buildThemeOption(
               context: dialogContext,
               mode: ThemeMode.system,
@@ -568,32 +565,40 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
     required VoidCallback onTap,
   }) {
     final isSelected = mode == currentMode;
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AppSpacing.mdSm),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected ? this.context.ongoingTaskColor : this.context.onSurfacePrimaryOpacity40,
+            color: isSelected
+                ? this.context.ongoingTaskColor
+                : this.context.onSurfacePrimaryOpacity40,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(8),
-          color: isSelected ? this.context.ongoingTaskColor.withValues(alpha: 0.1) : null,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+          color: isSelected
+              ? this.context.ongoingTaskColor.withValues(alpha: 0.1)
+              : null,
         ),
         child: Row(
           children: [
             Icon(
               _getThemeIcon(mode),
-              color: isSelected ? this.context.ongoingTaskColor : this.context.onSurfaceSecondary,
+              color: isSelected
+                  ? this.context.ongoingTaskColor
+                  : this.context.onSurfaceSecondary,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.mdSm),
             Expanded(
               child: Text(
                 _getThemeDisplayName(mode),
                 style: AppTypography.titleMedium.copyWith(
-                  color: isSelected ? this.context.ongoingTaskColor : this.context.onSurfacePrimary,
+                  color: isSelected
+                      ? this.context.ongoingTaskColor
+                      : this.context.onSurfacePrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -628,9 +633,9 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildThemePreviewCard('Light Theme', ThemeMode.light),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.mdSm),
               _buildThemePreviewCard('Dark Theme', ThemeMode.dark),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.mdSm),
               _buildThemePreviewCard('System Theme', ThemeMode.system),
             ],
           ),
@@ -653,18 +658,23 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
 
   Widget _buildThemePreviewCard(String themeName, ThemeMode mode) {
     // Create a mini preview of what the theme would look like
-    final isDark = mode == ThemeMode.dark || 
-        (mode == ThemeMode.system && MediaQuery.of(context).platformBrightness == Brightness.dark);
-    
-    final previewBg = isDark ? const Color(0xFF121212) : const Color(0xFFFFFFFF);
-    final previewText = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
+    final isDark = mode == ThemeMode.dark ||
+        (mode == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
+
+    final previewBg = isDark
+        ? AppColors.themePreviewDarkBackground
+        : AppColors.themePreviewLightBackground;
+    final previewText = isDark
+        ? AppColors.themePreviewDarkText
+        : AppColors.themePreviewLightText;
     final previewAccent = context.ongoingTaskColor;
-    
+
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AppSpacing.mdSm),
       decoration: BoxDecoration(
         color: previewBg,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
         border: Border.all(color: context.onSurfacePrimaryOpacity40),
       ),
       child: Column(
@@ -673,14 +683,15 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
           Row(
             children: [
               Container(
-                width: 24,
-                height: 24,
+                width: AppDimensions.iconSize,
+                height: AppDimensions.iconSize,
                 decoration: BoxDecoration(
                   color: previewAccent,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.iconSize / 2),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               Text(
                 themeName,
                 style: TextStyle(
@@ -691,55 +702,21 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Container(
-            height: 4,
+            height: AppDimensions.progressBarHeight,
             decoration: BoxDecoration(
               color: previewText.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Container(
             height: 4,
             width: 60,
             decoration: BoxDecoration(
               color: previewText.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showExportDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: context.surfaceSecondary,
-        title: Text(
-          'Export Data',
-          style: AppTypography.headlineSmall.copyWith(
-            color: context.onSurfacePrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: Text(
-          'This feature will be available in a future update. You will be able to export all your tasks and data.',
-          style: AppTypography.bodyMedium.copyWith(
-            color: context.onSurfaceSecondary,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              'OK',
-              style: AppTypography.labelLarge.copyWith(
-                color: context.ongoingTaskColor,
-                fontWeight: FontWeight.w600,
-              ),
             ),
           ),
         ],

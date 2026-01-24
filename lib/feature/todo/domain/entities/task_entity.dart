@@ -31,6 +31,7 @@ class TaskEntity extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isDeleted;
+  final List<String> attachmentIds;
 
   const TaskEntity({
     required this.id,
@@ -45,6 +46,7 @@ class TaskEntity extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.isDeleted = false,
+    this.attachmentIds = const [],
   });
 
   TaskEntity copyWith({
@@ -60,6 +62,7 @@ class TaskEntity extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isDeleted,
+    List<String>? attachmentIds,
   }) {
     return TaskEntity(
       id: id ?? this.id,
@@ -74,6 +77,7 @@ class TaskEntity extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
+      attachmentIds: attachmentIds ?? this.attachmentIds,
     );
   }
 
@@ -91,5 +95,6 @@ class TaskEntity extends Equatable {
         createdAt,
         updatedAt,
         isDeleted,
+        attachmentIds,
       ];
 }

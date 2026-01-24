@@ -16,7 +16,8 @@ class EmailVerificationScreen extends StatefulWidget {
   });
 
   @override
-  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
@@ -50,15 +51,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return Column(
       children: [
         Container(
-          width: 80,
-          height: 80,
+          width: AppDimensions.avatarSizeLarge,
+          height: AppDimensions.avatarSizeLarge,
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.email_outlined,
-            size: 40,
+            size: AppDimensions.avatarSizeSmall,
             color: AppColors.primary,
           ),
         ),
@@ -133,7 +134,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         email: widget.email,
         emailRedirectTo: AuthConstants.redirectUrl,
       );
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

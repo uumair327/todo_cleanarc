@@ -3,10 +3,14 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
 
-import 'package:glimfo_todo/feature/todo/domain/usecases/update_task_usecase.dart';
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart';
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart';
-import 'package:glimfo_todo/core/error/failures.dart';
+import 'package:todo_cleanarc/feature/todo/domain/usecases/update_task_usecase.dart';
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart';
+import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart';
+import 'package:todo_cleanarc/core/error/failures.dart';
+
+import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
+import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
 
 import 'update_task_usecase_test.mocks.dart';
 
@@ -17,17 +21,18 @@ void main() {
 
   setUp(() {
     mockRepository = MockTaskRepository();
-    useCase = UpdateTaskUseCase(repository: mockRepository);
+    useCase = UpdateTaskUseCase(mockRepository);
   });
 
   final testTask = TaskEntity(
-    id: '123',
-    userId: 'user123',
+    id: const TaskId('123'),
+    userId: UserId.fromString('user123'),
     title: 'Updated Task',
     description: 'Updated Description',
     dueDate: DateTime.now(),
-    category: 'in_process',
-    priority: 4,
+    dueTime: const DomainTime(hour: 10, minute: 0),
+    category: TaskCategory.inProcess,
+    priority: TaskPriority.urgent,
     progressPercentage: 50,
     createdAt: DateTime.now().subtract(const Duration(days: 1)),
     updatedAt: DateTime.now(),
@@ -48,9 +53,9 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return StorageFailure when task update fails', () async {
+    test('should return CacheFailure when task update fails', () async {
       // Arrange
-      const failure = StorageFailure(message: 'Failed to update task');
+      const failure = CacheFailure(message: 'Failed to update task');
       when(mockRepository.updateTask(testTask))
           .thenAnswer((_) async => const Left(failure));
 
@@ -63,9 +68,9 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return NotFoundFailure when task does not exist', () async {
+    test('should return CacheFailure when task does not exist', () async {
       // Arrange
-      const failure = NotFoundFailure(message: 'Task not found');
+      const failure = CacheFailure(message: 'Task not found');
       when(mockRepository.updateTask(testTask))
           .thenAnswer((_) async => const Left(failure));
 

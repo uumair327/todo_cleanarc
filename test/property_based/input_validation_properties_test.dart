@@ -1,12 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:glimfo_todo/core/domain/value_objects/email.dart';
-import 'package:glimfo_todo/core/domain/value_objects/password.dart';
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart';
-import 'package:glimfo_todo/core/domain/value_objects/task_id.dart';
-import 'package:glimfo_todo/core/domain/value_objects/user_id.dart';
-import 'package:glimfo_todo/core/domain/enums/task_enums.dart';
-
-import 'property_test_config.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/email.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/password.dart';
+import 'package:todo_cleanarc/feature/todo/domain/entities/task_entity.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/task_id.dart';
+import 'package:todo_cleanarc/core/domain/value_objects/user_id.dart';
+import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
 
 void main() {
   group('Input Validation Consistency Property Tests', () {

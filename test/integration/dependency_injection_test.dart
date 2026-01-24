@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import '../../lib/core/services/color_resolver_service.dart';
-import '../../lib/core/services/color_resolver_service_impl.dart';
-import '../../lib/core/services/theme_provider_service.dart';
-import '../../lib/core/domain/repositories/color_repository.dart';
-import '../../lib/core/domain/repositories/theme_repository.dart';
-import '../../lib/core/infrastructure/color/color_storage_impl.dart';
-import '../../lib/core/infrastructure/theme/theme_storage_impl.dart';
+import 'package:todo_cleanarc/core/services/color_resolver_service.dart';
+import 'package:todo_cleanarc/core/services/color_resolver_service_impl.dart';
+import 'package:todo_cleanarc/core/domain/repositories/color_repository.dart';
+import 'package:todo_cleanarc/core/domain/repositories/theme_repository.dart';
+import 'package:todo_cleanarc/core/infrastructure/color/color_storage_impl.dart';
+import 'package:todo_cleanarc/core/infrastructure/theme/theme_storage_impl.dart';
 
 /// Integration test to verify dependency injection setup is working correctly
 void main() {

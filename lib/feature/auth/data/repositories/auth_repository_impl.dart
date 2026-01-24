@@ -28,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultFuture<UserEntity> signUp({required Email email, required Password password}) async {
     if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure(message: 'No internet connection'));
+      return const Left(NetworkFailure(message: 'Cannot sign up: No internet connection. Please check your network and try again.'));
     }
 
     try {
@@ -48,15 +48,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(userModel.toEntity());
     } on AuthenticationException catch (e) {
-      return Left(AuthenticationFailure(message: e.message));
+      return Left(AuthenticationFailure(message: 'Sign up failed: ${e.message}'));
     } on NetworkException catch (e) {
-      return Left(NetworkFailure(message: e.message));
+      return Left(NetworkFailure(message: 'Network error during sign up: ${e.message}'));
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(message: 'Server error during sign up: ${e.message}'));
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Failed to save user data: ${e.message}'));
     } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error: $e'));
+      return const Left(ServerFailure(message: 'Unable to create account. Please try again.'));
     }
   }
 
@@ -84,16 +84,16 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(userModel.toEntity());
     } on AuthenticationException catch (e) {
-      return Left(AuthenticationFailure(message: e.message));
+      return Left(AuthenticationFailure(message: 'Sign in failed: ${e.message}'));
     } on NetworkException {
       // Try offline authentication as fallback
       return _authenticateOffline(email, password);
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(message: 'Server error during sign in: ${e.message}'));
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(CacheFailure(message: 'Failed to save user data: ${e.message}'));
     } catch (e) {
-      return Left(ServerFailure(message: 'Unexpected error: $e'));
+      return const Left(ServerFailure(message: 'Unable to sign in. Please check your credentials and try again.'));
     }
   }
 

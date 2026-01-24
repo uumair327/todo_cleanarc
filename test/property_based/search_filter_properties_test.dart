@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart';
-import 'package:glimfo_todo/feature/todo/domain/usecases/search_tasks_usecase.dart';
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart';
+import 'package:todo_cleanarc/feature/todo/domain/usecases/search_tasks_usecase.dart';
 
 import 'generators/task_generators.dart';
 import 'search_filter_properties_test.mocks.dart';
@@ -135,8 +135,8 @@ void main() {
         final lowerResult = await searchUseCase(lowerCase);
         final upperResult = await searchUseCase(upperCase);
 
-        bool lowerSuccess = false;
-        bool upperSuccess = false;
+        var lowerSuccess = false;
+        var upperSuccess = false;
 
         lowerResult.fold(
           (failure) => null,
@@ -209,7 +209,7 @@ void main() {
 
     /// Property test: No matching tasks returns empty list
     test('Search with no matches returns empty list', () async {
-      final allTasks = TaskGenerators.generateTaskList(count: 20);
+      TaskGenerators.generateTaskList(count: 20);
       const nonExistentQuery = 'xyzabc123nonexistent';
       
       when(mockRepository.searchTasks(nonExistentQuery))
@@ -375,13 +375,11 @@ void main() {
         count: 5,
       );
       
-      final otherTasks = TaskGenerators.generateTasksInDateRange(
+      TaskGenerators.generateTasksInDateRange(
         startDate: targetDate.add(const Duration(days: 1)),
         endDate: targetDate.add(const Duration(days: 10)),
         count: 10,
       );
-      
-      final allTasks = [...tasksOnDate, ...otherTasks];
       
       when(mockRepository.getTasksByDateRange(targetDate, targetDate))
           .thenAnswer((_) async => Right(tasksOnDate));

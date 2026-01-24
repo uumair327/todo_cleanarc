@@ -42,4 +42,9 @@ abstract class TaskRepository {
   ResultVoid markForSync(TaskId id);
   
   ResultFuture<bool> hasUnsyncedChanges();
+  
+  // Export/Import operations
+  ResultFuture<String> exportTasks(String format);
+  
+  ResultFuture<int> importTasks(String data, String format);
 }

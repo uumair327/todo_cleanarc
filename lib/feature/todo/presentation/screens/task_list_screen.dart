@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_durations.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/widgets.dart';
@@ -70,69 +73,36 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(AppStrings.tasks),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // Navigate to task form for creation
-              // This will be implemented when navigation is set up
+    return Column(
+      children: [
+        // Search and Filter Section
+        _buildSearchAndFilterSection(),
+
+        // Task List
+        Expanded(
+          child: BlocBuilder<TaskListBloc, TaskListState>(
+            builder: (context, state) {
+              if (state is TaskListLoading) {
+                return const TaskListSkeleton(itemCount: 5);
+              } else if (state is TaskListError) {
+                return _buildErrorState(state.message);
+              } else if (state is TaskListEmpty) {
+                return _buildEmptyState();
+              } else if (state is TaskListLoaded) {
+                return _buildLoadedState(state);
+              }
+              return const SizedBox.shrink();
             },
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Search and Filter Section
-          _buildSearchAndFilterSection(),
-
-          // Task List
-          Expanded(
-            child: BlocBuilder<TaskListBloc, TaskListState>(
-              builder: (context, state) {
-                return StreamBuilder<LoadingState>(
-                  stream: loadingManager.stateStream,
-                  builder: (context, loadingSnapshot) {
-                    final loadingState =
-                        loadingSnapshot.data ?? const LoadingState.idle();
-
-                    if (state is TaskListLoading) {
-                      return LoadingWidget(
-                        message:
-                            loadingState.message ?? AppStrings.loadingTasks,
-                        progress: loadingState.progress > 0
-                            ? loadingState.progress
-                            : null,
-                        showProgress: loadingState.progress > 0,
-                      );
-                    } else if (state is TaskListError) {
-                      return _buildErrorState(state.message);
-                    } else if (state is TaskListEmpty) {
-                      return _buildEmptyState();
-                    } else if (state is TaskListLoaded) {
-                      return _buildLoadedState(state);
-                    }
-                    return const SizedBox.shrink();
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildSearchAndFilterSection() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         children: [
           // Search Bar
@@ -142,7 +112,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             prefixIcon: const Icon(Icons.search),
             onChanged: (value) {
               // Debounce search to avoid too many API calls
-              Future.delayed(const Duration(milliseconds: 500), () {
+              Future.delayed(AppDurations.debounce, () {
                 if (_searchController.text == value && mounted) {
                   _paginationHelper.reset();
                   context.read<TaskListBloc>().add(
@@ -175,7 +145,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   )
                 : null,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.mdSm),
 
           // Filter Row
           Row(
@@ -192,7 +162,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   },
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.mdSm),
               Expanded(
                 child: _buildDateFilterButton(
                   AppStrings.endDate,
@@ -205,7 +175,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   },
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.mdSm),
               IconButton(
                 icon: const Icon(Icons.clear_all),
                 onPressed: _clearFilters,
@@ -234,19 +204,20 @@ class _TaskListScreenState extends State<TaskListScreen> {
         onDateSelected(date);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.mdSm, horizontal: AppSpacing.md),
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
         ),
         child: Row(
           children: [
             const Icon(
               Icons.calendar_today,
-              size: 16,
+              size: AppDimensions.iconSizeSmall,
               color: AppColors.textSecondary,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
                 selectedDate != null
@@ -380,9 +351,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
       },
       child: ListView.separated(
         controller: _scrollController,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         itemCount: state.tasks.length + (state.hasMore ? 1 : 0),
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: AppSpacing.mdSm),
         itemBuilder: (context, index) {
           if (index >= state.tasks.length) {
             // Loading indicator for more items
@@ -391,7 +363,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             });
             return const Center(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(AppSpacing.md),
                 child: CircularProgressIndicator(),
               ),
             );
@@ -401,8 +373,42 @@ class _TaskListScreenState extends State<TaskListScreen> {
           return TaskCard(
             task: task,
             onTap: () {
-              // Navigate to task details or edit
-              // This will be implemented when navigation is set up
+              context.push('/task/edit/${task.id.value}').then((result) {
+                if (result == true) {
+                  // Refresh the task list after successful edit
+                  _paginationHelper.reset();
+                  context.read<TaskListBloc>().add(
+                        TaskListLoadPaginatedRequested(
+                          page: 0,
+                          pageSize: _paginationHelper.pageSize,
+                          searchQuery: _searchController.text.isEmpty
+                              ? null
+                              : _searchController.text,
+                          startDate: _selectedStartDate,
+                          endDate: _selectedEndDate,
+                        ),
+                      );
+                }
+              });
+            },
+            onEdit: () {
+              context.push('/task/edit/${task.id.value}').then((result) {
+                if (result == true) {
+                  // Refresh the task list after successful edit
+                  _paginationHelper.reset();
+                  context.read<TaskListBloc>().add(
+                        TaskListLoadPaginatedRequested(
+                          page: 0,
+                          pageSize: _paginationHelper.pageSize,
+                          searchQuery: _searchController.text.isEmpty
+                              ? null
+                              : _searchController.text,
+                          startDate: _selectedStartDate,
+                          endDate: _selectedEndDate,
+                        ),
+                      );
+                }
+              });
             },
             onComplete: () {
               context.read<TaskListBloc>().add(

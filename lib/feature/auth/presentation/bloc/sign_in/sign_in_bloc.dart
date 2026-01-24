@@ -65,14 +65,6 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     Emitter<SignInState> emit,
   ) async {
     if (!state.isFormValid) {
-<<<<<<< HEAD
-      // Debug: show why form is invalid
-      print(
-          'SignIn: Form not valid - email: "${state.email}", password length: ${state.password.length}');
-      print(
-          'SignIn: emailError: ${state.emailError}, passwordError: ${state.passwordError}');
-=======
->>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
       return;
     }
 
@@ -95,15 +87,10 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
           ));
         },
         (user) {
-<<<<<<< HEAD
-          print('SignIn: Success!');
           emit(state.copyWith(
             status: SignInStatus.success,
             user: () => user,
           ));
-=======
-          emit(state.copyWith(status: SignInStatus.success));
->>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
         },
       );
     } catch (e) {

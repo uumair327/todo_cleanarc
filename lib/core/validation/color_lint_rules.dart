@@ -1,11 +1,11 @@
 /// Custom lint rules for detecting hardcoded colors in the codebase
-/// 
+///
 /// This module provides utilities to scan Dart files for hardcoded color
 /// usage and enforce the use of semantic color tokens instead.
 library color_lint_rules;
 
 import 'dart:io';
-import 'dart:convert';
+import '../services/app_logger.dart';
 
 /// Exception thrown when hardcoded colors are detected
 class HardcodedColorException implements Exception {
@@ -34,7 +34,7 @@ class ColorValidationResult {
   final int filesScanned;
   final bool isValid;
 
-  const ColorValidationResult({
+  ColorValidationResult({
     required this.violations,
     required this.filesScanned,
   }) : isValid = violations.isEmpty;
@@ -87,10 +87,10 @@ class HardcodedColorViolation {
 
 /// Types of color violations
 enum ColorViolationType {
-  materialColors,    // Colors.red, Colors.blue, etc.
-  hexColors,         // Color(0xFF123456)
-  rgbColors,         // Color.fromRGBO(255, 0, 0, 1.0)
-  argbColors,        // Color.fromARGB(255, 255, 0, 0)
+  materialColors, // Colors.red, Colors.blue, etc.
+  hexColors, // Color(0xFF123456)
+  rgbColors, // Color.fromRGBO(255, 0, 0, 1.0)
+  argbColors, // Color.fromARGB(255, 255, 0, 0)
 }
 
 /// Main color validation scanner
@@ -137,13 +137,13 @@ class ColorLintScanner {
 
   /// Suggestions for each violation type
   static const Map<ColorViolationType, String> _suggestions = {
-    ColorViolationType.materialColors: 
+    ColorViolationType.materialColors:
         'Use context.appColors.semanticColorName or context.colorScheme.colorName',
-    ColorViolationType.hexColors: 
+    ColorViolationType.hexColors:
         'Define color in ColorTokenRegistry and access via semantic name',
-    ColorViolationType.rgbColors: 
+    ColorViolationType.rgbColors:
         'Define color in ColorTokenRegistry and access via semantic name',
-    ColorViolationType.argbColors: 
+    ColorViolationType.argbColors:
         'Define color in ColorTokenRegistry and access via semantic name',
   };
 
@@ -156,12 +156,12 @@ class ColorLintScanner {
     int filesScanned = 0;
 
     final dartFiles = await _findDartFiles(rootPath, includeTests);
-    
+
     for (final file in dartFiles) {
       if (_shouldSkipFile(file.path)) continue;
-      
+
       filesScanned++;
-      final fileViolations = await _scanFile(file);
+      final fileViolations = await scanFile(file);
       violations.addAll(fileViolations);
     }
 
@@ -172,24 +172,26 @@ class ColorLintScanner {
   }
 
   /// Scan a single file for hardcoded colors
-  static Future<List<HardcodedColorViolation>> _scanFile(File file) async {
+  ///
+  /// This method is public to allow unit testing of individual file scanning.
+  static Future<List<HardcodedColorViolation>> scanFile(File file) async {
     final violations = <HardcodedColorViolation>[];
-    
+
     try {
       final lines = await file.readAsLines();
-      
+
       for (int i = 0; i < lines.length; i++) {
         final line = lines[i];
         final lineNumber = i + 1;
-        
+
         // Skip comments and strings (basic implementation)
         if (_isCommentOrString(line)) continue;
-        
+
         // Check each pattern
         for (final entry in _colorPatterns.entries) {
           final type = entry.key;
           final pattern = entry.value;
-          
+
           final matches = pattern.allMatches(line);
           for (final match in matches) {
             violations.add(HardcodedColorViolation(
@@ -205,26 +207,28 @@ class ColorLintScanner {
       }
     } catch (e) {
       // Skip files that can't be read
-      print('Warning: Could not scan file ${file.path}: $e');
+      final logger = AppLogger();
+      logger.warning('Could not scan file ${file.path}', e);
     }
-    
+
     return violations;
   }
 
   /// Find all Dart files in the project
-  static Future<List<File>> _findDartFiles(String rootPath, bool includeTests) async {
+  static Future<List<File>> _findDartFiles(
+      String rootPath, bool includeTests) async {
     final files = <File>[];
     final directory = Directory(rootPath);
-    
+
     if (!directory.existsSync()) return files;
-    
+
     await for (final entity in directory.list(recursive: true)) {
       if (entity is File && entity.path.endsWith('.dart')) {
         if (!includeTests && entity.path.contains('/test/')) continue;
         files.add(entity);
       }
     }
-    
+
     return files;
   }
 
@@ -234,54 +238,57 @@ class ColorLintScanner {
     for (final excludedPath in _excludedPaths) {
       if (filePath.contains(excludedPath)) return true;
     }
-    
+
     // Skip excluded files
     for (final excludedFile in _excludedFiles) {
       if (filePath.endsWith(excludedFile)) return true;
     }
-    
+
     return false;
   }
 
   /// Basic check for comments and strings (simplified)
   static bool _isCommentOrString(String line) {
     final trimmed = line.trim();
-    return trimmed.startsWith('//') || 
-           trimmed.startsWith('/*') || 
-           trimmed.startsWith('*') ||
-           trimmed.startsWith('///');
+    return trimmed.startsWith('//') ||
+        trimmed.startsWith('/*') ||
+        trimmed.startsWith('*') ||
+        trimmed.startsWith('///');
   }
 
   /// Generate a detailed report
   static String generateReport(ColorValidationResult result) {
     final buffer = StringBuffer();
-    
+
     buffer.writeln('Color Validation Report');
     buffer.writeln('======================');
     buffer.writeln('Files scanned: ${result.filesScanned}');
     buffer.writeln('Violations found: ${result.violations.length}');
     buffer.writeln('Status: ${result.isValid ? "PASS" : "FAIL"}');
     buffer.writeln();
-    
+
     if (result.violations.isNotEmpty) {
       buffer.writeln('Violations:');
       buffer.writeln('-----------');
-      
+
       // Group by file
       final violationsByFile = <String, List<HardcodedColorViolation>>{};
       for (final violation in result.violations) {
-        violationsByFile.putIfAbsent(violation.filePath, () => []).add(violation);
+        violationsByFile
+            .putIfAbsent(violation.filePath, () => [])
+            .add(violation);
       }
-      
+
       for (final entry in violationsByFile.entries) {
         buffer.writeln('\n${entry.key}:');
         for (final violation in entry.value) {
-          buffer.writeln('  Line ${violation.lineNumber}: ${violation.colorValue}');
+          buffer.writeln(
+              '  Line ${violation.lineNumber}: ${violation.colorValue}');
           buffer.writeln('    Suggestion: ${violation.suggestion}');
         }
       }
     }
-    
+
     return buffer.toString();
   }
 }

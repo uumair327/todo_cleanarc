@@ -41,7 +41,7 @@
 ### ✅ Code Quality Fixes
 
 #### Package Name Consistency:
-- ✅ Updated `pubspec.yaml`: `glimfo_todo` → `todo_cleanarc`
+- ✅ Updated `pubspec.yaml`: `todo_cleanarc` → `todo_cleanarc`
 - ✅ Updated app name: `Glimfo Todo` → `TaskFlow`
 - ✅ Fixed all import statements in test files (15+ files)
 - ✅ Regenerated mock files with correct package references

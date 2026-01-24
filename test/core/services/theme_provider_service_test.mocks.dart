@@ -6,14 +6,14 @@
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
-import 'package:flutter/material.dart' as _i6;
+import 'package:flutter/material.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:todo_cleanarc/core/domain/entities/app_theme_config.dart'
-    as _i5;
-import 'package:todo_cleanarc/core/domain/entities/theme_state.dart' as _i7;
+    as _i6;
+import 'package:todo_cleanarc/core/domain/entities/theme_state.dart' as _i8;
 import 'package:todo_cleanarc/core/domain/repositories/theme_repository.dart'
     as _i3;
-import 'package:todo_cleanarc/core/error/failures.dart' as _i8;
+import 'package:todo_cleanarc/core/error/failures.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -47,154 +47,314 @@ class MockThemeRepository extends _i1.Mock implements _i3.ThemeRepository {
   }
 
   @override
-  _i4.Future<_i2.Either<_i8.Failure, _i5.AppThemeConfig>> getCurrentTheme() =>
+  _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>> getCurrentTheme() =>
       (super.noSuchMethod(
         Invocation.method(
           #getCurrentTheme,
           [],
         ),
         returnValue:
-            _i4.Future<_i2.Either<_i8.Failure, _i5.AppThemeConfig>>.value(
-                _FakeEither_0<_i8.Failure, _i5.AppThemeConfig>(
+            _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>>.value(
+                _FakeEither_0<_i5.Failure, _i6.AppThemeConfig>(
           this,
           Invocation.method(
             #getCurrentTheme,
             [],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i8.Failure, _i5.AppThemeConfig>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>>);
 
   @override
-  _i4.Future<_i2.Either<_i8.Failure, void>> saveTheme(
-          _i5.AppThemeConfig? theme) =>
+  _i4.Future<_i2.Either<_i5.Failure, void>> saveTheme(
+          _i6.AppThemeConfig? theme) =>
       (super.noSuchMethod(
         Invocation.method(
           #saveTheme,
           [theme],
         ),
-        returnValue: _i4.Future<_i2.Either<_i8.Failure, void>>.value(
-            _FakeEither_0<_i8.Failure, void>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
             #saveTheme,
             [theme],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i8.Failure, void>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 
   @override
-  _i4.Future<_i2.Either<_i8.Failure, List<_i5.AppThemeConfig>>>
+  _i4.Future<_i2.Either<_i5.Failure, List<_i6.AppThemeConfig>>>
       getAvailableThemes() => (super.noSuchMethod(
             Invocation.method(
               #getAvailableThemes,
               [],
             ),
             returnValue: _i4.Future<
-                    _i2.Either<_i8.Failure, List<_i5.AppThemeConfig>>>.value(
-                _FakeEither_0<_i8.Failure, List<_i5.AppThemeConfig>>(
+                    _i2.Either<_i5.Failure, List<_i6.AppThemeConfig>>>.value(
+                _FakeEither_0<_i5.Failure, List<_i6.AppThemeConfig>>(
               this,
               Invocation.method(
                 #getAvailableThemes,
                 [],
               ),
             )),
-          ) as _i4.Future<_i2.Either<_i8.Failure, List<_i5.AppThemeConfig>>>);
+          ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.AppThemeConfig>>>);
 
   @override
-  _i4.Stream<_i6.ThemeMode> watchSystemTheme() => (super.noSuchMethod(
-        Invocation.method(
-          #watchSystemTheme,
-          [],
-        ),
-        returnValue: _i4.Stream<_i6.ThemeMode>.empty(),
-      ) as _i4.Stream<_i6.ThemeMode>);
-
-  @override
-  _i4.Future<_i2.Either<_i8.Failure, _i7.ThemeState>> getThemeState() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getThemeState,
-          [],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i8.Failure, _i7.ThemeState>>.value(
-            _FakeEither_0<_i8.Failure, _i7.ThemeState>(
-          this,
-          Invocation.method(
-            #getThemeState,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i8.Failure, _i7.ThemeState>>);
-
-  @override
-  _i4.Future<_i2.Either<_i8.Failure, _i5.AppThemeConfig>> getDefaultTheme() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getDefaultTheme,
-          [],
-        ),
-        returnValue:
-            _i4.Future<_i2.Either<_i8.Failure, _i5.AppThemeConfig>>.value(
-                _FakeEither_0<_i8.Failure, _i5.AppThemeConfig>(
-          this,
-          Invocation.method(
-            #getDefaultTheme,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i8.Failure, _i5.AppThemeConfig>>);
-
-  @override
-  _i4.Future<_i2.Either<_i8.Failure, void>> validateTheme(
-          _i5.AppThemeConfig? theme) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #validateTheme,
-          [theme],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i8.Failure, void>>.value(
-            _FakeEither_0<_i8.Failure, void>(
-          this,
-          Invocation.method(
-            #validateTheme,
-            [theme],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i8.Failure, void>>);
-
-  @override
-  _i4.Future<_i2.Either<_i8.Failure, void>> setSystemThemeEnabled(
-          bool? enabled) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setSystemThemeEnabled,
-          [enabled],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i8.Failure, void>>.value(
-            _FakeEither_0<_i8.Failure, void>(
-          this,
-          Invocation.method(
-            #setSystemThemeEnabled,
-            [enabled],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i8.Failure, void>>);
-
-  @override
-  _i4.Future<_i2.Either<_i8.Failure, void>> addCustomTheme(
-          _i5.AppThemeConfig? theme) =>
+  _i4.Future<_i2.Either<_i5.Failure, void>> addCustomTheme(
+          _i6.AppThemeConfig? theme) =>
       (super.noSuchMethod(
         Invocation.method(
           #addCustomTheme,
           [theme],
         ),
-        returnValue: _i4.Future<_i2.Either<_i8.Failure, void>>.value(
-            _FakeEither_0<_i8.Failure, void>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
             #addCustomTheme,
             [theme],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i8.Failure, void>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> removeCustomTheme(
+          String? themeName) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeCustomTheme,
+          [themeName],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #removeCustomTheme,
+            [themeName],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> updateCustomTheme(
+          _i6.AppThemeConfig? theme) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateCustomTheme,
+          [theme],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #updateCustomTheme,
+            [theme],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Stream<_i7.ThemeMode> watchSystemTheme() => (super.noSuchMethod(
+        Invocation.method(
+          #watchSystemTheme,
+          [],
+        ),
+        returnValue: _i4.Stream<_i7.ThemeMode>.empty(),
+      ) as _i4.Stream<_i7.ThemeMode>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i7.ThemeMode>> getSystemThemeMode() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSystemThemeMode,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i7.ThemeMode>>.value(
+            _FakeEither_0<_i5.Failure, _i7.ThemeMode>(
+          this,
+          Invocation.method(
+            #getSystemThemeMode,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i7.ThemeMode>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, bool>> getSystemThemeEnabled() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSystemThemeEnabled,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, bool>>.value(
+            _FakeEither_0<_i5.Failure, bool>(
+          this,
+          Invocation.method(
+            #getSystemThemeEnabled,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, bool>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> setSystemThemeEnabled(
+          bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSystemThemeEnabled,
+          [enabled],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #setSystemThemeEnabled,
+            [enabled],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i8.ThemeState>> getThemeState() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getThemeState,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i8.ThemeState>>.value(
+            _FakeEither_0<_i5.Failure, _i8.ThemeState>(
+          this,
+          Invocation.method(
+            #getThemeState,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i8.ThemeState>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> saveThemeState(
+          _i8.ThemeState? state) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #saveThemeState,
+          [state],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #saveThemeState,
+            [state],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> resetToDefaults() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #resetToDefaults,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #resetToDefaults,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> validateTheme(
+          _i6.AppThemeConfig? theme) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #validateTheme,
+          [theme],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #validateTheme,
+            [theme],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, Map<String, dynamic>>> exportTheme(
+          _i6.AppThemeConfig? theme) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #exportTheme,
+          [theme],
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, Map<String, dynamic>>>.value(
+                _FakeEither_0<_i5.Failure, Map<String, dynamic>>(
+          this,
+          Invocation.method(
+            #exportTheme,
+            [theme],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, Map<String, dynamic>>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>> importTheme(
+          Map<String, dynamic>? themeData) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #importTheme,
+          [themeData],
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>>.value(
+                _FakeEither_0<_i5.Failure, _i6.AppThemeConfig>(
+          this,
+          Invocation.method(
+            #importTheme,
+            [themeData],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, bool>> themeExists(String? themeName) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #themeExists,
+          [themeName],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, bool>>.value(
+            _FakeEither_0<_i5.Failure, bool>(
+          this,
+          Invocation.method(
+            #themeExists,
+            [themeName],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, bool>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>> getDefaultTheme() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getDefaultTheme,
+          [],
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>>.value(
+                _FakeEither_0<_i5.Failure, _i6.AppThemeConfig>(
+          this,
+          Invocation.method(
+            #getDefaultTheme,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.AppThemeConfig>>);
 }

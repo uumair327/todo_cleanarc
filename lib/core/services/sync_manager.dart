@@ -12,19 +12,19 @@ import '../../feature/auth/domain/repositories/auth_repository.dart';
 class SyncManager {
   late final BackgroundSyncService _syncService;
   late final ConnectivityService _connectivityService;
-  
+
   // Combined status streams
-  final StreamController<SyncManagerStatus> _statusController = 
+  final StreamController<SyncManagerStatus> _statusController =
       StreamController<SyncManagerStatus>.broadcast();
-  
+
   StreamSubscription<SyncStatus>? _syncStatusSubscription;
   StreamSubscription<ConnectivityStatus>? _connectivityStatusSubscription;
   StreamSubscription<SyncError>? _syncErrorSubscription;
-  
+
   SyncStatus _currentSyncStatus = SyncStatus.idle;
   ConnectivityStatus _currentConnectivityStatus = ConnectivityStatus.none;
   SyncError? _lastSyncError;
-  
+
   SyncManager({
     required TaskRepository taskRepository,
     required AuthRepository authRepository,
@@ -36,49 +36,51 @@ class SyncManager {
       authRepository: authRepository,
       networkInfo: networkInfo,
     );
-    
+
     _connectivityService = ConnectivityService(
       connectivity: connectivity ?? Connectivity(),
       networkInfo: networkInfo,
       syncService: _syncService,
     );
-    
+
     _setupStatusListeners();
   }
 
   /// Stream of combined sync manager status updates
   Stream<SyncManagerStatus> get statusStream => _statusController.stream;
-  
+
   /// Current sync status
   SyncStatus get syncStatus => _currentSyncStatus;
-  
+
   /// Current connectivity status
   ConnectivityStatus get connectivityStatus => _currentConnectivityStatus;
-  
+
   /// Last sync error (if any)
   SyncError? get lastSyncError => _lastSyncError;
-  
+
   /// Current combined status
   SyncManagerStatus get currentStatus => SyncManagerStatus(
-    syncStatus: _currentSyncStatus,
-    connectivityStatus: _currentConnectivityStatus,
-    lastError: _lastSyncError,
-  );
+        syncStatus: _currentSyncStatus,
+        connectivityStatus: _currentConnectivityStatus,
+        lastError: _lastSyncError,
+      );
 
   /// Initialize and start all sync services
   Future<void> initialize() async {
     developer.log('Initializing sync manager', name: 'SyncManager');
-    
+
     try {
       // Start connectivity monitoring first
       await _connectivityService.startMonitoring();
-      
+
       // Start background sync service
       _syncService.startPeriodicSync();
-      
-      developer.log('Sync manager initialized successfully', name: 'SyncManager');
+
+      developer.log('Sync manager initialized successfully',
+          name: 'SyncManager');
     } catch (e) {
-      developer.log('Failed to initialize sync manager: $e', name: 'SyncManager');
+      developer.log('Failed to initialize sync manager: $e',
+          name: 'SyncManager');
       rethrow;
     }
   }
@@ -86,14 +88,15 @@ class SyncManager {
   /// Stop all sync services
   void stop() {
     developer.log('Stopping sync manager', name: 'SyncManager');
-    
+
     _syncService.stopPeriodicSync();
     _connectivityService.stopMonitoring();
   }
 
   /// Manually trigger a sync operation
   Future<void> triggerSync() async {
-    developer.log('Manual sync triggered via sync manager', name: 'SyncManager');
+    developer.log('Manual sync triggered via sync manager',
+        name: 'SyncManager');
     await _syncService.triggerSync();
   }
 
@@ -107,7 +110,7 @@ class SyncManager {
     if (_currentConnectivityStatus == ConnectivityStatus.none) {
       return 'Offline - Changes will sync when connected';
     }
-    
+
     switch (_currentSyncStatus) {
       case SyncStatus.syncing:
         return 'Syncing your changes...';
@@ -120,17 +123,16 @@ class SyncManager {
       case SyncStatus.offline:
         return 'No internet connection';
       case SyncStatus.idle:
-      default:
         return 'Ready to sync';
     }
   }
 
   /// Check if sync is currently in progress
   bool get isSyncing => _currentSyncStatus == SyncStatus.syncing;
-  
+
   /// Check if currently online
   bool get isOnline => _connectivityService.isOnline;
-  
+
   /// Check if currently offline
   bool get isOffline => _connectivityService.isOffline;
 
@@ -146,18 +148,20 @@ class SyncManager {
         developer.log('Sync status stream error: $error', name: 'SyncManager');
       },
     );
-    
+
     // Listen to connectivity status changes
-    _connectivityStatusSubscription = _connectivityService.connectivityStatusStream.listen(
+    _connectivityStatusSubscription =
+        _connectivityService.connectivityStatusStream.listen(
       (connectivityStatus) {
         _currentConnectivityStatus = connectivityStatus;
         _emitStatusUpdate();
       },
       onError: (error) {
-        developer.log('Connectivity status stream error: $error', name: 'SyncManager');
+        developer.log('Connectivity status stream error: $error',
+            name: 'SyncManager');
       },
     );
-    
+
     // Listen to sync errors
     _syncErrorSubscription = _syncService.syncErrorStream.listen(
       (syncError) {
@@ -177,20 +181,20 @@ class SyncManager {
       connectivityStatus: _currentConnectivityStatus,
       lastError: _lastSyncError,
     );
-    
+
     _statusController.add(status);
   }
 
   /// Dispose of all resources
   void dispose() {
     developer.log('Disposing sync manager', name: 'SyncManager');
-    
+
     stop();
-    
+
     _syncStatusSubscription?.cancel();
     _connectivityStatusSubscription?.cancel();
     _syncErrorSubscription?.cancel();
-    
+
     _syncService.dispose();
     _connectivityService.dispose();
     _statusController.close();
@@ -211,13 +215,13 @@ class SyncManagerStatus {
   }) : timestamp = DateTime.now();
 
   /// Check if sync is available (online and not failed)
-  bool get canSync => 
-      connectivityStatus != ConnectivityStatus.none && 
+  bool get canSync =>
+      connectivityStatus != ConnectivityStatus.none &&
       syncStatus != SyncStatus.failed;
 
   /// Check if there are issues that need user attention
-  bool get hasIssues => 
-      syncStatus == SyncStatus.failed || 
+  bool get hasIssues =>
+      syncStatus == SyncStatus.failed ||
       (connectivityStatus == ConnectivityStatus.none && lastError != null);
 
   /// Get priority level for status display (higher = more important)
@@ -232,7 +236,7 @@ class SyncManagerStatus {
   @override
   String toString() {
     return 'SyncManagerStatus(sync: ${syncStatus.name}, '
-           'connectivity: ${connectivityStatus.name}, '
-           'hasError: ${lastError != null}, timestamp: $timestamp)';
+        'connectivity: ${connectivityStatus.name}, '
+        'hasError: ${lastError != null}, timestamp: $timestamp)';
   }
 }

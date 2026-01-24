@@ -2,13 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
-import 'package:glimfo_todo/feature/todo/domain/entities/task_entity.dart';
-import 'package:glimfo_todo/feature/todo/domain/repositories/task_repository.dart';
-import 'package:glimfo_todo/feature/todo/domain/usecases/get_dashboard_stats_usecase.dart';
-import 'package:glimfo_todo/core/domain/enums/task_enums.dart';
+import 'package:todo_cleanarc/feature/todo/domain/repositories/task_repository.dart';
+import 'package:todo_cleanarc/feature/todo/domain/usecases/get_dashboard_stats_usecase.dart';
+import 'package:todo_cleanarc/core/domain/enums/task_enums.dart';
 
 import 'generators/task_generators.dart';
-import 'property_test_config.dart';
 import 'dashboard_statistics_properties_test.mocks.dart';
 
 @GenerateMocks([TaskRepository])

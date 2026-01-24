@@ -3,9 +3,9 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
 
-import 'package:glimfo_todo/feature/auth/domain/usecases/sign_out_usecase.dart';
-import 'package:glimfo_todo/feature/auth/domain/repositories/auth_repository.dart';
-import 'package:glimfo_todo/core/error/failures.dart';
+import 'package:todo_cleanarc/feature/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:todo_cleanarc/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:todo_cleanarc/core/error/failures.dart';
 
 import 'sign_out_usecase_test.mocks.dart';
 
@@ -16,14 +16,13 @@ void main() {
 
   setUp(() {
     mockRepository = MockAuthRepository();
-    useCase = SignOutUseCase(repository: mockRepository);
+    useCase = SignOutUseCase(mockRepository);
   });
 
   group('SignOutUseCase', () {
     test('should return Right(unit) when sign out is successful', () async {
       // Arrange
-      when(mockRepository.signOut())
-          .thenAnswer((_) async => const Right(unit));
+      when(mockRepository.signOut()).thenAnswer((_) async => const Right(unit));
 
       // Act
       final result = await useCase.call();
@@ -34,9 +33,9 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return AuthFailure when sign out fails', () async {
+    test('should return AuthenticationFailure when sign out fails', () async {
       // Arrange
-      const failure = AuthFailure(message: 'Sign out failed');
+      const failure = AuthenticationFailure(message: 'Sign out failed');
       when(mockRepository.signOut())
           .thenAnswer((_) async => const Left(failure));
 

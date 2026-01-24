@@ -59,6 +59,14 @@ dependencies:
   uuid: ^4.4.0
   connectivity_plus: ^6.0.5
   shared_preferences: ^2.2.3
+  logger: ^2.4.0
+  flutter_colorpicker: ^1.1.0
+  file_picker: ^8.1.4
+  mime: ^2.0.0
+  url_launcher: ^6.3.1
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +86,7 @@ dev_dependencies:
   
   # Testing
   mockito: ^5.4.4
+  bloc_test: ^9.1.7
   faker: ^2.1.0
 
 # For information on the generic Dart part of this file, see the

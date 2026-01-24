@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
-<<<<<<< HEAD
-import '../../../../core/utils/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/constants/app_strings.dart';
-=======
 import '../../../../core/theme/build_context_color_extension.dart';
->>>>>>> 35c26355e54afe6023cde3a873a421d55c0cd6c3
 import '../../../../core/widgets/widgets.dart';
 import '../bloc/dashboard/dashboard_bloc.dart';
 import '../bloc/dashboard/dashboard_event.dart';
@@ -40,13 +38,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(AppSpacing.md),
             child: BlocBuilder<DashboardBloc, DashboardState>(
               builder: (context, state) {
                 if (state is DashboardLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return _buildLoadingState();
                 } else if (state is DashboardError) {
                   return _buildErrorState(state.message);
                 } else if (state is DashboardLoaded) {
@@ -61,6 +57,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _buildLoadingState() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Greeting skeleton
+        Container(
+          width: double.infinity,
+          height: 120,
+          decoration: BoxDecoration(
+            color: context.surfacePrimary,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(AppSpacing.mdLg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonLoader(
+                  width: 200,
+                  height: 28,
+                ),
+                SizedBox(height: AppSpacing.sm),
+                SkeletonLoader(
+                  width: 150,
+                  height: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        
+        // Stats section skeleton
+        SkeletonLoader(
+          width: 150,
+          height: 24,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        const DashboardStatsSkeleton(),
+        const SizedBox(height: AppSpacing.lg),
+        
+        // Recent tasks skeleton
+        SkeletonLoader(
+          width: 120,
+          height: 24,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        const TaskCardSkeleton(),
+        const SizedBox(height: AppSpacing.mdSm),
+        const TaskCardSkeleton(),
+      ],
+    );
+  }
+
   Widget _buildErrorState(String message) {
     return Center(
       child: Column(
@@ -71,14 +123,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             size: 64,
             color: context.colorScheme.error,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           Text(
             AppStrings.errorLoadingDashboard,
             style: AppTheme.textTheme.headlineSmall?.copyWith(
               color: context.colorScheme.error,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             message,
             style: AppTheme.textTheme.bodyMedium?.copyWith(
@@ -86,7 +138,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
           CustomButton(
             text: AppStrings.retry,
             onPressed: () {
@@ -104,11 +156,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         // User Greeting
         _buildGreetingSection(state.userGreeting),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
 
         // Category Statistics
         _buildCategoryStatsSection(state),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
 
         // Recent Tasks
         _buildRecentTasksSection(state),
@@ -119,20 +171,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildGreetingSection(String greeting) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.mdLg),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
             context.ongoingTaskColor,
-            context.appColors.ongoingTask.toFlutterColor().withValues(alpha: 0.8),
+            context.appColors.ongoingTask
+                .toFlutterColor()
+                .withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
         boxShadow: [
           BoxShadow(
-            color: context.appColors.ongoingTask.toFlutterColor().withValues(alpha: 0.3),
+            color: context.appColors.ongoingTask
+                .toFlutterColor()
+                .withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -148,11 +204,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             AppStrings.dashProductiveTagline,
             style: AppTheme.textTheme.bodyLarge?.copyWith(
-              color: context.appColors.onOngoingTask.toFlutterColor().withValues(alpha: 0.9),
+              color: context.appColors.onOngoingTask
+                  .toFlutterColor()
+                  .withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -171,13 +229,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
+          crossAxisSpacing: AppSpacing.mdSm,
+          mainAxisSpacing: AppSpacing.mdSm,
           childAspectRatio: 1.2,
           children: [
             _buildCategoryCard(
@@ -217,10 +275,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     IconData icon,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: context.surfacePrimary,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
         boxShadow: [
           BoxShadow(
             color: context.onSurfacePrimaryOpacity40,
@@ -233,18 +291,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AppSpacing.mdSm),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
             ),
             child: Icon(
               icon,
               color: color,
-              size: 24,
+              size: AppDimensions.iconSize,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.mdSm),
           Text(
             count.toString(),
             style: AppTheme.textTheme.headlineMedium?.copyWith(
@@ -252,7 +310,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             title,
             style: AppTheme.textTheme.bodySmall?.copyWith(
@@ -294,7 +352,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         if (state.stats.recentTasks.isEmpty)
           _buildEmptyRecentTasks()
         else
@@ -302,14 +360,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: state.stats.recentTasks.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: AppSpacing.mdSm),
             itemBuilder: (context, index) {
               final task = state.stats.recentTasks[index];
               return TaskCard(
                 task: task,
                 onTap: () {
-                  // Navigate to task details or edit
-                  // This will be implemented when navigation is set up
+                  context.push('/task/edit/${task.id.value}').then((result) {
+                    if (result == true) {
+                      // Refresh dashboard after successful edit
+                      context
+                          .read<DashboardBloc>()
+                          .add(const DashboardRefreshRequested());
+                    }
+                  });
+                },
+                onEdit: () {
+                  context.push('/task/edit/${task.id.value}').then((result) {
+                    if (result == true) {
+                      // Refresh dashboard after successful edit
+                      context
+                          .read<DashboardBloc>()
+                          .add(const DashboardRefreshRequested());
+                    }
+                  });
                 },
                 onComplete: () {
                   // Handle task completion
@@ -335,10 +410,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildEmptyRecentTasks() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: context.surfacePrimary,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
         boxShadow: [
           BoxShadow(
             color: context.onSurfacePrimaryOpacity40,
@@ -351,21 +426,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           Icon(
             Icons.task_alt,
-            size: 48,
-            color: context.appColors.onSurfaceSecondary.toFlutterColor().withValues(alpha: 0.5),
+            size: AppSpacing.xxl,
+            color: context.appColors.onSurfaceSecondary
+                .toFlutterColor()
+                .withValues(alpha: 0.5),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           Text(
             AppStrings.noTasksYet,
             style: AppTheme.textTheme.titleMedium?.copyWith(
               color: context.onSurfaceSecondary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             AppStrings.createFirstTask,
             style: AppTheme.textTheme.bodyMedium?.copyWith(
-              color: context.appColors.onSurfaceSecondary.toFlutterColor().withValues(alpha: 0.7),
+              color: context.appColors.onSurfaceSecondary
+                  .toFlutterColor()
+                  .withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),

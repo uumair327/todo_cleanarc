@@ -3,6 +3,7 @@ import '../models/task_model.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/utils/pagination_helper.dart';
 import '../../../../core/utils/memory_manager.dart';
+import '../../../../core/theme/app_durations.dart';
 
 abstract class HiveTaskDataSource {
   Future<List<TaskModel>> getAllTasks();
@@ -55,13 +56,14 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       if (cached != null) return cached;
 
       final taskBox = await box;
-      final tasks = taskBox.values
-          .where((task) => !task.isDeleted)
-          .toList()
+      final tasks = taskBox.values.where((task) => !task.isDeleted).toList()
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-      
-      // Cache for 5 minutes
-      memoryManager.cacheItem(cacheKey, tasks, ttl: const Duration(minutes: 5));
+
+      // Cache for 5 minutes with 'tasks' group
+      memoryManager.cacheItem(cacheKey, tasks, 
+        ttl: AppDurations.cacheMedium, 
+        group: 'tasks',
+      );
       return tasks;
     } catch (e) {
       throw CacheException(message: 'Failed to get all tasks: $e');
@@ -77,8 +79,10 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     DateTime? endDate,
   }) async {
     try {
-      final cacheKey = 'paginated_tasks_${page}_${pageSize}_${searchQuery ?? ''}_${startDate?.millisecondsSinceEpoch ?? ''}_${endDate?.millisecondsSinceEpoch ?? ''}';
-      final cached = memoryManager.getCachedItem<PaginatedResult<TaskModel>>(cacheKey);
+      final cacheKey =
+          'paginated_tasks_${page}_${pageSize}_${searchQuery ?? ''}_${startDate?.millisecondsSinceEpoch ?? ''}_${endDate?.millisecondsSinceEpoch ?? ''}';
+      final cached =
+          memoryManager.getCachedItem<PaginatedResult<TaskModel>>(cacheKey);
       if (cached != null) return cached;
 
       final taskBox = await box;
@@ -95,12 +99,14 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       if (startDate != null || endDate != null) {
         allTasks = allTasks.where((task) {
           if (startDate != null && endDate != null) {
-            return task.dueDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
-                   task.dueDate.isBefore(endDate.add(const Duration(days: 1)));
+            return task.dueDate
+                    .isAfter(startDate.subtract(AppDurations.oneDay)) &&
+                task.dueDate.isBefore(endDate.add(AppDurations.oneDay));
           } else if (startDate != null) {
-            return task.dueDate.isAfter(startDate.subtract(const Duration(days: 1)));
+            return task.dueDate
+                .isAfter(startDate.subtract(AppDurations.oneDay));
           } else if (endDate != null) {
-            return task.dueDate.isBefore(endDate.add(const Duration(days: 1)));
+            return task.dueDate.isBefore(endDate.add(AppDurations.oneDay));
           }
           return true;
         });
@@ -112,8 +118,8 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       final totalCount = taskList.length;
       final startIndex = page * pageSize;
       final endIndex = (startIndex + pageSize).clamp(0, totalCount);
-      
-      final paginatedTasks = startIndex < totalCount 
+
+      final paginatedTasks = startIndex < totalCount
           ? taskList.sublist(startIndex, endIndex)
           : <TaskModel>[];
 
@@ -125,8 +131,11 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
         pageSize: pageSize,
       );
 
-      // Cache for 2 minutes
-      memoryManager.cacheItem(cacheKey, result, ttl: const Duration(minutes: 2));
+      // Cache for 2 minutes with 'pagination' group
+      memoryManager.cacheItem(cacheKey, result, 
+        ttl: AppDurations.cacheShort,
+        group: 'pagination',
+      );
       return result;
     } catch (e) {
       throw CacheException(message: 'Failed to get paginated tasks: $e');
@@ -165,7 +174,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       if (existingTask == null) {
         throw const CacheException(message: 'Task not found for update');
       }
-      
+
       task.needsSync = true;
       task.updatedAt = DateTime.now();
       await taskBox.put(task.id, task);
@@ -184,7 +193,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
       if (task == null) {
         throw const CacheException(message: 'Task not found for deletion');
       }
-      
+
       // Soft delete - mark as deleted and needs sync
       task.isDeleted = true;
       task.needsSync = true;
@@ -198,14 +207,15 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   }
 
   @override
-  Future<List<TaskModel>> getTasksByDateRange(DateTime start, DateTime end) async {
+  Future<List<TaskModel>> getTasksByDateRange(
+      DateTime start, DateTime end) async {
     try {
       final taskBox = await box;
       return taskBox.values
-          .where((task) => 
+          .where((task) =>
               !task.isDeleted &&
-              task.dueDate.isAfter(start.subtract(const Duration(days: 1))) &&
-              task.dueDate.isBefore(end.add(const Duration(days: 1))))
+              task.dueDate.isAfter(start.subtract(AppDurations.oneDay)) &&
+              task.dueDate.isBefore(end.add(AppDurations.oneDay)))
           .toList()
         ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
     } catch (e) {
@@ -218,12 +228,12 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     try {
       final taskBox = await box;
       final lowercaseQuery = query.toLowerCase();
-      
+
       return taskBox.values
-          .where((task) => 
+          .where((task) =>
               !task.isDeleted &&
               (task.title.toLowerCase().contains(lowercaseQuery) ||
-               task.description.toLowerCase().contains(lowercaseQuery)))
+                  task.description.toLowerCase().contains(lowercaseQuery)))
           .toList()
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     } catch (e) {
@@ -235,9 +245,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   Future<List<TaskModel>> getTasksNeedingSync() async {
     try {
       final taskBox = await box;
-      return taskBox.values
-          .where((task) => task.needsSync)
-          .toList()
+      return taskBox.values.where((task) => task.needsSync).toList()
         ..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
     } catch (e) {
       throw CacheException(message: 'Failed to get tasks needing sync: $e');
@@ -277,12 +285,12 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     try {
       final taskBox = await box;
       final Map<String, TaskModel> taskMap = {};
-      
+
       for (final task in tasks) {
         task.needsSync = true;
         taskMap[task.id] = task;
       }
-      
+
       await taskBox.putAll(taskMap);
     } catch (e) {
       throw CacheException(message: 'Failed to batch create tasks: $e');
@@ -294,7 +302,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     try {
       final taskBox = await box;
       final Map<String, TaskModel> taskMap = {};
-      
+
       for (final task in tasks) {
         final existingTask = taskBox.get(task.id);
         if (existingTask != null) {
@@ -303,7 +311,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
           taskMap[task.id] = task;
         }
       }
-      
+
       await taskBox.putAll(taskMap);
     } catch (e) {
       throw CacheException(message: 'Failed to batch update tasks: $e');
@@ -315,7 +323,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     try {
       final taskBox = await box;
       final Map<String, TaskModel> taskMap = {};
-      
+
       for (final id in ids) {
         final task = taskBox.get(id);
         if (task != null) {
@@ -325,7 +333,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
           taskMap[id] = task;
         }
       }
-      
+
       await taskBox.putAll(taskMap);
     } catch (e) {
       throw CacheException(message: 'Failed to batch delete tasks: $e');
@@ -337,9 +345,9 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     try {
       final taskBox = await box;
       final existingTask = taskBox.get(task.id);
-      
+
       if (existingTask == null) return false;
-      
+
       // Check if the existing task has been modified more recently
       return existingTask.updatedAt.isAfter(task.updatedAt);
     } catch (e) {
@@ -369,9 +377,12 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
 
       final taskBox = await box;
       final count = taskBox.values.where((task) => !task.isDeleted).length;
-      
-      // Cache for 1 minute
-      memoryManager.cacheItem(cacheKey, count, ttl: const Duration(minutes: 1));
+
+      // Cache for 1 minute with 'stats' group
+      memoryManager.cacheItem(cacheKey, count, 
+        ttl: AppDurations.cacheQuick,
+        group: 'stats',
+      );
       return count;
     } catch (e) {
       throw CacheException(message: 'Failed to get task count: $e');
@@ -383,27 +394,27 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     try {
       final taskBox = await box;
       final indexBox = await this.indexBox;
-      
+
       // Remove permanently deleted tasks older than 30 days
-      final cutoffDate = DateTime.now().subtract(const Duration(days: 30));
+      final cutoffDate = DateTime.now().subtract(AppDurations.recentPeriod);
       final keysToRemove = <String>[];
-      
+
       for (final entry in taskBox.toMap().entries) {
         final task = entry.value;
         if (task.isDeleted && task.updatedAt.isBefore(cutoffDate)) {
           keysToRemove.add(entry.key);
         }
       }
-      
+
       for (final key in keysToRemove) {
         await taskBox.delete(key);
         await _removeFromIndexes(key);
       }
-      
+
       // Compact the database
       await taskBox.compact();
       await indexBox.compact();
-      
+
       _invalidateCache();
     } catch (e) {
       throw CacheException(message: 'Failed to optimize storage: $e');
@@ -414,13 +425,14 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   Future<void> _updateIndexes(TaskModel task) async {
     try {
       final indexBox = await this.indexBox;
-      
+
       // Title index for search
       final titleWords = task.title.toLowerCase().split(' ');
       for (final word in titleWords) {
         if (word.isNotEmpty) {
           final key = 'title_$word';
-          final existing = indexBox.get(key) ?? <String, dynamic>{'ids': <String>[]};
+          final existing =
+              indexBox.get(key) ?? <String, dynamic>{'ids': <String>[]};
           final ids = List<String>.from(existing['ids'] ?? []);
           if (!ids.contains(task.id)) {
             ids.add(task.id);
@@ -429,20 +441,22 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
           }
         }
       }
-      
+
       // Date index for filtering
       final dateKey = 'date_${task.dueDate.toIso8601String().split('T')[0]}';
-      final existing = indexBox.get(dateKey) ?? <String, dynamic>{'ids': <String>[]};
+      final existing =
+          indexBox.get(dateKey) ?? <String, dynamic>{'ids': <String>[]};
       final ids = List<String>.from(existing['ids'] ?? []);
       if (!ids.contains(task.id)) {
         ids.add(task.id);
         existing['ids'] = ids;
         await indexBox.put(dateKey, existing);
       }
-      
+
       // Category index
       final categoryKey = 'category_${task.category}';
-      final categoryExisting = indexBox.get(categoryKey) ?? <String, dynamic>{'ids': <String>[]};
+      final categoryExisting =
+          indexBox.get(categoryKey) ?? <String, dynamic>{'ids': <String>[]};
       final categoryIds = List<String>.from(categoryExisting['ids'] ?? []);
       if (!categoryIds.contains(task.id)) {
         categoryIds.add(task.id);
@@ -459,7 +473,7 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
   Future<void> _removeFromIndexes(String taskId) async {
     try {
       final indexBox = await this.indexBox;
-      
+
       // Remove from all indexes
       for (final entry in indexBox.toMap().entries) {
         final data = entry.value;
@@ -477,8 +491,11 @@ class HiveTaskDataSourceImpl implements HiveTaskDataSource {
     }
   }
 
-  /// Invalidate memory cache
+  /// Invalidate memory cache with selective group invalidation
   void _invalidateCache() {
-    memoryManager.clearCache();
+    // Invalidate task-related cache groups
+    memoryManager.clearCacheGroup('tasks');
+    memoryManager.clearCacheGroup('pagination');
+    memoryManager.clearCacheGroup('stats');
   }
 }

@@ -1,4 +1,5 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import '../../../../../core/constants/app_strings.dart';
 import '../../../domain/usecases/get_tasks_usecase.dart';
 import '../../../domain/usecases/get_tasks_paginated_usecase.dart';
 import '../../../domain/usecases/search_tasks_usecase.dart';
@@ -7,6 +8,7 @@ import '../../../domain/usecases/update_task_usecase.dart';
 import '../../../domain/usecases/sync_tasks_usecase.dart';
 import '../../../domain/entities/task_entity.dart';
 import '../../../../../core/domain/enums/task_enums.dart';
+import '../../../../../core/theme/app_durations.dart';
 import 'task_list_event.dart';
 import 'task_list_state.dart';
 
@@ -73,7 +75,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
   ) async {
     if (state is TaskListLoaded) {
       final currentState = state as TaskListLoaded;
-      
+
       try {
         final result = await _getTasksPaginatedUseCase(
           page: event.page,
@@ -82,12 +84,12 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
           startDate: event.startDate,
           endDate: event.endDate,
         );
-        
+
         result.fold(
           (failure) => emit(TaskListError(_getFailureMessage(failure))),
           (paginatedResult) {
             final allTasks = [...currentState.tasks, ...paginatedResult.data];
-            
+
             if (allTasks.isEmpty) {
               emit(const TaskListEmpty());
             } else {
@@ -121,10 +123,10 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
     Emitter<TaskListState> emit,
   ) async {
     emit(const TaskListLoading());
-    
+
     try {
       final result = await _searchTasksUseCase(event.query);
-      
+
       result.fold(
         (failure) => emit(TaskListError(_getFailureMessage(failure))),
         (tasks) {
@@ -132,7 +134,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
             tasks,
             searchQuery: event.query,
           );
-          
+
           if (filteredTasks.isEmpty) {
             emit(const TaskListEmpty());
           } else {
@@ -154,10 +156,10 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
   ) async {
     if (state is TaskListLoaded) {
       final currentState = state as TaskListLoaded;
-      
+
       try {
         final result = await _getTasksUseCase();
-        
+
         result.fold(
           (failure) => emit(TaskListError(_getFailureMessage(failure))),
           (tasks) {
@@ -167,7 +169,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
               startDate: event.startDate,
               endDate: event.endDate,
             );
-            
+
             if (filteredTasks.isEmpty) {
               emit(const TaskListEmpty());
             } else {
@@ -185,10 +187,8 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
       }
     } else {
       // If not loaded yet, load tasks first then apply filter
-      await _loadTasks(emit, 
-        startDate: event.startDate, 
-        endDate: event.endDate
-      );
+      await _loadTasks(emit,
+          startDate: event.startDate, endDate: event.endDate);
     }
   }
 
@@ -198,7 +198,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
   ) async {
     try {
       final result = await _deleteTaskUseCase(event.taskId);
-      
+
       result.fold(
         (failure) => emit(TaskListError(_getFailureMessage(failure))),
         (_) {
@@ -221,9 +221,9 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
         progressPercentage: 100,
         updatedAt: DateTime.now(),
       );
-      
+
       final result = await _updateTaskUseCase(completedTask);
-      
+
       result.fold(
         (failure) => emit(TaskListError(_getFailureMessage(failure))),
         (_) {
@@ -250,7 +250,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
     try {
       // Trigger sync operation
       final syncResult = await _syncTasksUseCase();
-      
+
       syncResult.fold(
         (failure) {
           // Sync failed, but don't change the current state
@@ -274,7 +274,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
   }) async {
     try {
       final result = await _getTasksUseCase();
-      
+
       result.fold(
         (failure) => emit(TaskListError(_getFailureMessage(failure))),
         (tasks) {
@@ -284,7 +284,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
             startDate: startDate,
             endDate: endDate,
           );
-          
+
           if (filteredTasks.isEmpty) {
             emit(const TaskListEmpty());
           } else {
@@ -318,7 +318,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
         startDate: startDate,
         endDate: endDate,
       );
-      
+
       result.fold(
         (failure) => emit(TaskListError(_getFailureMessage(failure))),
         (paginatedResult) {
@@ -354,16 +354,16 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
     if (startDate != null || endDate != null) {
       filteredTasks = filteredTasks.where((task) {
         final taskDate = task.dueDate;
-        
+
         if (startDate != null && endDate != null) {
-          return taskDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
-                 taskDate.isBefore(endDate.add(const Duration(days: 1)));
+          return taskDate.isAfter(startDate.subtract(AppDurations.oneDay)) &&
+              taskDate.isBefore(endDate.add(AppDurations.oneDay));
         } else if (startDate != null) {
-          return taskDate.isAfter(startDate.subtract(const Duration(days: 1)));
+          return taskDate.isAfter(startDate.subtract(AppDurations.oneDay));
         } else if (endDate != null) {
-          return taskDate.isBefore(endDate.add(const Duration(days: 1)));
+          return taskDate.isBefore(endDate.add(AppDurations.oneDay));
         }
-        
+
         return true;
       }).toList();
     }
@@ -373,7 +373,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
       final query = searchQuery.toLowerCase();
       filteredTasks = filteredTasks.where((task) {
         return task.title.toLowerCase().contains(query) ||
-               task.description.toLowerCase().contains(query);
+            task.description.toLowerCase().contains(query);
       }).toList();
     }
 
@@ -387,7 +387,7 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
   TaskListState? fromJson(Map<String, dynamic> json) {
     try {
       final stateType = json['type'] as String?;
-      
+
       switch (stateType) {
         case 'loaded':
           // For offline persistence, we'll restore to initial state
@@ -425,6 +425,6 @@ class TaskListBloc extends HydratedBloc<TaskListEvent, TaskListState> {
     } else if (failure.runtimeType.toString().contains('CacheFailure')) {
       return (failure as dynamic).message;
     }
-    return 'An unexpected error occurred';
+    return AppStrings.unexpectedError;
   }
 }

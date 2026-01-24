@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/background_sync_service.dart';
+import '../theme/app_spacing.dart';
 import '../services/connectivity_service.dart';
 import '../theme/build_context_color_extension.dart';
 
@@ -26,11 +27,12 @@ class SyncStatusWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      margin: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
         color: _getStatusColor(context).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
         border: Border.all(
           color: _getStatusColor(context).withValues(alpha: 0.3),
           width: 1,
@@ -40,7 +42,7 @@ class SyncStatusWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildStatusIcon(context),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,28 +51,29 @@ class SyncStatusWidget extends StatelessWidget {
                 Text(
                   _getStatusMessage(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: _getStatusColor(context),
-                    fontWeight: FontWeight.w500,
-                  ),
+                        color: _getStatusColor(context),
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
                 if (showDetails && _getDetailMessage().isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xxs),
                   Text(
                     _getDetailMessage(),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: _getStatusColor(context).withValues(alpha: 0.8),
-                    ),
+                          color:
+                              _getStatusColor(context).withValues(alpha: 0.8),
+                        ),
                   ),
                 ],
               ],
             ),
           ),
           if (_shouldShowRetryButton()) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             IconButton(
               onPressed: onRetryPressed,
               icon: const Icon(Icons.refresh),
-              iconSize: 20,
+              iconSize: AppDimensions.iconSize,
               color: _getStatusColor(context),
               tooltip: 'Retry sync',
             ),
@@ -82,12 +85,12 @@ class SyncStatusWidget extends StatelessWidget {
 
   Widget _buildStatusIcon(BuildContext context) {
     IconData iconData;
-    
+
     switch (syncStatus) {
       case SyncStatus.syncing:
         return SizedBox(
-          width: 16,
-          height: 16,
+          width: AppDimensions.iconSizeSmall,
+          height: AppDimensions.iconSizeSmall,
           child: CircularProgressIndicator(
             strokeWidth: 2,
             valueColor: AlwaysStoppedAnimation<Color>(_getStatusColor(context)),
@@ -112,7 +115,7 @@ class SyncStatusWidget extends StatelessWidget {
 
     return Icon(
       iconData,
-      size: 16,
+      size: AppDimensions.iconSizeSmall,
       color: _getStatusColor(context),
     );
   }
@@ -140,8 +143,8 @@ class SyncStatusWidget extends StatelessWidget {
       case SyncStatus.upToDate:
         return 'Up to date';
       case SyncStatus.offline:
-        return connectivityStatus == ConnectivityStatus.none 
-            ? 'Offline' 
+        return connectivityStatus == ConnectivityStatus.none
+            ? 'Offline'
             : 'No internet connection';
       case SyncStatus.retrying:
         return 'Retrying sync...';
@@ -167,8 +170,8 @@ class SyncStatusWidget extends StatelessWidget {
 
   bool _shouldShowStatus() {
     // Always show status except when idle and online
-    return !(syncStatus == SyncStatus.idle && 
-             connectivityStatus != ConnectivityStatus.none);
+    return !(syncStatus == SyncStatus.idle &&
+        connectivityStatus != ConnectivityStatus.none);
   }
 
   bool _shouldShowRetryButton() {
@@ -191,7 +194,7 @@ class CompactSyncStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (syncStatus == SyncStatus.upToDate && 
+    if (syncStatus == SyncStatus.upToDate &&
         connectivityStatus != ConnectivityStatus.none) {
       return const SizedBox.shrink();
     }
@@ -199,22 +202,23 @@ class CompactSyncStatusWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
         decoration: BoxDecoration(
           color: _getCompactStatusColor(context).withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildCompactStatusIcon(context),
-            const SizedBox(width: 4),
+            const SizedBox(width: AppSpacing.xs),
             Text(
               _getCompactMessage(),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: _getCompactStatusColor(context),
-                fontWeight: FontWeight.w500,
-              ),
+                    color: _getCompactStatusColor(context),
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ],
         ),
@@ -224,15 +228,16 @@ class CompactSyncStatusWidget extends StatelessWidget {
 
   Widget _buildCompactStatusIcon(BuildContext context) {
     IconData iconData;
-    
+
     switch (syncStatus) {
       case SyncStatus.syncing:
         return SizedBox(
-          width: 12,
-          height: 12,
+          width: AppDimensions.iconSizeXSmall,
+          height: AppDimensions.iconSizeXSmall,
           child: CircularProgressIndicator(
             strokeWidth: 1.5,
-            valueColor: AlwaysStoppedAnimation<Color>(_getCompactStatusColor(context)),
+            valueColor:
+                AlwaysStoppedAnimation<Color>(_getCompactStatusColor(context)),
           ),
         );
       case SyncStatus.offline:
@@ -252,7 +257,7 @@ class CompactSyncStatusWidget extends StatelessWidget {
 
     return Icon(
       iconData,
-      size: 12,
+      size: AppDimensions.iconSizeXSmall,
       color: _getCompactStatusColor(context),
     );
   }
