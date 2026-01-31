@@ -125,7 +125,7 @@ This implementation plan converts the color centralization design into discrete 
   - **Property 12: Theme persistence**
   - **Validates: Requirements 6.5**
 
-- [-] 9. Add build-time color validation
+- [ ] 9. Add build-time color validation
   - Create custom lint rules to detect hardcoded colors
   - Add pre-commit hooks for color validation
   - Implement build script to scan for color violations

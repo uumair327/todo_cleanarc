@@ -16,7 +16,7 @@ class AuthConstants {
       return githubPagesUrl;
     }
 
-    // Check for production build
+    // Check for production build.
     const bool isProduction = bool.fromEnvironment('dart.vm.product');
     return isProduction ? prodRedirectUrl : devRedirectUrl;
   }
