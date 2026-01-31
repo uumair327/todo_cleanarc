@@ -88,6 +88,9 @@ dev_dependencies:
   mockito: ^5.4.4
   bloc_test: ^9.1.7
   faker: ^2.1.0
+  
+  # Static Analysis
+  analyzer: ^6.4.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
