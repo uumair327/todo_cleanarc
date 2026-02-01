@@ -45,28 +45,28 @@ The implementation follows a bottom-up approach: building core analysis componen
     - Test edge cases: files in unexpected locations
     - _Requirements: 1.1, 2.1, 3.1_
 
-- [ ] 3. Implement Static Analysis Module
-  - [ ] 3.1 Create AST parser using analyzer package
+- [-] 3. Implement Static Analysis Module
+  - [x] 3.1 Create AST parser using analyzer package
     - Add `analyzer` package dependency
     - Implement `StaticAnalyzer` interface
     - Parse Dart files into `CompilationUnit` AST
     - Handle parsing errors gracefully
     - _Requirements: 1.1, 2.1, 3.1_
   
-  - [ ] 3.2 Implement class extraction logic
+  - [x] 3.2 Implement class extraction logic
     - Extract class declarations from AST
     - Capture class name, superclass, interfaces, mixins
     - Extract methods and fields with metadata
     - Track line numbers for violation reporting
     - _Requirements: 5.1, 5.2, 5.3_
   
-  - [ ] 3.3 Implement dependency extraction logic
+  - [x] 3.3 Implement dependency extraction logic
     - Extract import statements from AST
     - Classify imports as relative or package imports
     - Determine target layer and feature for each import
     - _Requirements: 1.3, 2.4, 4.1_
   
-  - [ ] 3.4 Implement widget analysis logic
+  - [-] 3.4 Implement widget analysis logic
     - Detect StatelessWidget and StatefulWidget subclasses
     - Identify business logic patterns (database calls, API calls)
     - Calculate widget nesting depth
