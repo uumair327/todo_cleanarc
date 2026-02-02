@@ -93,8 +93,8 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
     }
     
     // Calculate line count
-    final lineNumber = ast.lineInfo?.getLocation(classDecl.offset).lineNumber ?? 0;
-    final endLine = ast.lineInfo?.getLocation(classDecl.end).lineNumber ?? 0;
+    final lineNumber = ast.lineInfo.getLocation(classDecl.offset).lineNumber;
+    final endLine = ast.lineInfo.getLocation(classDecl.end).lineNumber;
     final lineCount = endLine - lineNumber + 1;
     
     return ClassInfo(
@@ -111,7 +111,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
   }
   
   MethodInfo _extractMethodInfo(MethodDeclaration method, CompilationUnit ast) {
-    final lineNumber = ast.lineInfo?.getLocation(method.offset).lineNumber ?? 0;
+    final lineNumber = ast.lineInfo.getLocation(method.offset).lineNumber;
     
     // Extract parameters
     final parameters = <ParameterInfo>[];
@@ -172,7 +172,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
   
   List<FieldInfo> _extractFieldInfo(FieldDeclaration field, CompilationUnit ast) {
     final fields = <FieldInfo>[];
-    final lineNumber = ast.lineInfo?.getLocation(field.offset).lineNumber ?? 0;
+    final lineNumber = ast.lineInfo.getLocation(field.offset).lineNumber;
     
     for (final variable in field.fields.variables) {
       fields.add(FieldInfo(
@@ -199,7 +199,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
     for (final directive in ast.directives) {
       if (directive is ImportDirective) {
         final importPath = directive.uri.stringValue ?? '';
-        final lineNumber = ast.lineInfo?.getLocation(directive.offset).lineNumber ?? 0;
+        final lineNumber = ast.lineInfo.getLocation(directive.offset).lineNumber;
         
         // Skip dart: imports as they're not architectural dependencies
         if (importPath.startsWith('dart:')) {
@@ -313,6 +313,12 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
   }
   
   bool _hasBusinessLogicPatterns(ClassDeclaration classDecl) {
+    // Only check widget classes for business logic
+    final superclass = classDecl.extendsClause?.superclass.name2.toString();
+    if (superclass != 'StatelessWidget' && superclass != 'StatefulWidget') {
+      return false;
+    }
+    
     // Check for business logic indicators in the class
     final visitor = _BusinessLogicVisitor();
     classDecl.visitChildren(visitor);
@@ -324,7 +330,7 @@ class StaticAnalyzerImpl implements StaticAnalyzer {
     for (final member in classDecl.members) {
       if (member is MethodDeclaration && member.name.lexeme == 'build') {
         final visitor = _WidgetDepthVisitor();
-        member.visitChildren(visitor);
+        member.body.visitChildren(visitor);
         return visitor.maxDepth;
       }
     }
@@ -372,13 +378,29 @@ class _BusinessLogicVisitor extends GeneralizingAstVisitor<void> {
     final typeName = node.constructorName.type.name2.toString();
     
     // Check for direct repository or service instantiation
-    if (typeName.toLowerCase().contains('repository') ||
-        typeName.toLowerCase().contains('service') ||
-        typeName.toLowerCase().contains('datasource')) {
+    final lowerTypeName = typeName.toLowerCase();
+    if (lowerTypeName.contains('repository') ||
+        lowerTypeName.contains('service') ||
+        lowerTypeName.contains('datasource')) {
       hasBusinessLogic = true;
     }
     
     super.visitInstanceCreationExpression(node);
+  }
+  
+  @override
+  void visitVariableDeclaration(VariableDeclaration node) {
+    // Check variable initializers for business logic
+    if (node.initializer != null) {
+      node.initializer!.visitChildren(this);
+    }
+    super.visitVariableDeclaration(node);
+  }
+  
+  @override
+  void visitFieldDeclaration(FieldDeclaration node) {
+    // Visit field declarations to catch field initializers
+    super.visitFieldDeclaration(node);
   }
 }
 

@@ -35,7 +35,8 @@ The implementation follows a bottom-up approach: building core analysis componen
     - Handle core files separately from feature files
     - _Requirements: 8.1_
   
-  - [ ]* 2.4 Write property test for file discovery
+  - [x] 2.4 Write property test for file discovery
+
     - **Property: File Discovery Completeness**
     - **Validates: Requirements 1.1, 2.1, 3.1**
     - Generate random directory structures and verify all Dart files are discovered
@@ -45,7 +46,7 @@ The implementation follows a bottom-up approach: building core analysis componen
     - Test edge cases: files in unexpected locations
     - _Requirements: 1.1, 2.1, 3.1_
 
-- [-] 3. Implement Static Analysis Module
+- [x] 3. Implement Static Analysis Module
   - [x] 3.1 Create AST parser using analyzer package
     - Add `analyzer` package dependency
     - Implement `StaticAnalyzer` interface
@@ -66,7 +67,7 @@ The implementation follows a bottom-up approach: building core analysis componen
     - Determine target layer and feature for each import
     - _Requirements: 1.3, 2.4, 4.1_
   
-  - [-] 3.4 Implement widget analysis logic
+  - [x] 3.4 Implement widget analysis logic
     - Detect StatelessWidget and StatefulWidget subclasses
     - Identify business logic patterns (database calls, API calls)
     - Calculate widget nesting depth
